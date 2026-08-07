@@ -124,7 +124,7 @@
 
       <!-- Opening statement -->
       <div class="hero__intro" data-hero-intro>
-        <p class="eyebrow"><span data-bind="companyName">ClearFlow Plumbing</span> · Serving <span data-bind="regionShort">St. Mary's County</span></p>
+        <p class="eyebrow"><span class="eyebrow__text"><span data-bind="companyName">ClearFlow Plumbing</span> · Serving <span data-bind="regionShort">St.&nbsp;Mary's County</span></span></p>
         <h1 class="hero__title">Scroll to restore<br>your home.</h1>
         <p class="hero__lede">Plumbing problems don't fix themselves. Professional repairs, installations and emergency plumbing from a local team homeowners trust.</p>
         <div class="hero__actions">
@@ -435,6 +435,14 @@
 
             <!-- .......... facade (covers section initially) ............ -->
             <g id="facade">
+              <!-- ground cover: hides everything below grade until diagnosis -->
+              <g class="facade-panel" data-panel="ground">
+                <rect x="0" y="544" width="1180" height="296" fill="#F1EFE8"/>
+                <rect x="0" y="544" width="1180" height="296" fill="url(#soil)" opacity="0.45"/>
+                <line x1="0" y1="558" x2="90" y2="558" stroke="#0C1821" stroke-width="2"/>
+                <path d="M90 544 V558" stroke="#0C1821" stroke-width="1.6" fill="none"/>
+                <rect x="0" y="559" width="90" height="7" fill="#0C1821" opacity="0.12"/>
+              </g>
               <g class="facade-panel" data-panel="1">
                 <rect x="300" y="256" width="240" height="286" fill="#EDEAE0"/>
                 <g stroke="#0C1821" stroke-opacity="0.08" stroke-width="1">
@@ -452,11 +460,12 @@
                   <line x1="450" y1="280" x2="450" y2="364" stroke="#0C1821" stroke-width="2"/>
                 </g>
                 <!-- stage 01: exterior hint of trouble -->
-                <ellipse id="stain" cx="500" cy="534" rx="52" ry="14" fill="url(#stain)" opacity="0"/>
+                <ellipse id="stain" cx="500" cy="530" rx="72" ry="20" fill="url(#stain)" opacity="0"/>
                 <g id="drips-ext" opacity="0" fill="#3E8FB0">
                   <circle cx="486" cy="522" r="2"/><circle cx="502" cy="530" r="1.6"/><circle cx="516" cy="526" r="1.8"/>
                 </g>
-                <circle id="pulse-ext" cx="500" cy="522" r="10" fill="none" stroke="#B4552D" stroke-width="1.6" opacity="0"/>
+                <circle id="pulse-ext" cx="500" cy="522" r="10" fill="none" stroke="#B4552D" stroke-width="2.2" opacity="0"/>
+                <circle id="pulse-ext-dot" cx="500" cy="522" r="3" fill="#B4552D" opacity="0"/>
               </g>
               <g class="facade-panel" data-panel="2">
                 <rect x="540" y="256" width="220" height="286" fill="#EDEAE0"/>
@@ -474,9 +483,6 @@
                 <circle cx="672" cy="496" r="2.5" fill="#B89A68"/>
                 <rect x="608" y="542" width="88" height="8" fill="#0C1821" opacity="0.85"/>
                 <circle id="sconce" cx="604" cy="452" r="3" fill="#E8C98A" opacity="0.25"/>
-                <!-- gable vent -->
-                <circle cx="620" cy="196" r="13" fill="none" stroke="#0C1821" stroke-width="2" opacity="0.6"/>
-                <line x1="620" y1="183" x2="620" y2="209" stroke="#0C1821" stroke-width="1.4" opacity="0.6"/>
               </g>
               <g class="facade-panel" data-panel="3">
                 <rect x="760" y="256" width="220" height="286" fill="#EDEAE0"/>
@@ -961,14 +967,14 @@
           </g>
           <!-- town markers: index matches data-area list -->
           <g data-map-markers>
-            <g class="map-marker" data-marker="0" transform="translate(210,262)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">Leonardtown</text></g>
-            <g class="map-marker" data-marker="1" transform="translate(300,330)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">California</text></g>
-            <g class="map-marker" data-marker="2" transform="translate(330,404)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">Lexington Park</text></g>
-            <g class="map-marker" data-marker="3" transform="translate(282,222)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">Hollywood</text></g>
-            <g class="map-marker" data-marker="4" transform="translate(176,110)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">Mechanicsville</text></g>
-            <g class="map-marker" data-marker="5" transform="translate(282,432)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="-14" y="4" class="svg-label svg-label--map" text-anchor="end">Great Mills</text></g>
-            <g class="map-marker" data-marker="6" transform="translate(140,72)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">Charlotte Hall</text></g>
-            <g class="map-marker" data-marker="7" transform="translate(452,240)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="-14" y="4" class="svg-label svg-label--map" text-anchor="end">Lusby</text></g>
+            <g class="map-marker" data-marker="0" transform="translate(210,262)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="19" y="4" class="svg-label svg-label--map" text-anchor="start">Leonardtown</text></g>
+            <g class="map-marker" data-marker="1" transform="translate(300,330)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="19" y="4" class="svg-label svg-label--map" text-anchor="start">California</text></g>
+            <g class="map-marker" data-marker="2" transform="translate(330,404)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="19" y="4" class="svg-label svg-label--map" text-anchor="start">Lexington Park</text></g>
+            <g class="map-marker" data-marker="3" transform="translate(282,222)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="19" y="4" class="svg-label svg-label--map" text-anchor="start">Hollywood</text></g>
+            <g class="map-marker" data-marker="4" transform="translate(176,110)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="19" y="4" class="svg-label svg-label--map" text-anchor="start">Mechanicsville</text></g>
+            <g class="map-marker" data-marker="5" transform="translate(282,432)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="-19" y="4" class="svg-label svg-label--map" text-anchor="end">Great Mills</text></g>
+            <g class="map-marker" data-marker="6" transform="translate(140,72)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="19" y="4" class="svg-label svg-label--map" text-anchor="start">Charlotte Hall</text></g>
+            <g class="map-marker" data-marker="7" transform="translate(452,240)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="-19" y="4" class="svg-label svg-label--map" text-anchor="end">Lusby</text></g>
           </g>
         </svg>
       </div>

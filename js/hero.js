@@ -26,8 +26,9 @@
   /* ---------- camera framings (viewBox strings) ---------- */
   var CAM = {
     full:   "0 0 1180 840",
+    fullM:  "165 55 910 785",    // mobile: house fills the frame
     joint:  "316 348 500 356",   // tight on the failed coupling
-    lowerM: "150 300 780 555",   // mobile: kitchen + basement zone
+    lowerM: "180 310 820 585",   // mobile: kitchen + basement zone
     jointM: "336 360 460 327"    // mobile repair framing
   };
 
@@ -75,10 +76,10 @@
       /* =====================================================
          INITIAL STATE
       ====================================================== */
-      gsap.set(svg, { attr: { viewBox: CAM.full } });
+      gsap.set(svg, { attr: { viewBox: isMobile ? CAM.fullM : CAM.full } });
       gsap.set("#notes, #flow, #pipe-new, #cut-marks", { autoAlpha: 0 });
       gsap.set("#stream-kitchen, #stream-bath, #stream-shower", { autoAlpha: 0 });
-      gsap.set("#stain, #drips-ext, #pulse-ext, #pulse-int, #leak-glow, #leak-tag, #puddle", { autoAlpha: 0 });
+      gsap.set("#stain, #drips-ext, #pulse-ext, #pulse-ext-dot, #pulse-int, #leak-glow, #leak-tag, #puddle", { autoAlpha: 0 });
       gsap.set("#scan-trail, #scan-head", { autoAlpha: 0 });
       gsap.set("#ambient, #light-1, #light-2", { autoAlpha: 0 });
       gsap.set(".facade-panel", { autoAlpha: 1, x: 0, y: 0 });
@@ -100,6 +101,7 @@
       loops.pulseExt = gsap.timeline({ repeat: -1, paused: true })
         .fromTo("#pulse-ext", { attr: { r: 8 }, autoAlpha: 0.9 },
           { attr: { r: 30 }, autoAlpha: 0, duration: 1.6, ease: "power1.out" })
+        .fromTo("#pulse-ext-dot", { autoAlpha: 0.9 }, { autoAlpha: 0.25, duration: 1.6 }, 0)
         .to({}, { duration: 0.4 });
 
       loops.pulseInt = gsap.timeline({ repeat: -1, paused: true })
@@ -141,7 +143,7 @@
           anticipatePin: 1,
           onUpdate: function (self) {
             var p = self.progress;
-            gate(loops.pulseExt, p > 0.04 && p < 0.2, "#pulse-ext");
+            gate(loops.pulseExt, p > 0.04 && p < 0.2, "#pulse-ext, #pulse-ext-dot");
             gate(loops.pulseInt, p > 0.2 && p < 0.44, "#pulse-int");
             gate(loops.drip, p > 0.2 && p < 0.52, ".droplet");
             gate(loops.glow, p > 0.4 && p < 0.5, null);
@@ -172,7 +174,8 @@
 
       /* ---- 02 · DIAGNOSIS --------------------------------- */
       // facade parts: panels drift apart and dissolve
-      tl.to("[data-panel='1']", { autoAlpha: 0, x: -46, duration: 6, ease: "power2.inOut" }, 19)
+      tl.to("[data-panel='ground']", { autoAlpha: 0, y: 16, duration: 6, ease: "power2.inOut" }, 18.5)
+        .to("[data-panel='1']", { autoAlpha: 0, x: -46, duration: 6, ease: "power2.inOut" }, 19)
         .to("[data-panel='3']", { autoAlpha: 0, x: 46, duration: 6, ease: "power2.inOut" }, 20)
         .to("[data-panel='2']", { autoAlpha: 0, y: 24, duration: 6, ease: "power2.inOut" }, 21)
         .to("[data-panel='2b']", { autoAlpha: 0, y: -30, duration: 6, ease: "power2.inOut" }, 21.5);
@@ -230,13 +233,13 @@
         .to("#fitting-l", { rotation: 100, transformOrigin: "50% 50%", duration: 2.5, ease: "power2.inOut" }, 60)
         .to("#fitting-r", { rotation: -100, transformOrigin: "50% 50%", duration: 2.5, ease: "power2.inOut" }, 61)
         .fromTo("#seal-l", { attr: { r: 6 }, autoAlpha: 0.9 },
-          { attr: { r: 20 }, autoAlpha: 0, duration: 2.5, ease: "power1.out" }, 62.5)
+          { attr: { r: 20 }, autoAlpha: 0, duration: 2.5, ease: "power1.out", immediateRender: false }, 62.5)
         .fromTo("#seal-r", { attr: { r: 6 }, autoAlpha: 0.9 },
-          { attr: { r: 20 }, autoAlpha: 0, duration: 2.5, ease: "power1.out" }, 63.5);
+          { attr: { r: 20 }, autoAlpha: 0, duration: 2.5, ease: "power1.out", immediateRender: false }, 63.5);
 
       /* ---- 04 · RESTORED ---------------------------------- */
       tl.to("[data-caption='3']", CAPTION_OUT, 65)
-        .to(svg, { attr: { viewBox: CAM.full }, duration: 6, ease: "power2.inOut" }, 65.5)
+        .to(svg, { attr: { viewBox: isMobile ? CAM.fullM : CAM.full }, duration: 6, ease: "power2.inOut" }, 65.5)
         .to("[data-caption='4']", CAPTION_IN, 71);
 
       tl.to("#flow", { autoAlpha: 1, duration: 1 }, 70);
