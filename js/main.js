@@ -118,6 +118,39 @@
   }
 
   /* ==========================================================
+     01b · SMOOTH SCROLL — Lenis, wired into ScrollTrigger.
+     Skipped entirely under prefers-reduced-motion.
+  ========================================================== */
+  var lenis = null;
+  function startLenis() {
+    if (lenis || reduced() || !window.Lenis || !window.gsap || !window.ScrollTrigger) return;
+    docEl.classList.add("has-lenis");
+    lenis = new Lenis({ duration: 1.05, smoothWheel: true });
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
+    gsap.ticker.lagSmoothing(0);
+  }
+  function stopLenis() {
+    if (!lenis) return;
+    lenis.destroy();
+    lenis = null;
+    docEl.classList.remove("has-lenis");
+  }
+  startLenis();
+  REDUCE.addEventListener("change", function () { reduced() ? stopLenis() : startLenis(); });
+
+  // in-page anchors scroll through Lenis (native fallback otherwise)
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a || !lenis) return;
+    var id = a.getAttribute("href").slice(1);
+    var target = id && document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    lenis.scrollTo(target, { offset: id === "top" ? 0 : -64 });
+  });
+
+  /* ==========================================================
      02 · HEADER — solid on scroll, hide on fast down-scroll
   ========================================================== */
   var header = document.querySelector("[data-header]");

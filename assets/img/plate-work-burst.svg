@@ -1,47 +1,69 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0.7" y2="1">
-      <stop offset="0" stop-color="#152836"/>
-      <stop offset="1" stop-color="#0C1821"/>
+      <stop offset="0" stop-color="#1B3242"/>
+      <stop offset="0.55" stop-color="#122534"/>
+      <stop offset="1" stop-color="#0B1720"/>
     </linearGradient>
-    <radialGradient id="halo" cx="0.5" cy="0.46" r="0.5">
-      <stop offset="0" stop-color="#B89A68" stop-opacity="0.22"/>
-      <stop offset="1" stop-color="#B89A68" stop-opacity="0"/>
+    <radialGradient id="halo" cx="0.5" cy="0.46" r="0.45">
+      <stop offset="0" stop-color="#F2D9A4" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#F2D9A4" stop-opacity="0"/>
     </radialGradient>
+    <linearGradient id="steel-pipe" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7E93A2"/>
+      <stop offset="0.35" stop-color="#C6D3DC"/>
+      <stop offset="0.6" stop-color="#68808F"/>
+      <stop offset="1" stop-color="#31485A"/>
+    </linearGradient>
+    <linearGradient id="copper-pipe" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A5875C"/>
+      <stop offset="0.35" stop-color="#EACD97"/>
+      <stop offset="0.6" stop-color="#B89462"/>
+      <stop offset="1" stop-color="#66502F"/>
+    </linearGradient>
+    <radialGradient id="vig" cx="0.5" cy="0.45" r="0.85">
+      <stop offset="0.55" stop-color="#050B10" stop-opacity="0"/>
+      <stop offset="1" stop-color="#050B10" stop-opacity="0.5"/>
+    </radialGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>
     <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0"/><feComposite operator="over" in2="SourceGraphic"/></filter>
   </defs>
   <rect width="1200" height="800" fill="url(#bg)"/>
   <rect width="1200" height="800" fill="url(#halo)"/>
 
   <!-- stud framing hints -->
-  <g stroke="#F4F2ED" stroke-opacity="0.07" stroke-width="2">
+  <g stroke="#F4F2ED" stroke-opacity="0.06" stroke-width="2">
     <line x1="180" y1="0" x2="180" y2="800"/><line x1="1020" y1="0" x2="1020" y2="800"/>
     <line x1="600" y1="0" x2="600" y2="120"/><line x1="600" y1="680" x2="600" y2="800"/>
   </g>
 
-  <!-- old pipe left/right -->
-  <g stroke-linecap="round" fill="none">
-    <path d="M60 400 H430" stroke="#F4F2ED" stroke-opacity="0.55" stroke-width="26"/>
-    <path d="M770 400 H1140" stroke="#F4F2ED" stroke-opacity="0.55" stroke-width="26"/>
-    <path d="M60 391 H430 M770 391 H1140" stroke="#F4F2ED" stroke-opacity="0.16" stroke-width="4"/>
+  <!-- old steel pipe left/right -->
+  <rect x="52" y="387" width="378" height="26" rx="13" fill="url(#steel-pipe)"/>
+  <rect x="770" y="387" width="378" height="26" rx="13" fill="url(#steel-pipe)"/>
+
+  <!-- new copper section -->
+  <rect x="430" y="386" width="340" height="28" rx="14" fill="url(#copper-pipe)"/>
+  <line x1="444" y1="392" x2="756" y2="392" stroke="#F6E4BC" stroke-width="2.5" opacity="0.8"/>
+
+  <!-- couplings, brass -->
+  <g>
+    <rect x="408" y="376" width="52" height="48" rx="8" fill="#0E1E2A"/>
+    <rect x="410" y="378" width="48" height="44" rx="7" fill="url(#copper-pipe)"/>
+    <rect x="740" y="376" width="52" height="48" rx="8" fill="#0E1E2A"/>
+    <rect x="742" y="378" width="48" height="44" rx="7" fill="url(#copper-pipe)"/>
+  </g>
+  <g stroke="#66502F" stroke-width="2.5" opacity="0.8">
+    <line x1="422" y1="378" x2="422" y2="422"/><line x1="446" y1="378" x2="446" y2="422"/>
+    <line x1="754" y1="378" x2="754" y2="422"/><line x1="778" y1="378" x2="778" y2="422"/>
+  </g>
+  <g stroke="#F6E4BC" stroke-width="1.4" opacity="0.7">
+    <line x1="424" y1="380" x2="424" y2="420"/><line x1="756" y1="380" x2="756" y2="420"/>
   </g>
 
-  <!-- new copper section + couplings -->
-  <g stroke-linecap="round" fill="none">
-    <path d="M430 400 H770" stroke="#B89A68" stroke-width="28"/>
-    <path d="M436 390 H764" stroke="#F4F2ED" stroke-opacity="0.35" stroke-width="4"/>
-  </g>
-  <g fill="#0C1821" stroke="#B89A68" stroke-width="4">
-    <rect x="408" y="376" width="52" height="48" rx="8"/>
-    <rect x="740" y="376" width="52" height="48" rx="8"/>
-  </g>
-  <g stroke="#B89A68" stroke-width="2.5" stroke-opacity="0.8">
-    <line x1="420" y1="376" x2="420" y2="424"/><line x1="448" y1="376" x2="448" y2="424"/>
-    <line x1="752" y1="376" x2="752" y2="424"/><line x1="780" y1="376" x2="780" y2="424"/>
-  </g>
-
-  <!-- solder shine -->
-  <g stroke="#E8C98A" stroke-width="2" stroke-linecap="round" opacity="0.85">
+  <!-- solder glow at joints -->
+  <circle cx="434" cy="400" r="22" fill="#F2D9A4" opacity="0.25" filter="url(#soft)"/>
+  <circle cx="766" cy="400" r="22" fill="#F2D9A4" opacity="0.25" filter="url(#soft)"/>
+  <g stroke="#F6E4BC" stroke-width="2" stroke-linecap="round" opacity="0.9">
     <path d="M470 380 l22 -12 M508 378 l14 -8"/>
     <path d="M700 382 l20 -11"/>
   </g>
@@ -51,5 +73,7 @@
     <line x1="434" y1="470" x2="434" y2="500"/><line x1="766" y1="470" x2="766" y2="500"/>
     <line x1="434" y1="486" x2="766" y2="486"/>
   </g>
+
+  <rect width="1200" height="800" fill="url(#vig)"/>
   <rect width="1200" height="800" fill="transparent" filter="url(#grain)"/>
 </svg>

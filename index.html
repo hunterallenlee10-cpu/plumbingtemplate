@@ -195,6 +195,33 @@
               <stop offset="0%" stop-color="#E8C98A" stop-opacity="0.16"/>
               <stop offset="100%" stop-color="#E8C98A" stop-opacity="0"/>
             </radialGradient>
+            <linearGradient id="sky-wash" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#F9EFDA" stop-opacity="0.75"/>
+              <stop offset="0.55" stop-color="#F5EDDD" stop-opacity="0.28"/>
+              <stop offset="1" stop-color="#F5EDDD" stop-opacity="0"/>
+            </linearGradient>
+            <radialGradient id="sun-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stop-color="#F2D9A4" stop-opacity="0.5"/>
+              <stop offset="0.6" stop-color="#F2D9A4" stop-opacity="0.16"/>
+              <stop offset="1" stop-color="#F2D9A4" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="siding-shade" x1="0" y1="0" x2="0.65" y2="1">
+              <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.4"/>
+              <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.05"/>
+              <stop offset="1" stop-color="#0C1821" stop-opacity="0.1"/>
+            </linearGradient>
+            <linearGradient id="eave-shadow" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0C1821" stop-opacity="0.16"/>
+              <stop offset="1" stop-color="#0C1821" stop-opacity="0"/>
+            </linearGradient>
+            <radialGradient id="cast-shadow" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stop-color="#0C1821" stop-opacity="0.22"/>
+              <stop offset="1" stop-color="#0C1821" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="room-warmth" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#E8C98A" stop-opacity="0.07"/>
+              <stop offset="1" stop-color="#E8C98A" stop-opacity="0.015"/>
+            </linearGradient>
             <radialGradient id="stain-grad" cx="50%" cy="20%" r="80%">
               <stop offset="0%" stop-color="#33525f" stop-opacity="0.5"/>
               <stop offset="100%" stop-color="#33525f" stop-opacity="0"/>
@@ -202,6 +229,18 @@
           </defs>
 
           <g id="scene">
+
+            <!-- ............ backdrop: sky, sun, treelines .............. -->
+            <g id="backdrop">
+              <rect x="0" y="0" width="1180" height="545" fill="url(#sky-wash)"/>
+              <rect id="sun-halo" x="580" y="-80" width="620" height="520" fill="url(#sun-glow)"/>
+              <g fill="#66757B">
+                <path d="M0 542 q40 -46 95 -44 q50 2 78 24 q36 -34 86 -30 q42 4 62 26 q20 -12 42 -10 l0 34 Z" opacity="0.13"/>
+                <path d="M30 542 q50 -30 100 -26 q55 5 80 22 q30 -20 65 -16 l0 20 Z" opacity="0.1"/>
+                <path d="M980 542 q40 -40 96 -38 q56 2 104 30 l0 8 Z" opacity="0.12"/>
+                <path d="M1040 542 q46 -24 140 -20 l0 20 Z" opacity="0.09"/>
+              </g>
+            </g>
 
             <!-- ..................... site / ground ..................... -->
             <g id="site">
@@ -215,12 +254,19 @@
               <rect x="90" y="542" width="210" height="298" fill="url(#soil)"/>
               <rect x="980" y="542" width="200" height="298" fill="url(#soil)"/>
               <rect x="300" y="716" width="680" height="124" fill="url(#soil)"/>
+              <!-- house cast shadow -->
+              <ellipse cx="700" cy="546" rx="430" ry="11" fill="url(#cast-shadow)"/>
               <!-- grass ticks -->
               <g stroke="#52616B" stroke-width="1.2" opacity="0.55">
                 <path d="M140 542 l3 -7 M180 542 l-3 -7 M236 542 l3 -8 M268 542 l-2 -6"/>
                 <path d="M1012 542 l3 -7 M1052 542 l-3 -7 M1150 542 l3 -8"/>
               </g>
               <!-- tree, right -->
+              <g fill="#6C7A6B" stroke="none">
+                <circle cx="1092" cy="446" r="34" opacity="0.16"/>
+                <circle cx="1070" cy="462" r="18" opacity="0.12"/>
+                <circle cx="1116" cy="458" r="16" opacity="0.12"/>
+              </g>
               <g stroke="#52616B" fill="none" opacity="0.7">
                 <path d="M1092 542 C1090 500 1094 486 1092 470" stroke-width="2.5"/>
                 <path d="M1092 500 C1080 492 1074 486 1070 478 M1092 486 C1102 478 1108 472 1112 462" stroke-width="1.6"/>
@@ -243,6 +289,7 @@
             <g id="shell">
               <!-- interior background -->
               <rect x="316" y="250" width="648" height="450" fill="#F8F6F1"/>
+              <rect x="316" y="250" width="648" height="290" fill="url(#room-warmth)"/>
               <!-- warm ambient (stage 04) -->
               <rect id="ambient" x="316" y="250" width="648" height="450" fill="url(#warmlight)" opacity="0"/>
               <!-- windows “beyond” (faint) -->
@@ -451,12 +498,17 @@
                   <line x1="300" y1="436" x2="540" y2="436"/><line x1="300" y1="472" x2="540" y2="472"/>
                   <line x1="300" y1="508" x2="540" y2="508"/>
                 </g>
+                <rect x="300" y="256" width="240" height="286" fill="url(#siding-shade)"/>
+                <rect x="300" y="256" width="240" height="34" fill="url(#eave-shadow)"/>
                 <g>
                   <rect x="420" y="430" width="120" height="80" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
                   <rect class="win-glow" x="424" y="434" width="112" height="72" fill="#E8C98A" opacity="0.13"/>
+                  <polygon points="428,510 462,430 484,430 450,510" fill="#F4F2ED" opacity="0.09"/>
+                  <polygon points="456,510 478,458 488,458 466,510" fill="#F4F2ED" opacity="0.05"/>
                   <line x1="480" y1="430" x2="480" y2="510" stroke="#0C1821" stroke-width="2"/>
                   <rect x="380" y="280" width="140" height="84" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
                   <rect class="win-glow" x="384" y="284" width="132" height="76" fill="#E8C98A" opacity="0.1"/>
+                  <polygon points="390,364 428,280 452,280 414,364" fill="#F4F2ED" opacity="0.09"/>
                   <line x1="450" y1="280" x2="450" y2="364" stroke="#0C1821" stroke-width="2"/>
                 </g>
                 <!-- stage 01: exterior hint of trouble -->
@@ -481,9 +533,11 @@
                   <line x1="540" y1="436" x2="760" y2="436"/><line x1="540" y1="472" x2="760" y2="472"/>
                   <line x1="540" y1="508" x2="760" y2="508"/>
                 </g>
+                <rect x="540" y="256" width="220" height="286" fill="url(#siding-shade)"/>
+                <rect x="540" y="256" width="220" height="34" fill="url(#eave-shadow)"/>
                 <!-- entry door + step + sconce -->
                 <rect x="620" y="446" width="64" height="96" fill="#0C1821"/>
-                <rect x="626" y="452" width="52" height="90" fill="#EDEAE0" opacity="0.12"/>
+                <rect x="626" y="452" width="52" height="90" fill="#B89A68" opacity="0.22"/>
                 <circle cx="672" cy="496" r="2.5" fill="#B89A68"/>
                 <rect x="608" y="542" width="88" height="8" fill="#0C1821" opacity="0.85"/>
                 <circle id="sconce" cx="604" cy="452" r="3" fill="#E8C98A" opacity="0.25"/>
@@ -496,15 +550,21 @@
                   <line x1="760" y1="436" x2="980" y2="436"/><line x1="760" y1="472" x2="980" y2="472"/>
                   <line x1="760" y1="508" x2="980" y2="508"/>
                 </g>
+                <rect x="760" y="256" width="220" height="286" fill="url(#siding-shade)"/>
+                <rect x="760" y="256" width="220" height="34" fill="url(#eave-shadow)"/>
                 <rect x="790" y="420" width="150" height="116" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
                 <rect class="win-glow" x="794" y="424" width="142" height="108" fill="#E8C98A" opacity="0.12"/>
+                <polygon points="800,536 846,420 872,420 826,536" fill="#F4F2ED" opacity="0.09"/>
+                <polygon points="836,536 864,468 874,468 846,536" fill="#F4F2ED" opacity="0.05"/>
                 <line x1="865" y1="420" x2="865" y2="536" stroke="#0C1821" stroke-width="2"/>
                 <rect x="800" y="278" width="84" height="66" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
                 <rect class="win-glow" x="804" y="282" width="76" height="58" fill="#E8C98A" opacity="0.1"/>
+                <polygon points="808,344 834,278 852,278 826,344" fill="#F4F2ED" opacity="0.08"/>
               </g>
               <!-- gable field above facade panels -->
               <g class="facade-panel" data-panel="2b">
                 <polygon points="300,256 620,126 980,256" fill="#E9E5DA"/>
+                <polygon points="300,256 620,126 980,256" fill="url(#siding-shade)" opacity="0.7"/>
                 <g stroke="#0C1821" stroke-opacity="0.07" stroke-width="1">
                   <line x1="620" y1="140" x2="620" y2="250"/>
                   <line x1="560" y1="166" x2="560" y2="252"/><line x1="680" y1="166" x2="680" y2="252"/>
@@ -1173,6 +1233,7 @@
 
   <script src="js/vendor/gsap.min.js" defer></script>
   <script src="js/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="js/vendor/lenis.min.js" defer></script>
   <script src="js/config.js" defer></script>
   <script src="js/hero.js" defer></script>
   <script src="js/main.js" defer></script>

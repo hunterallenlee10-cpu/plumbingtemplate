@@ -190,7 +190,10 @@
       /* ---- 0 · settle in ---------------------------------- */
       tl.to("[data-hero-intro]", { autoAlpha: 0, y: -46, duration: 5, ease: "power1.in" }, 0)
         .to("[data-hero-cue]", { autoAlpha: 0, duration: 3 }, 0)
-        .to("[data-hero-rail]", { autoAlpha: 1, duration: 3 }, 2);
+        .to("[data-hero-rail]", { autoAlpha: 1, duration: 3 }, 2)
+        .fromTo("#backdrop", { x: 10 }, { x: -14, duration: 100, ease: "none" }, 0)
+        .to("#sun-halo", { opacity: 0.55, duration: 20 }, 20)
+        .to("#sun-halo", { opacity: 1, duration: 16 }, 72);
 
       /* ---- 01 · THE PROBLEM ------------------------------- */
       tl.to("[data-caption='1']", CAPTION_IN, 4)
