@@ -1304,6 +1304,13 @@ address, cite, em { font-style: normal; }
   }
   .intro__grid { grid-template-columns: 1fr; }
   .intro__media { order: 2; max-width: 30rem; }
+  .emergency__inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .emergency__number {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--line-dark);
+    padding-top: 1.9rem;
+  }
   .process__steps { grid-template-columns: 1fr 1fr; row-gap: 3rem; }
   .process__line { display: none; }
   .process__step { padding-top: 0; padding-left: 1.6rem; border-left: 1px solid var(--line); }
