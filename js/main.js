@@ -49,6 +49,74 @@
     el.textContent = new Date().getFullYear();
   });
 
+  // stats band: values + labels from config (markup is the fallback)
+  if (Array.isArray(S.stats)) {
+    var statItems = document.querySelectorAll(".stats__item");
+    S.stats.forEach(function (stat, i) {
+      var item = statItems[i];
+      if (!item) return;
+      var label = item.querySelector(".stats__label");
+      var counter = item.querySelector("[data-counter]");
+      var sup = item.querySelector("sup");
+      if (label && stat.label) label.textContent = stat.label;
+      if (counter && stat.value != null) {
+        counter.setAttribute("data-target", stat.value);
+        if (stat.decimals) counter.setAttribute("data-decimals", stat.decimals);
+      }
+      if (sup && stat.suffix != null) {
+        sup.textContent = stat.suffix.trim();
+        sup.classList.toggle("stats__star", stat.suffix.indexOf("\u2605") !== -1);
+      }
+    });
+  }
+
+  // service areas: both the areas section list and the footer list
+  if (Array.isArray(S.serviceAreas)) {
+    var areasList = document.querySelector("[data-areas-list]");
+    if (areasList) {
+      areasList.innerHTML = "";
+      S.serviceAreas.forEach(function (town, i) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = "#contact";
+        a.setAttribute("data-area", i);
+        a.textContent = town;
+        li.appendChild(a);
+        areasList.appendChild(li);
+      });
+    }
+    var footArea = document.querySelector("[data-footer-areas]");
+    if (footArea) {
+      footArea.innerHTML = "";
+      S.serviceAreas.forEach(function (town) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = "#areas";
+        a.textContent = town;
+        li.appendChild(a);
+        footArea.appendChild(li);
+      });
+    }
+  }
+
+  // social links: render from config, hide entries with empty hrefs
+  if (Array.isArray(S.social)) {
+    var socialList = document.querySelector("[data-social]");
+    if (socialList) {
+      socialList.innerHTML = "";
+      S.social.forEach(function (link) {
+        if (!link.href) return;
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.className = "link-underline link-underline--light";
+        a.href = link.href;
+        a.textContent = link.label;
+        li.appendChild(a);
+        socialList.appendChild(li);
+      });
+    }
+  }
+
   /* ==========================================================
      02 · HEADER — solid on scroll, hide on fast down-scroll
   ========================================================== */
@@ -85,7 +153,17 @@
     el.addEventListener("click", function () { setMenu(false); });
   });
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && menuOpen) { setMenu(false); toggle.focus(); }
+    if (e.key === "Escape" && menuOpen) { setMenu(false); toggle.focus(); return; }
+    if (e.key !== "Tab" || !menuOpen) return;
+    // keep focus inside the open menu (toggle button included)
+    var focusables = [toggle].concat(
+      Array.prototype.slice.call(menu.querySelectorAll("a[href], button"))
+    );
+    var first = focusables[0];
+    var last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    else if (focusables.indexOf(document.activeElement) === -1) { e.preventDefault(); first.focus(); }
   });
 
   /* ==========================================================
@@ -110,6 +188,26 @@
 
   document.querySelectorAll("[data-reveal], [data-reveal-lines], [data-reveal-mask]")
     .forEach(function (el) { io.observe(el); });
+
+  /* nav scrollspy: aria-current on the section in view */
+  var spyLinks = Array.prototype.slice.call(document.querySelectorAll(".site-nav__link"));
+  var spyMap = {};
+  spyLinks.forEach(function (link) {
+    var id = (link.getAttribute("href") || "").slice(1);
+    var section = id && document.getElementById(id);
+    if (section) spyMap[id] = link;
+  });
+  var spyIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var link = spyMap[entry.target.id];
+      if (!link) return;
+      if (entry.isIntersecting) {
+        spyLinks.forEach(function (l) { l.removeAttribute("aria-current"); });
+        link.setAttribute("aria-current", "true");
+      }
+    });
+  }, { rootMargin: "-35% 0px -55% 0px" });
+  Object.keys(spyMap).forEach(function (id) { spyIO.observe(document.getElementById(id)); });
 
   /* ==========================================================
      04 · COUNTERS — count up when the stat band scrolls in
@@ -181,6 +279,11 @@
   serviceRows.forEach(function (row) {
     var idx = +row.getAttribute("data-service");
     var trigger = row.querySelector(".services__trigger");
+    var detail = row.querySelector(".services__detail");
+    if (detail) {
+      detail.id = "svc-detail-" + idx;
+      trigger.setAttribute("aria-controls", detail.id);
+    }
     row.addEventListener("mouseenter", function () {
       if (isDesktopSvc()) activateService(idx);
     });
@@ -204,9 +307,11 @@
     viewport.addEventListener("pointerdown", function (e) {
       if (e.pointerType !== "mouse") return; // touch uses native scrolling
       isDown = true;
+      velocity = 0;
       startX = lastX = e.clientX;
       startScroll = viewport.scrollLeft;
       viewport.classList.add("is-dragging");
+      viewport.classList.remove("is-settling");
       cancelAnimationFrame(raf);
     });
     window.addEventListener("pointermove", function (e) {
@@ -219,12 +324,14 @@
       if (!isDown) return;
       isDown = false;
       viewport.classList.remove("is-dragging");
-      if (reduced()) return;
+      if (reduced() || Math.abs(velocity) < 2) return;
+      viewport.classList.add("is-settling");
       var v = -velocity * 14;
       var decel = function () {
         v *= 0.92;
         viewport.scrollLeft += v * 0.016;
         if (Math.abs(v) > 8) raf = requestAnimationFrame(decel);
+        else viewport.classList.remove("is-settling");
       };
       raf = requestAnimationFrame(decel);
     });
@@ -280,37 +387,62 @@
   ========================================================== */
   var form = document.querySelector("[data-contact-form]");
   if (form) {
+    var errorNote = form.querySelector("[data-form-error]");
+    var fields = Array.prototype.slice.call(form.querySelectorAll("input, select, textarea"));
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var required = form.querySelectorAll("[required]");
-      var ok = true;
-      required.forEach(function (input) {
+      var firstInvalid = null;
+      fields.forEach(function (input) {
         var valid = input.checkValidity();
         input.classList.toggle("is-invalid", !valid);
-        if (!valid && ok) { input.focus(); ok = false; }
+        if (valid) input.removeAttribute("aria-invalid");
+        else {
+          input.setAttribute("aria-invalid", "true");
+          if (!firstInvalid) firstInvalid = input;
+        }
       });
-      if (!ok) return;
+      if (firstInvalid) {
+        errorNote.hidden = false;
+        errorNote.textContent = "Please check the highlighted fields.";
+        firstInvalid.focus();
+        return;
+      }
+      errorNote.hidden = true;
 
+      var submitBtn = form.querySelector(".contact__submit");
       var finish = function () {
+        form.classList.add("is-done");
         var success = form.querySelector("[data-form-success]");
         success.hidden = false;
         success.setAttribute("tabindex", "-1");
         success.focus({ preventScroll: true });
       };
+      var fail = function () {
+        submitBtn.disabled = false;
+        errorNote.hidden = false;
+        errorNote.textContent = "Something went wrong sending your request. Please try again, or call " + (S.phone || "us") + ".";
+      };
 
       if (S.formEndpoint) {
-        var data = new FormData(form);
+        submitBtn.disabled = true;
         fetch(S.formEndpoint, {
           method: "POST",
-          body: data,
+          body: new FormData(form),
           headers: { Accept: "application/json" }
-        }).then(finish).catch(finish);
+        }).then(function (res) {
+          if (res.ok) finish(); else fail();
+        }).catch(fail);
       } else {
         finish();
       }
     });
-    form.querySelectorAll("[required]").forEach(function (input) {
-      input.addEventListener("input", function () { input.classList.remove("is-invalid"); });
+
+    fields.forEach(function (input) {
+      input.addEventListener("input", function () {
+        input.classList.remove("is-invalid");
+        input.removeAttribute("aria-invalid");
+      });
     });
   }
 })();

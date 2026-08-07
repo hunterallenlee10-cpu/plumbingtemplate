@@ -53,7 +53,8 @@ All colors live in the `:root` design-token block at the top of
 ### 3. Typography
 
 Self-hosted variable fonts in `assets/fonts/`:
-**Fraunces** (display serif) and **Hanken Grotesk** (sans). Swap the
+**Fraunces** (display serif) and **Hanken Grotesk** (sans; an italic Fraunces
+is available from `@fontsource-variable/fraunces` if you ever need it). Swap the
 `@font-face` rules and the `--font-display` / `--font-sans` tokens to rebrand.
 
 ### 4. Imagery — `assets/img/`
@@ -71,9 +72,11 @@ you swap in real photography (JPG/WebP recommended):
 
 ### 5. Services, projects, testimonials, areas
 
-These live directly in `index.html` (searchable via `EDIT:` comments) so the
-markup stays crawlable. The service-area map markers in the Areas section are
-indexed to the list items via `data-area` / `data-marker` attributes.
+Service areas, statistics and footer social links render from `js/config.js`.
+Services, projects and testimonials live directly in `index.html` (searchable
+via `EDIT:` comments) so the markup stays crawlable. The abstract map's town
+labels are hand-placed SVG — search `data-map-markers` in `index.html` and
+keep them in sync with `serviceAreas`.
 
 ### 6. Contact form
 

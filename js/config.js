@@ -15,7 +15,6 @@ window.SITE = {
   /* ---- Identity ------------------------------------------ */
   companyName: "ClearFlow Plumbing",
   companyShort: "ClearFlow",
-  tagline: "Dependable plumbing. Done right the first time.",
 
   /* ---- Contact ------------------------------------------- */
   phone: "(555) 555-0123",
@@ -23,8 +22,10 @@ window.SITE = {
   email: "service@clearflowplumbing.com",
   address: "41780 Commerce Lane, Leonardtown, MD 20650",
 
-  /* ---- Service area -------------------------------------- */
-  region: "St. Mary's County, Maryland",
+  /* ---- Service area ----------------------------------------
+     serviceAreas renders the Areas list and the footer list.
+     The abstract map's town labels are hand-placed in index.html
+     (search "data-map-markers") — edit those to match. */
   regionShort: "St. Mary's County",
   serviceAreas: [
     "Leonardtown", "California", "Lexington Park", "Hollywood",

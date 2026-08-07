@@ -26,6 +26,7 @@
   /* ---------- camera framings (viewBox strings) ---------- */
   var CAM = {
     full:   "0 0 1180 840",
+    problem:"120 128 1000 712",   // stage 01: gentle push toward the house,
     fullM:  "165 55 910 785",    // mobile: house fills the frame
     joint:  "316 348 500 356",   // tight on the failed coupling
     lowerM: "180 310 820 585",   // mobile: kitchen + basement zone
@@ -33,20 +34,34 @@
   };
 
   /* ---------- static fallback (no JS-motion) -------------- */
+  var STATIC_HIDE = ["#facade", "#scan-trail", "#scan-head", "#pipe-damaged",
+    "#leak-tag", "#leak-glow", "#pulse-int", "#droplets", "#puddle", "#cut-marks"];
+  var STATIC_SHOW = ["#pipe-new", "#notes", "#flow", "#stream-kitchen",
+    "#stream-bath", "#stream-shower", "#ambient", "#light-1", "#light-2"];
+
+  function clearStatic() {
+    STATIC_HIDE.concat(STATIC_SHOW).forEach(function (sel) {
+      var el = svg.querySelector(sel);
+      if (el) { el.style.removeProperty("display"); el.style.removeProperty("opacity"); }
+    });
+    var heaterDot = svg.querySelector("#heater-dot");
+    if (heaterDot) { heaterDot.style.removeProperty("fill"); heaterDot.style.removeProperty("opacity"); }
+  }
+
   function goStatic() {
     hero.classList.add("hero--static");
+    var title = hero.querySelector(".hero__title");
+    if (title && !title.hasAttribute("data-motion-title")) {
+      title.setAttribute("data-motion-title", title.innerHTML);
+      title.innerHTML = "Restore your home.";
+    }
     // show the restored cutaway: facade off, flow on, notes on
-    var hide = ["#facade", "#scan-trail", "#scan-head", "#pipe-damaged",
-                "#leak-tag", "#leak-glow", "#pulse-int", "#droplets", "#puddle",
-                "#cut-marks"];
-    hide.forEach(function (s) {
-      var el = svg.querySelector(s);
+    STATIC_HIDE.forEach(function (sel) {
+      var el = svg.querySelector(sel);
       if (el) el.style.display = "none";
     });
-    var show = ["#pipe-new", "#notes", "#flow", "#stream-kitchen",
-                "#stream-bath", "#stream-shower", "#ambient", "#light-1", "#light-2"];
-    show.forEach(function (s) {
-      var el = svg.querySelector(s);
+    STATIC_SHOW.forEach(function (sel) {
+      var el = svg.querySelector(sel);
       if (el) el.style.opacity = 1;
     });
     var heaterDot = svg.querySelector("#heater-dot");
@@ -70,6 +85,12 @@
 
       if (c.reduce) { goStatic(); return function () { hero.classList.remove("hero--static"); }; }
       hero.classList.remove("hero--static");
+      clearStatic();
+      var titleEl = hero.querySelector(".hero__title");
+      if (titleEl && titleEl.hasAttribute("data-motion-title")) {
+        titleEl.innerHTML = titleEl.getAttribute("data-motion-title");
+        titleEl.removeAttribute("data-motion-title");
+      }
 
       var isMobile = c.mobile;
 
@@ -88,6 +109,7 @@
       gsap.set("[data-hero-final]", { autoAlpha: 0, y: 26 });
       gsap.set("[data-hero-rail]", { autoAlpha: 0 });
       var railFill = q("[data-rail-fill]");
+      var railSet = railFill ? gsap.quickSetter(railFill, "scaleY") : null;
       var railSteps = qa("[data-rail-step]");
       var captions = qa("[data-caption]");
       gsap.set(captions, { autoAlpha: 0, y: 30 });
@@ -99,8 +121,8 @@
       var loops = {};
 
       loops.pulseExt = gsap.timeline({ repeat: -1, paused: true })
-        .fromTo("#pulse-ext", { attr: { r: 8 }, autoAlpha: 0.9 },
-          { attr: { r: 30 }, autoAlpha: 0, duration: 1.6, ease: "power1.out" })
+        .fromTo("#pulse-ext", { attr: { r: 10 }, autoAlpha: 0.95 },
+          { attr: { r: 44 }, autoAlpha: 0, duration: 1.6, ease: "power1.out" })
         .fromTo("#pulse-ext-dot", { autoAlpha: 0.9 }, { autoAlpha: 0.25, duration: 1.6 }, 0)
         .to({}, { duration: 0.4 });
 
@@ -141,15 +163,19 @@
           pin: true,
           scrub: isMobile ? 0.6 : 1,
           anticipatePin: 1,
+          onToggle: function (self) {
+            hero.classList.toggle("is-scene-active", self.isActive);
+            if (!self.isActive) document.getElementById("flow").classList.remove("is-flowing");
+          },
           onUpdate: function (self) {
             var p = self.progress;
             gate(loops.pulseExt, p > 0.04 && p < 0.2, "#pulse-ext, #pulse-ext-dot");
             gate(loops.pulseInt, p > 0.2 && p < 0.44, "#pulse-int");
             gate(loops.drip, p > 0.2 && p < 0.52, ".droplet");
             gate(loops.glow, p > 0.4 && p < 0.5, null);
-            document.getElementById("flow").classList.toggle("is-flowing", p > 0.7);
+            document.getElementById("flow").classList.toggle("is-flowing", self.isActive && p > 0.7);
             // progress rail
-            if (railFill) gsap.set(railFill, { scaleY: p });
+            if (railSet) railSet(p);
             var stage = p < 0.2 ? 1 : p < 0.46 ? 2 : p < 0.7 ? 3 : 4;
             railSteps.forEach(function (s) {
               s.classList.toggle("is-active", +s.getAttribute("data-rail-step") === stage);
@@ -168,9 +194,15 @@
 
       /* ---- 01 · THE PROBLEM ------------------------------- */
       tl.to("[data-caption='1']", CAPTION_IN, 4)
-        .to("#stain", { autoAlpha: 0.75, duration: 6 }, 5)
+        .to("#stain", { autoAlpha: 0.85, duration: 6 }, 5)
+        .to(".win-glow", { autoAlpha: 0.25, duration: 8 }, 4)
         .to("#drips-ext", { autoAlpha: 0.9, duration: 4 }, 8)
         .to("[data-caption='1']", CAPTION_OUT, 16);
+
+      if (!isMobile) {
+        tl.to(svg, { attr: { viewBox: CAM.problem }, duration: 10, ease: "power1.inOut" }, 4)
+          .to(svg, { attr: { viewBox: CAM.full }, duration: 7, ease: "power1.inOut" }, 19);
+      }
 
       /* ---- 02 · DIAGNOSIS --------------------------------- */
       // facade parts: panels drift apart and dissolve

@@ -93,7 +93,7 @@
   <!-- Mobile menu overlay -->
   <div class="mobile-menu" id="mobile-menu" data-mobile-menu aria-hidden="true">
     <div class="mobile-menu__backdrop" data-nav-close></div>
-    <nav class="mobile-menu__panel" aria-label="Mobile">
+    <nav class="mobile-menu__panel" role="dialog" aria-modal="true" aria-label="Mobile">
       <ul class="mobile-menu__list">
         <li style="--i:0"><a href="#services" data-nav-close>Services</a></li>
         <li style="--i:1"><a href="#why" data-nav-close>Why Us</a></li>
@@ -195,7 +195,7 @@
               <stop offset="0%" stop-color="#E8C98A" stop-opacity="0.16"/>
               <stop offset="100%" stop-color="#E8C98A" stop-opacity="0"/>
             </radialGradient>
-            <radialGradient id="stain" cx="50%" cy="20%" r="80%">
+            <radialGradient id="stain-grad" cx="50%" cy="20%" r="80%">
               <stop offset="0%" stop-color="#33525f" stop-opacity="0.5"/>
               <stop offset="100%" stop-color="#33525f" stop-opacity="0"/>
             </radialGradient>
@@ -460,9 +460,13 @@
                   <line x1="450" y1="280" x2="450" y2="364" stroke="#0C1821" stroke-width="2"/>
                 </g>
                 <!-- stage 01: exterior hint of trouble -->
-                <ellipse id="stain" cx="500" cy="530" rx="72" ry="20" fill="url(#stain)" opacity="0"/>
-                <g id="drips-ext" opacity="0" fill="#3E8FB0">
-                  <circle cx="486" cy="522" r="2"/><circle cx="502" cy="530" r="1.6"/><circle cx="516" cy="526" r="1.8"/>
+                <ellipse id="stain" cx="500" cy="528" rx="100" ry="24" fill="url(#stain-grad)" opacity="0"/>
+                <g id="drips-ext" opacity="0">
+                  <path d="M496 512 q2 6 -1 12 q-2 5 1 12" fill="none" stroke="#33525f" stroke-width="2" opacity="0.55"/>
+                  <path d="M508 514 q-2 7 1 14" fill="none" stroke="#33525f" stroke-width="1.6" opacity="0.4"/>
+                  <g fill="#3E8FB0">
+                    <circle cx="486" cy="524" r="2"/><circle cx="502" cy="532" r="1.7"/><circle cx="516" cy="528" r="1.9"/>
+                  </g>
                 </g>
                 <circle id="pulse-ext" cx="500" cy="522" r="10" fill="none" stroke="#B4552D" stroke-width="2.2" opacity="0"/>
                 <circle id="pulse-ext-dot" cx="500" cy="522" r="3" fill="#B4552D" opacity="0"/>
@@ -598,10 +602,10 @@
               <span class="services__name">Emergency Plumbing</span>
               <span class="services__marker" aria-hidden="true"></span>
             </button>
-            <div class="services__detail">
+            <div class="services__detail"><div class="services__detail-inner">
               <p>Burst pipes, backups and failures don't wait for morning — neither do we. Live dispatch, day and night.</p>
               <img class="services__detail-img" src="assets/img/plate-svc-emergency.svg" alt="" width="800" height="600" loading="lazy">
-            </div>
+            </div></div>
           </li>
           <li class="services__row" data-service="1" data-reveal>
             <button class="services__trigger" aria-expanded="false">
@@ -609,10 +613,10 @@
               <span class="services__name">Leak Detection &amp; Repair</span>
               <span class="services__marker" aria-hidden="true"></span>
             </button>
-            <div class="services__detail">
+            <div class="services__detail"><div class="services__detail-inner">
               <p>Acoustic and thermal diagnostics find the source behind walls and under slabs — before we open anything.</p>
               <img class="services__detail-img" src="assets/img/plate-svc-leak.svg" alt="" width="800" height="600" loading="lazy">
-            </div>
+            </div></div>
           </li>
           <li class="services__row" data-service="2" data-reveal>
             <button class="services__trigger" aria-expanded="false">
@@ -620,10 +624,10 @@
               <span class="services__name">Drain Cleaning</span>
               <span class="services__marker" aria-hidden="true"></span>
             </button>
-            <div class="services__detail">
+            <div class="services__detail"><div class="services__detail-inner">
               <p>Camera-verified clearing that restores full flow — not a temporary punch-through that clogs again next month.</p>
               <img class="services__detail-img" src="assets/img/plate-svc-drain.svg" alt="" width="800" height="600" loading="lazy">
-            </div>
+            </div></div>
           </li>
           <li class="services__row" data-service="3" data-reveal>
             <button class="services__trigger" aria-expanded="false">
@@ -631,10 +635,10 @@
               <span class="services__name">Water Heaters</span>
               <span class="services__marker" aria-hidden="true"></span>
             </button>
-            <div class="services__detail">
+            <div class="services__detail"><div class="services__detail-inner">
               <p>Tank and tankless — sized correctly, installed to code, and tuned for the way your household actually uses hot water.</p>
               <img class="services__detail-img" src="assets/img/plate-work-tankless.svg" alt="" width="800" height="600" loading="lazy">
-            </div>
+            </div></div>
           </li>
           <li class="services__row" data-service="4" data-reveal>
             <button class="services__trigger" aria-expanded="false">
@@ -642,10 +646,10 @@
               <span class="services__name">Sewer Line Repair</span>
               <span class="services__marker" aria-hidden="true"></span>
             </button>
-            <div class="services__detail">
+            <div class="services__detail"><div class="services__detail-inner">
               <p>Camera inspection first, then the least invasive fix that actually lasts — from spot repairs to full replacement.</p>
               <img class="services__detail-img" src="assets/img/plate-work-sewer.svg" alt="" width="800" height="600" loading="lazy">
-            </div>
+            </div></div>
           </li>
           <li class="services__row" data-service="5" data-reveal>
             <button class="services__trigger" aria-expanded="false">
@@ -653,10 +657,10 @@
               <span class="services__name">Fixture Installation</span>
               <span class="services__marker" aria-hidden="true"></span>
             </button>
-            <div class="services__detail">
+            <div class="services__detail"><div class="services__detail-inner">
               <p>Faucets, toilets, showers and pot fillers — set level, sealed properly, and finished like furniture.</p>
               <img class="services__detail-img" src="assets/img/plate-svc-fixtures.svg" alt="" width="800" height="600" loading="lazy">
-            </div>
+            </div></div>
           </li>
           <li class="services__row" data-service="6" data-reveal>
             <button class="services__trigger" aria-expanded="false">
@@ -664,10 +668,10 @@
               <span class="services__name">Repiping</span>
               <span class="services__marker" aria-hidden="true"></span>
             </button>
-            <div class="services__detail">
+            <div class="services__detail"><div class="services__detail-inner">
               <p>Whole-home supply replacement in copper or PEX — planned room by room to keep your household running during the work.</p>
               <img class="services__detail-img" src="assets/img/plate-work-repipe.svg" alt="" width="800" height="600" loading="lazy">
-            </div>
+            </div></div>
           </li>
           <li class="services__row" data-service="7" data-reveal>
             <button class="services__trigger" aria-expanded="false">
@@ -675,10 +679,10 @@
               <span class="services__name">Water Filtration</span>
               <span class="services__marker" aria-hidden="true"></span>
             </button>
-            <div class="services__detail">
+            <div class="services__detail"><div class="services__detail-inner">
               <p>Whole-house and point-of-use systems matched to your water test — better taste, softer water, longer-lived fixtures.</p>
               <img class="services__detail-img" src="assets/img/plate-svc-filtration.svg" alt="" width="800" height="600" loading="lazy">
-            </div>
+            </div></div>
           </li>
         </ul>
 
@@ -715,13 +719,18 @@
       </svg>
     </div>
     <div class="container emergency__inner">
-      <p class="eyebrow eyebrow--light" data-reveal>24/7 Emergency Service</p>
-      <h2 id="emergency-title" class="emergency__title" data-reveal-lines><span>When water</span> <span>can't wait.</span></h2>
-      <p class="emergency__lede" data-reveal>Leaks, burst pipes, backups and failed water heaters don't follow business hours.</p>
-      <div class="emergency__actions" data-reveal>
-        <a class="btn btn--paper" href="tel:+15555550123" data-bind-href="phoneHref" data-magnetic><span class="btn__label">Call Emergency Service</span></a>
-        <a class="emergency__phone" href="tel:+15555550123" data-bind-href="phoneHref"><span data-bind="phone">(555) 555-0123</span></a>
+      <div class="emergency__content">
+        <p class="eyebrow eyebrow--light" data-reveal>24/7 Emergency Service</p>
+        <h2 id="emergency-title" class="emergency__title" data-reveal-lines><span>When water</span> <span>can't wait.</span></h2>
+        <p class="emergency__lede" data-reveal>Leaks, burst pipes, backups and failed water heaters don't follow business hours.</p>
+        <div class="emergency__actions" data-reveal>
+          <a class="btn btn--paper" href="tel:+15555550123" data-bind-href="phoneHref" data-magnetic><span class="btn__label">Call Emergency Service</span></a>
+        </div>
       </div>
+      <a class="emergency__number" href="tel:+15555550123" data-bind-href="phoneHref" data-reveal>
+        <span class="emergency__number-label">One number, day or night</span>
+        <span class="emergency__number-value" data-bind="phone">(555) 555-0123</span>
+      </a>
     </div>
   </section>
 
@@ -900,27 +909,27 @@
       <ul class="reviews__track">
         <!-- EDIT: testimonials — replace quotes, names and cities -->
         <li class="reviews__card">
-          <p class="reviews__stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p class="reviews__stars" role="img" aria-label="5 out of 5 stars">★★★★★</p>
           <blockquote class="reviews__quote">Water heater died Sunday night — new one running by Monday afternoon. Upfront price, spotless work area.</blockquote>
           <footer class="reviews__who"><cite>Dana W.</cite><span>Leonardtown</span></footer>
         </li>
         <li class="reviews__card">
-          <p class="reviews__stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p class="reviews__stars" role="img" aria-label="5 out of 5 stars">★★★★★</p>
           <blockquote class="reviews__quote">They found a slab leak two other companies missed, and fixed it without tearing up half the house.</blockquote>
           <footer class="reviews__who"><cite>Marcus T.</cite><span>Lexington Park</span></footer>
         </li>
         <li class="reviews__card">
-          <p class="reviews__stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p class="reviews__stars" role="img" aria-label="5 out of 5 stars">★★★★★</p>
           <blockquote class="reviews__quote">Repiped our whole 1970s rancher in three days. Water pressure is like a different house.</blockquote>
           <footer class="reviews__who"><cite>Ellen &amp; Rob K.</cite><span>Hollywood</span></footer>
         </li>
         <li class="reviews__card">
-          <p class="reviews__stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p class="reviews__stars" role="img" aria-label="5 out of 5 stars">★★★★★</p>
           <blockquote class="reviews__quote">Showed up in the window they promised, explained everything, and the bill matched the quote exactly.</blockquote>
           <footer class="reviews__who"><cite>Priya S.</cite><span>California</span></footer>
         </li>
         <li class="reviews__card">
-          <p class="reviews__stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p class="reviews__stars" role="img" aria-label="5 out of 5 stars">★★★★★</p>
           <blockquote class="reviews__quote">Middle-of-the-night burst pipe. They answered on the second ring and were here within the hour.</blockquote>
           <footer class="reviews__who"><cite>Jim H.</cite><span>Great Mills</span></footer>
         </li>
@@ -974,7 +983,7 @@
             <g class="map-marker" data-marker="4" transform="translate(176,110)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="19" y="4" class="svg-label svg-label--map" text-anchor="start">Mechanicsville</text></g>
             <g class="map-marker" data-marker="5" transform="translate(282,432)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="-19" y="4" class="svg-label svg-label--map" text-anchor="end">Great Mills</text></g>
             <g class="map-marker" data-marker="6" transform="translate(140,72)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="19" y="4" class="svg-label svg-label--map" text-anchor="start">Charlotte Hall</text></g>
-            <g class="map-marker" data-marker="7" transform="translate(452,240)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="-19" y="4" class="svg-label svg-label--map" text-anchor="end">Lusby</text></g>
+            <g class="map-marker map-marker--out" data-marker="7" transform="translate(452,240)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="-19" y="4" class="svg-label svg-label--map" text-anchor="end">Lusby</text></g>
           </g>
         </svg>
       </div>
@@ -1080,6 +1089,7 @@
             <label class="toggle"><input type="radio" name="emergency" value="yes"><span>Yes — call me ASAP</span></label>
           </div>
         </fieldset>
+        <p class="contact__form-error" data-form-error role="alert" hidden>Please fill in the highlighted fields.</p>
         <button class="btn contact__submit" type="submit" data-magnetic><span class="btn__label">Request Service</span></button>
         <p class="contact__form-note">We reply within one business hour, seven days a week.</p>
         <div class="contact__success" data-form-success hidden>
