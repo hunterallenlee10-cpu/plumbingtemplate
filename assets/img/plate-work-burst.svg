@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.7" y2="1">
+      <stop offset="0" stop-color="#152836"/>
+      <stop offset="1" stop-color="#0C1821"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.46" r="0.5">
+      <stop offset="0" stop-color="#B89A68" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#B89A68" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0"/><feComposite operator="over" in2="SourceGraphic"/></filter>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect width="1200" height="800" fill="url(#halo)"/>
+
+  <!-- stud framing hints -->
+  <g stroke="#F4F2ED" stroke-opacity="0.07" stroke-width="2">
+    <line x1="180" y1="0" x2="180" y2="800"/><line x1="1020" y1="0" x2="1020" y2="800"/>
+    <line x1="600" y1="0" x2="600" y2="120"/><line x1="600" y1="680" x2="600" y2="800"/>
+  </g>
+
+  <!-- old pipe left/right -->
+  <g stroke-linecap="round" fill="none">
+    <path d="M60 400 H430" stroke="#F4F2ED" stroke-opacity="0.55" stroke-width="26"/>
+    <path d="M770 400 H1140" stroke="#F4F2ED" stroke-opacity="0.55" stroke-width="26"/>
+    <path d="M60 391 H430 M770 391 H1140" stroke="#F4F2ED" stroke-opacity="0.16" stroke-width="4"/>
+  </g>
+
+  <!-- new copper section + couplings -->
+  <g stroke-linecap="round" fill="none">
+    <path d="M430 400 H770" stroke="#B89A68" stroke-width="28"/>
+    <path d="M436 390 H764" stroke="#F4F2ED" stroke-opacity="0.35" stroke-width="4"/>
+  </g>
+  <g fill="#0C1821" stroke="#B89A68" stroke-width="4">
+    <rect x="408" y="376" width="52" height="48" rx="8"/>
+    <rect x="740" y="376" width="52" height="48" rx="8"/>
+  </g>
+  <g stroke="#B89A68" stroke-width="2.5" stroke-opacity="0.8">
+    <line x1="420" y1="376" x2="420" y2="424"/><line x1="448" y1="376" x2="448" y2="424"/>
+    <line x1="752" y1="376" x2="752" y2="424"/><line x1="780" y1="376" x2="780" y2="424"/>
+  </g>
+
+  <!-- solder shine -->
+  <g stroke="#E8C98A" stroke-width="2" stroke-linecap="round" opacity="0.85">
+    <path d="M470 380 l22 -12 M508 378 l14 -8"/>
+    <path d="M700 382 l20 -11"/>
+  </g>
+
+  <!-- measurement marks -->
+  <g stroke="#8ED6E8" stroke-width="1.6" opacity="0.6">
+    <line x1="434" y1="470" x2="434" y2="500"/><line x1="766" y1="470" x2="766" y2="500"/>
+    <line x1="434" y1="486" x2="766" y2="486"/>
+  </g>
+  <rect width="1200" height="800" fill="transparent" filter="url(#grain)"/>
+</svg>

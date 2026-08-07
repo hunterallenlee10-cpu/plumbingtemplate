@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#152836"/>
+      <stop offset="1" stop-color="#0C1821"/>
+    </linearGradient>
+    <radialGradient id="scanfade" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#8ED6E8" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#8ED6E8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0"/><feComposite operator="over" in2="SourceGraphic"/></filter>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+
+  <!-- wall with studs -->
+  <g stroke="#F4F2ED" stroke-opacity="0.08" stroke-width="2">
+    <line x1="130" y1="0" x2="130" y2="600"/><line x1="400" y1="0" x2="400" y2="600"/><line x1="670" y1="0" x2="670" y2="600"/>
+  </g>
+  <line x1="0" y1="510" x2="800" y2="510" stroke="#F4F2ED" stroke-opacity="0.3" stroke-width="2"/>
+
+  <!-- hidden pipe behind wall (revealed in scan circle) -->
+  <circle cx="400" cy="300" r="150" fill="url(#scanfade)"/>
+  <g clip-path="none">
+    <path d="M270 380 H400 V210 H540" fill="none" stroke="#3E8FB0" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
+  </g>
+  <!-- weep at joint -->
+  <circle cx="400" cy="300" r="6" fill="none" stroke="#B4552D" stroke-width="2.5"/>
+  <g fill="#3E8FB0" opacity="0.85">
+    <circle cx="400" cy="330" r="3"/><circle cx="398" cy="352" r="2.4"/>
+  </g>
+
+  <!-- scan reticle -->
+  <g fill="none" stroke="#8ED6E8">
+    <circle cx="400" cy="300" r="112" stroke-width="1.8" opacity="0.7"/>
+    <circle cx="400" cy="300" r="150" stroke-width="1.2" opacity="0.35"/>
+    <path d="M400 176 v26 M400 398 v26 M276 300 h26 M498 300 h26" stroke-width="2" opacity="0.8"/>
+  </g>
+  <!-- readout ticks -->
+  <g stroke="#B89A68" stroke-width="2.5" stroke-linecap="round" opacity="0.8">
+    <path d="M620 470 v-18 M646 470 v-34 M672 470 v-52 M698 470 v-26"/>
+  </g>
+  <rect width="800" height="600" fill="transparent" filter="url(#grain)"/>
+</svg>

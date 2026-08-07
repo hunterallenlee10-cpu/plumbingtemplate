@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- EDIT: metadata — swap company name, region and description when rebranding -->
+  <title>ClearFlow Plumbing — Licensed Plumbers in St. Mary's County, MD</title>
+  <meta name="description" content="Dependable plumbing, done right the first time. Emergency repairs, leak detection, water heaters, repiping and more from licensed local plumbers serving St. Mary's County, Maryland.">
+  <meta property="og:title" content="ClearFlow Plumbing — Dependable Plumbing, Done Right">
+  <meta property="og:description" content="Emergency repairs, leak detection, water heaters and whole-home repiping from licensed local plumbers. Serving St. Mary's County, MD. 24/7 emergency service.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/og-image.png">
+  <meta name="theme-color" content="#0C1821">
+
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <!-- Self-hosted fonts (no external requests) -->
+  <link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/hanken-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/hero.css">
+
+  <!-- EDIT: LocalBusiness schema — update for the client's real details -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Plumber",
+    "name": "ClearFlow Plumbing",
+    "description": "Licensed residential plumbing company serving St. Mary's County, Maryland. Emergency plumbing, leak detection, drain cleaning, water heaters, sewer repair, fixture installation, repiping and water filtration.",
+    "telephone": "+1-555-555-0123",
+    "email": "service@clearflowplumbing.com",
+    "url": "https://www.example.com/",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "41780 Commerce Lane",
+      "addressLocality": "Leonardtown",
+      "addressRegion": "MD",
+      "postalCode": "20650",
+      "addressCountry": "US"
+    },
+    "areaServed": ["Leonardtown MD","California MD","Lexington Park MD","Hollywood MD","Mechanicsville MD","Great Mills MD","Charlotte Hall MD","Lusby MD"],
+    "openingHours": ["Mo-Fr 07:00-18:00","Sa 08:00-14:00"],
+    "hasCredential": "MD Master Plumber Lic. #12345"
+  }
+  </script>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ================================================================
+       HEADER
+  ================================================================= -->
+  <header class="site-header" data-header>
+    <div class="site-header__inner">
+      <a class="brand" href="#top" aria-label="ClearFlow Plumbing — home">
+        <svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <path class="brand__mark-pipe" d="M8 30 L8 16 Q8 10 14 10 L30 10" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+          <path class="brand__mark-drop" d="M27 20 q5 6.2 5 9.4 a5 5 0 0 1 -10 0 q0 -3.2 5 -9.4 Z" fill="currentColor"/>
+        </svg>
+        <span class="brand__word"><span data-bind="companyShort">ClearFlow</span><em>Plumbing</em></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary">
+        <ul class="site-nav__list">
+          <li><a class="site-nav__link" href="#services">Services</a></li>
+          <li><a class="site-nav__link" href="#why">Why Us</a></li>
+          <li><a class="site-nav__link" href="#work">Our Work</a></li>
+          <li><a class="site-nav__link" href="#reviews">Reviews</a></li>
+          <li><a class="site-nav__link" href="#areas">Service Areas</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <a class="site-header__phone" href="tel:+15555550123" data-bind-href="phoneHref">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.4 1.5c.5-.5 1.3-.4 1.7.2l1.3 2c.3.5.2 1.1-.2 1.5l-.9.9a10.8 10.8 0 0 0 4.6 4.6l.9-.9c.4-.4 1-.5 1.5-.2l2 1.3c.6.4.7 1.2.2 1.7l-1 1c-.5.5-1.2.7-1.9.5A14.6 14.6 0 0 1 1.9 4.4c-.2-.7 0-1.4.5-1.9l1-1Z" fill="currentColor"/></svg>
+          <span data-bind="phone">(555) 555-0123</span>
+        </a>
+        <a class="btn btn--sm site-header__cta" href="#contact" data-magnetic>
+          <span class="btn__label">Schedule Service</span>
+        </a>
+        <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+          <span class="nav-toggle__line"></span>
+          <span class="nav-toggle__line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile menu overlay -->
+  <div class="mobile-menu" id="mobile-menu" data-mobile-menu aria-hidden="true">
+    <div class="mobile-menu__backdrop" data-nav-close></div>
+    <nav class="mobile-menu__panel" aria-label="Mobile">
+      <ul class="mobile-menu__list">
+        <li style="--i:0"><a href="#services" data-nav-close>Services</a></li>
+        <li style="--i:1"><a href="#why" data-nav-close>Why Us</a></li>
+        <li style="--i:2"><a href="#work" data-nav-close>Our Work</a></li>
+        <li style="--i:3"><a href="#reviews" data-nav-close>Reviews</a></li>
+        <li style="--i:4"><a href="#areas" data-nav-close>Service Areas</a></li>
+        <li style="--i:5"><a href="#contact" data-nav-close>Contact</a></li>
+      </ul>
+      <div class="mobile-menu__foot">
+        <a class="mobile-menu__phone" href="tel:+15555550123" data-bind-href="phoneHref">
+          <span class="eyebrow-sm">24/7 Emergency</span>
+          <span class="mobile-menu__number" data-bind="phone">(555) 555-0123</span>
+        </a>
+        <a class="btn btn--paper" href="#contact" data-nav-close><span class="btn__label">Schedule Service</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <main id="main">
+
+  <!-- ================================================================
+       HERO — “Scroll to restore your home”
+       A pinned, scroll-scrubbed architectural cutaway in four stages:
+       01 Problem → 02 Diagnosis → 03 Repair → 04 Restored
+  ================================================================= -->
+  <section class="hero" id="top" data-hero aria-label="Interactive introduction">
+    <div class="hero__pin" data-hero-pin>
+
+      <!-- Opening statement -->
+      <div class="hero__intro" data-hero-intro>
+        <p class="eyebrow"><span data-bind="companyName">ClearFlow Plumbing</span> · Serving <span data-bind="regionShort">St. Mary's County</span></p>
+        <h1 class="hero__title">Scroll to restore<br>your home.</h1>
+        <p class="hero__lede">Plumbing problems don't fix themselves. Professional repairs, installations and emergency plumbing from a local team homeowners trust.</p>
+        <div class="hero__actions">
+          <a class="btn" href="#contact" data-magnetic><span class="btn__label">Schedule Service</span></a>
+          <a class="btn btn--ghost" href="tel:+15555550123" data-bind-href="phoneHref"><span class="btn__label">Call <span data-bind="phone">(555) 555-0123</span></span></a>
+        </div>
+        <p class="hero__trust">Licensed · Insured · Local</p>
+      </div>
+
+      <!-- Scroll cue -->
+      <div class="hero__cue" data-hero-cue aria-hidden="true">
+        <span>Scroll to see how we solve it</span>
+        <svg viewBox="0 0 12 32"><path d="M6 2 V26 M2 22 L6 27 L10 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <!-- Stage captions -->
+      <div class="hero__captions" aria-hidden="true">
+        <div class="hero__caption" data-caption="1">
+          <span class="hero__caption-index">01 — The Problem</span>
+          <p class="hero__caption-text">A small leak can become a big&nbsp;problem.</p>
+        </div>
+        <div class="hero__caption" data-caption="2">
+          <span class="hero__caption-index">02 — Diagnosis</span>
+          <p class="hero__caption-text">We find the source — not just the&nbsp;symptom.</p>
+        </div>
+        <div class="hero__caption" data-caption="3">
+          <span class="hero__caption-index">03 — The Repair</span>
+          <p class="hero__caption-text">Precision repairs. Built to&nbsp;last.</p>
+        </div>
+        <div class="hero__caption" data-caption="4">
+          <span class="hero__caption-index">04 — Restored</span>
+          <p class="hero__caption-text">Everything flowing exactly as it&nbsp;should.</p>
+        </div>
+      </div>
+
+      <!-- Progress rail -->
+      <div class="hero__rail" data-hero-rail aria-hidden="true">
+        <span class="hero__rail-track"><span class="hero__rail-fill" data-rail-fill></span></span>
+        <ol class="hero__rail-steps">
+          <li data-rail-step="1">01</li>
+          <li data-rail-step="2">02</li>
+          <li data-rail-step="3">03</li>
+          <li data-rail-step="4">04</li>
+        </ol>
+      </div>
+
+      <!-- Final CTA (revealed at stage 04) -->
+      <div class="hero__final" data-hero-final>
+        <a class="btn" href="#contact" data-magnetic><span class="btn__label">Schedule Service</span></a>
+        <a class="btn btn--ghost" href="tel:+15555550123" data-bind-href="phoneHref"><span class="btn__label">Call Now</span></a>
+      </div>
+
+      <!-- ===========================================================
+           THE SCENE — architectural cross-section, hand drawn
+           All ids referenced from js/hero.js
+      ============================================================ -->
+      <div class="hero__scene" data-hero-scene>
+        <svg id="house" viewBox="0 0 1180 840" role="img" aria-label="Architectural cross-section of a home showing its plumbing system being diagnosed, repaired and restored" preserveAspectRatio="xMidYMax meet">
+          <defs>
+            <filter id="soft-glow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="4" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <pattern id="soil" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="14" stroke="#0C1821" stroke-opacity="0.09" stroke-width="1"/>
+            </pattern>
+            <radialGradient id="warmlight" cx="50%" cy="30%" r="75%">
+              <stop offset="0%" stop-color="#E8C98A" stop-opacity="0.16"/>
+              <stop offset="100%" stop-color="#E8C98A" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="stain" cx="50%" cy="20%" r="80%">
+              <stop offset="0%" stop-color="#33525f" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#33525f" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+
+          <g id="scene">
+
+            <!-- ..................... site / ground ..................... -->
+            <g id="site">
+              <rect x="0" y="556" width="92" height="284" fill="#0C1821" opacity="0.06"/>
+              <path d="M0 542 H90 V558 H0" fill="none" stroke="#0C1821" stroke-width="1.4" opacity="0.5"/>
+              <line x1="0" y1="558" x2="90" y2="558" stroke="#0C1821" stroke-width="2"/>
+              <line x1="90" y1="542" x2="300" y2="542" stroke="#0C1821" stroke-width="2"/>
+              <line x1="980" y1="542" x2="1180" y2="542" stroke="#0C1821" stroke-width="2"/>
+              <!-- soil hatch -->
+              <rect x="0" y="558" width="92" height="282" fill="url(#soil)"/>
+              <rect x="90" y="542" width="210" height="298" fill="url(#soil)"/>
+              <rect x="980" y="542" width="200" height="298" fill="url(#soil)"/>
+              <rect x="300" y="716" width="680" height="124" fill="url(#soil)"/>
+              <!-- grass ticks -->
+              <g stroke="#52616B" stroke-width="1.2" opacity="0.55">
+                <path d="M140 542 l3 -7 M180 542 l-3 -7 M236 542 l3 -8 M268 542 l-2 -6"/>
+                <path d="M1012 542 l3 -7 M1052 542 l-3 -7 M1150 542 l3 -8"/>
+              </g>
+              <!-- tree, right -->
+              <g stroke="#52616B" fill="none" opacity="0.7">
+                <path d="M1092 542 C1090 500 1094 486 1092 470" stroke-width="2.5"/>
+                <path d="M1092 500 C1080 492 1074 486 1070 478 M1092 486 C1102 478 1108 472 1112 462" stroke-width="1.6"/>
+                <circle cx="1092" cy="446" r="34" stroke-width="1.6"/>
+                <circle cx="1070" cy="462" r="18" stroke-width="1.2" opacity="0.7"/>
+                <circle cx="1116" cy="458" r="16" stroke-width="1.2" opacity="0.7"/>
+              </g>
+            </g>
+
+            <!-- ................. utilities under the street ............ -->
+            <g id="utilities">
+              <!-- water main -->
+              <line x1="0" y1="640" x2="96" y2="640" stroke="#3E8FB0" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+              <circle cx="96" cy="640" r="5" fill="none" stroke="#3E8FB0" stroke-width="2.5"/>
+              <!-- sewer lateral (house → street) -->
+              <path id="pipe-sewer" d="M646 676 L300 676 L86 688 L0 690" fill="none" stroke="#52616B" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+            </g>
+
+            <!-- ................ house shell (section poché) ............ -->
+            <g id="shell">
+              <!-- interior background -->
+              <rect x="316" y="250" width="648" height="450" fill="#F8F6F1"/>
+              <!-- warm ambient (stage 04) -->
+              <rect id="ambient" x="316" y="250" width="648" height="450" fill="url(#warmlight)" opacity="0"/>
+              <!-- windows “beyond” (faint) -->
+              <g stroke="#52616B" stroke-width="1.4" fill="none" opacity="0.28">
+                <rect x="420" y="430" width="140" height="76"/>
+                <line x1="490" y1="430" x2="490" y2="506"/>
+                <rect x="700" y="418" width="220" height="118"/>
+                <line x1="810" y1="418" x2="810" y2="536"/>
+                <rect x="380" y="280" width="140" height="80"/>
+                <line x1="450" y1="280" x2="450" y2="360"/>
+                <rect x="800" y="278" width="80" height="62"/>
+              </g>
+              <!-- floor slabs & walls (cut = solid) -->
+              <rect x="300" y="258" width="16" height="458" fill="#0C1821"/>
+              <rect x="964" y="256" width="16" height="460" fill="#0C1821"/>
+              <rect x="316" y="390" width="648" height="13" fill="#0C1821"/>
+              <rect x="316" y="540" width="648" height="14" fill="#0C1821"/>
+              <rect x="296" y="700" width="688" height="16" fill="#0C1821"/>
+              <line x1="316" y1="250" x2="964" y2="250" stroke="#0C1821" stroke-width="3"/>
+              <!-- interior partitions with plumbing chase -->
+              <rect x="636" y="403" width="20" height="137" fill="#0C1821" opacity="0.88"/>
+              <rect x="636" y="250" width="20" height="140" fill="#0C1821" opacity="0.88"/>
+              <!-- roof -->
+              <path d="M268 272 L620 126 L1010 264" fill="none" stroke="#0C1821" stroke-width="13" stroke-linecap="square"/>
+              <path d="M268 282 L620 136 L1010 274" fill="none" stroke="#0C1821" stroke-width="1.4" opacity="0.45"/>
+              <!-- vent through roof -->
+              <line x1="646" y1="145" x2="646" y2="112" stroke="#52616B" stroke-width="5" stroke-linecap="round" opacity="0.65"/>
+              <line x1="640" y1="112" x2="652" y2="112" stroke="#52616B" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
+            </g>
+
+            <!-- .................. furnishings (line hints) ............. -->
+            <g id="rooms" stroke="#52616B" fill="none" stroke-width="1.6" opacity="0.66">
+              <!-- kitchen: counters + sink + upper cabinets -->
+              <path d="M430 540 V506 H640"/>
+              <path d="M430 506 H462 M530 506 H640"/>
+              <path d="M462 506 v8 h68 v-8"/>
+              <line x1="500" y1="514" x2="500" y2="540" opacity="0.7"/>
+              <line x1="560" y1="506" x2="560" y2="540" opacity="0.5"/>
+              <line x1="610" y1="506" x2="610" y2="540" opacity="0.5"/>
+              <!-- kitchen faucet -->
+              <path d="M492 506 v-10 q0 -6 8 -6 h4" stroke-width="2.4"/>
+              <path d="M430 430 h116 v30 h-116 z" opacity="0.55"/>
+              <line x1="488" y1="430" x2="488" y2="460" opacity="0.5"/>
+              <!-- living: table + sofa -->
+              <path d="M700 540 v-26 h96 v26 M712 514 v26 M784 514 v26" opacity="0.5"/>
+              <path d="M842 540 v-22 q0 -8 10 -8 h74 q10 0 10 8 v22 M842 522 h94" opacity="0.55"/>
+              <!-- bedroom: bed + table -->
+              <path d="M360 390 v-22 h150 v22 M360 372 h150" opacity="0.55"/>
+              <path d="M368 368 v-16 h30 M524 390 v-26 h26 v26" opacity="0.45"/>
+              <!-- bath: vanity, mirror, toilet, shower -->
+              <path d="M660 390 v-34 h62 M660 356 h62 v34"/>
+              <path d="M676 348 h32" opacity="0.5"/>
+              <path d="M672 300 h40 v34 h-40 z" opacity="0.45"/>
+              <path d="M744 390 v-16 q0 -8 9 -8 h18 q9 0 9 8 v16 M748 366 a12 10 0 0 1 24 0" opacity="0.55"/>
+              <path d="M820 390 L820 282" stroke-width="1.4" opacity="0.6"/>
+              <path d="M816 388 h140" stroke-width="2.2"/>
+              <!-- basement: shelf -->
+              <path d="M720 700 v-56 h150 v56 M720 672 h150" opacity="0.4"/>
+            </g>
+
+            <!-- ................... water heater ........................ -->
+            <g id="heater">
+              <rect x="430" y="598" width="64" height="96" rx="10" fill="#F4F2ED" stroke="#0C1821" stroke-width="2.5"/>
+              <line x1="430" y1="622" x2="494" y2="622" stroke="#0C1821" stroke-width="1.2" opacity="0.35"/>
+              <rect x="446" y="676" width="32" height="10" rx="2" fill="none" stroke="#0C1821" stroke-width="1.4" opacity="0.5"/>
+              <circle id="heater-dot" cx="462" cy="662" r="4" fill="#52616B" opacity="0.45"/>
+              <line x1="440" y1="694" x2="440" y2="700" stroke="#0C1821" stroke-width="2.5"/>
+              <line x1="484" y1="694" x2="484" y2="700" stroke="#0C1821" stroke-width="2.5"/>
+            </g>
+
+            <!-- ................ supply piping (cold/hot) ............... -->
+            <g id="pipes" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <!-- COLD service + distribution -->
+              <path class="pipe pipe--cold" d="M96 640 H336"/>
+              <rect x="336" y="628" width="26" height="24" rx="3" fill="#F4F2ED" stroke="#0C1821" stroke-width="2"/>
+              <path class="pipe pipe--cold" d="M362 640 H400"/>
+              <path class="pipe pipe--cold" d="M400 640 V600 H446 V598"/>
+              <path class="pipe pipe--cold" d="M400 640 V572 H642 V524"/>
+              <!-- kitchen branch: split around the damaged segment -->
+              <path class="pipe pipe--cold" d="M642 524 H596"/>
+              <path class="pipe pipe--cold" d="M536 524 H496 V510"/>
+              <!-- riser to bath + shower -->
+              <path class="pipe pipe--cold" d="M642 524 V368 H678 V354"/>
+              <path class="pipe pipe--cold" d="M642 368 V300 H852 V288 H864"/>
+              <!-- HOT from heater -->
+              <path class="pipe pipe--hot" d="M478 598 V580 H650 V530 H504 V512"/>
+              <path class="pipe pipe--hot" d="M650 530 V376 H672 V358"/>
+              <path class="pipe pipe--hot" d="M650 376 V308 H846 V296"/>
+              <!-- shower valve -->
+              <circle cx="852" cy="330" r="7" fill="#F8F6F1" stroke="#0C1821" stroke-width="2"/>
+              <circle cx="852" cy="330" r="2.2" fill="#0C1821"/>
+            </g>
+
+            <!-- ..................... drain piping ...................... -->
+            <g id="drains" fill="none" stroke="#52616B" stroke-linecap="round" stroke-linejoin="round" opacity="0.55">
+              <path class="pipe pipe--drain" d="M486 514 V556 M486 556 V588 H646"/>
+              <path class="pipe pipe--drain" d="M686 362 V416 H646"/>
+              <path class="pipe pipe--drain" d="M874 388 V410 H646"/>
+              <path class="pipe pipe--drain" d="M646 410 V676"/>
+              <path class="pipe pipe--drain" d="M646 410 V145" stroke-dasharray="none" opacity="0.8"/>
+            </g>
+
+            <!-- ......... blueprint annotations (stage 02) .............. -->
+            <g id="notes" opacity="0">
+              <g class="note">
+                <line x1="180" y1="628" x2="180" y2="606" stroke="#52616B" stroke-width="1"/>
+                <circle cx="180" cy="640" r="2.4" fill="#52616B"/>
+                <text x="180" y="596" class="svg-label">MAIN SUPPLY</text>
+              </g>
+              <g class="note">
+                <line x1="462" y1="592" x2="462" y2="576" stroke="#52616B" stroke-width="1"/>
+                <text x="462" y="566" class="svg-label">WATER HEATER</text>
+              </g>
+              <g class="note">
+                <line x1="646" y1="440" x2="700" y2="440" stroke="#52616B" stroke-width="1"/>
+                <text x="706" y="444" class="svg-label" text-anchor="start">STACK</text>
+              </g>
+            </g>
+
+            <!-- ........... the leak (problem elements) ................. -->
+            <g id="leak">
+              <!-- damaged segment of the kitchen cold branch -->
+              <g id="pipe-damaged">
+                <line x1="536" y1="524" x2="596" y2="524" class="pipe pipe--cold-line"/>
+                <rect x="556" y="518" width="20" height="12" rx="2" fill="#F4F2ED" stroke="#0C1821" stroke-width="2"/>
+                <path d="M562 518 l4 6 l-3 6 M572 518 l-3 5" stroke="#B4552D" stroke-width="1.6" fill="none"/>
+              </g>
+              <!-- replacement segment (starts hidden above) -->
+              <g id="pipe-new" opacity="0">
+                <line x1="538" y1="524" x2="594" y2="524" stroke="#3E8FB0" stroke-width="5" stroke-linecap="round"/>
+                <g id="fitting-l"><rect x="540" y="517" width="10" height="14" rx="2" fill="#B89A68" stroke="#0C1821" stroke-width="1.4"/></g>
+                <g id="fitting-r"><rect x="582" y="517" width="10" height="14" rx="2" fill="#B89A68" stroke="#0C1821" stroke-width="1.4"/></g>
+              </g>
+              <!-- cut marks (flash during repair) -->
+              <g id="cut-marks" opacity="0" stroke="#0C1821" stroke-width="2">
+                <line x1="538" y1="514" x2="538" y2="534"/>
+                <line x1="594" y1="514" x2="594" y2="534"/>
+              </g>
+              <!-- seal flash rings -->
+              <circle id="seal-l" cx="545" cy="524" r="6" fill="none" stroke="#8ED6E8" stroke-width="2.5" opacity="0"/>
+              <circle id="seal-r" cx="587" cy="524" r="6" fill="none" stroke="#8ED6E8" stroke-width="2.5" opacity="0"/>
+              <!-- droplets + puddle + warning pulse -->
+              <g id="droplets">
+                <circle class="droplet" cx="566" cy="530" r="2.4" fill="#3E8FB0"/>
+                <circle class="droplet" cx="566" cy="530" r="2" fill="#3E8FB0"/>
+              </g>
+              <ellipse id="puddle" cx="566" cy="539" rx="14" ry="2.6" fill="#3E8FB0" opacity="0"/>
+              <circle id="pulse-int" cx="566" cy="524" r="10" fill="none" stroke="#B4552D" stroke-width="1.6" opacity="0"/>
+              <circle id="leak-glow" cx="566" cy="524" r="7" fill="#B4552D" opacity="0" filter="url(#soft-glow)"/>
+              <g id="leak-tag" opacity="0">
+                <line x1="566" y1="512" x2="566" y2="488" stroke="#B4552D" stroke-width="1"/>
+                <text x="566" y="478" class="svg-label svg-label--warn">LEAK DETECTED</text>
+              </g>
+            </g>
+
+            <!-- ............ scan (diagnosis traveller) ................. -->
+            <g id="scan">
+              <path id="scan-path" d="M349 640 H400 V572 H642 V524 H566" fill="none" stroke="none"/>
+              <path id="scan-trail" d="M349 640 H400 V572 H642 V524 H566" fill="none" stroke="#8ED6E8" stroke-width="2.4" stroke-linecap="round" opacity="0"/>
+              <circle id="scan-head" r="5" cx="349" cy="640" fill="#8ED6E8" filter="url(#soft-glow)" opacity="0"/>
+            </g>
+
+            <!-- ............... water flow (stage 04) ................... -->
+            <g id="flow" fill="none" stroke="#8ED6E8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" opacity="0">
+              <path class="flow-path" d="M96 640 H336 M362 640 H400 V572 H642 V524 H496 V510"/>
+              <path class="flow-path" d="M400 640 V600 H446 V598"/>
+              <path class="flow-path flow-path--hot" d="M478 598 V580 H650 V530 H504 V512"/>
+              <path class="flow-path" d="M642 524 V368 H678 V354"/>
+              <path class="flow-path" d="M642 368 V300 H852 V288 H864"/>
+            </g>
+
+            <!-- ............ fixture activation (stage 04) .............. -->
+            <g id="fixtures">
+              <g id="stream-kitchen" opacity="0">
+                <line x1="500" y1="492" x2="500" y2="512" stroke="#8ED6E8" stroke-width="2.6" stroke-linecap="round"/>
+                <ellipse cx="500" cy="513" rx="7" ry="1.8" fill="none" stroke="#8ED6E8" stroke-width="1.4"/>
+              </g>
+              <g id="stream-bath" opacity="0">
+                <line x1="684" y1="346" x2="684" y2="356" stroke="#8ED6E8" stroke-width="2.2" stroke-linecap="round"/>
+              </g>
+              <g id="stream-shower" opacity="0" stroke="#8ED6E8" stroke-width="1.8" stroke-linecap="round">
+                <line x1="866" y1="294" x2="858" y2="330"/>
+                <line x1="870" y1="295" x2="870" y2="334"/>
+                <line x1="874" y1="294" x2="882" y2="330"/>
+                <line x1="878" y1="292" x2="892" y2="326"/>
+              </g>
+              <circle id="light-1" cx="520" cy="418" r="3" fill="#E8C98A" opacity="0" filter="url(#soft-glow)"/>
+              <circle id="light-2" cx="800" cy="264" r="3" fill="#E8C98A" opacity="0" filter="url(#soft-glow)"/>
+            </g>
+
+            <!-- .......... facade (covers section initially) ............ -->
+            <g id="facade">
+              <g class="facade-panel" data-panel="1">
+                <rect x="300" y="256" width="240" height="286" fill="#EDEAE0"/>
+                <g stroke="#0C1821" stroke-opacity="0.08" stroke-width="1">
+                  <line x1="300" y1="292" x2="540" y2="292"/><line x1="300" y1="328" x2="540" y2="328"/>
+                  <line x1="300" y1="364" x2="540" y2="364"/><line x1="300" y1="400" x2="540" y2="400"/>
+                  <line x1="300" y1="436" x2="540" y2="436"/><line x1="300" y1="472" x2="540" y2="472"/>
+                  <line x1="300" y1="508" x2="540" y2="508"/>
+                </g>
+                <g>
+                  <rect x="420" y="430" width="120" height="80" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
+                  <rect class="win-glow" x="424" y="434" width="112" height="72" fill="#E8C98A" opacity="0.13"/>
+                  <line x1="480" y1="430" x2="480" y2="510" stroke="#0C1821" stroke-width="2"/>
+                  <rect x="380" y="280" width="140" height="84" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
+                  <rect class="win-glow" x="384" y="284" width="132" height="76" fill="#E8C98A" opacity="0.1"/>
+                  <line x1="450" y1="280" x2="450" y2="364" stroke="#0C1821" stroke-width="2"/>
+                </g>
+                <!-- stage 01: exterior hint of trouble -->
+                <ellipse id="stain" cx="500" cy="534" rx="52" ry="14" fill="url(#stain)" opacity="0"/>
+                <g id="drips-ext" opacity="0" fill="#3E8FB0">
+                  <circle cx="486" cy="522" r="2"/><circle cx="502" cy="530" r="1.6"/><circle cx="516" cy="526" r="1.8"/>
+                </g>
+                <circle id="pulse-ext" cx="500" cy="522" r="10" fill="none" stroke="#B4552D" stroke-width="1.6" opacity="0"/>
+              </g>
+              <g class="facade-panel" data-panel="2">
+                <rect x="540" y="256" width="220" height="286" fill="#EDEAE0"/>
+                <polygon points="540,290 620,256 620,126 540,160" fill="#EDEAE0" opacity="0"/>
+                <path d="M292 268 L620 132 L986 260 L986 268 L620 142 L292 276 Z" fill="#EDEAE0" opacity="0"/>
+                <g stroke="#0C1821" stroke-opacity="0.08" stroke-width="1">
+                  <line x1="540" y1="292" x2="760" y2="292"/><line x1="540" y1="328" x2="760" y2="328"/>
+                  <line x1="540" y1="364" x2="760" y2="364"/><line x1="540" y1="400" x2="760" y2="400"/>
+                  <line x1="540" y1="436" x2="760" y2="436"/><line x1="540" y1="472" x2="760" y2="472"/>
+                  <line x1="540" y1="508" x2="760" y2="508"/>
+                </g>
+                <!-- entry door + step + sconce -->
+                <rect x="620" y="446" width="64" height="96" fill="#0C1821"/>
+                <rect x="626" y="452" width="52" height="90" fill="#EDEAE0" opacity="0.12"/>
+                <circle cx="672" cy="496" r="2.5" fill="#B89A68"/>
+                <rect x="608" y="542" width="88" height="8" fill="#0C1821" opacity="0.85"/>
+                <circle id="sconce" cx="604" cy="452" r="3" fill="#E8C98A" opacity="0.25"/>
+                <!-- gable vent -->
+                <circle cx="620" cy="196" r="13" fill="none" stroke="#0C1821" stroke-width="2" opacity="0.6"/>
+                <line x1="620" y1="183" x2="620" y2="209" stroke="#0C1821" stroke-width="1.4" opacity="0.6"/>
+              </g>
+              <g class="facade-panel" data-panel="3">
+                <rect x="760" y="256" width="220" height="286" fill="#EDEAE0"/>
+                <g stroke="#0C1821" stroke-opacity="0.08" stroke-width="1">
+                  <line x1="760" y1="292" x2="980" y2="292"/><line x1="760" y1="328" x2="980" y2="328"/>
+                  <line x1="760" y1="364" x2="980" y2="364"/><line x1="760" y1="400" x2="980" y2="400"/>
+                  <line x1="760" y1="436" x2="980" y2="436"/><line x1="760" y1="472" x2="980" y2="472"/>
+                  <line x1="760" y1="508" x2="980" y2="508"/>
+                </g>
+                <rect x="790" y="420" width="150" height="116" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
+                <rect class="win-glow" x="794" y="424" width="142" height="108" fill="#E8C98A" opacity="0.12"/>
+                <line x1="865" y1="420" x2="865" y2="536" stroke="#0C1821" stroke-width="2"/>
+                <rect x="800" y="278" width="84" height="66" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
+                <rect class="win-glow" x="804" y="282" width="76" height="58" fill="#E8C98A" opacity="0.1"/>
+              </g>
+              <!-- gable field above facade panels -->
+              <g class="facade-panel" data-panel="2b">
+                <polygon points="300,256 620,126 980,256" fill="#E9E5DA"/>
+                <g stroke="#0C1821" stroke-opacity="0.07" stroke-width="1">
+                  <line x1="620" y1="140" x2="620" y2="250"/>
+                  <line x1="560" y1="166" x2="560" y2="252"/><line x1="680" y1="166" x2="680" y2="252"/>
+                  <line x1="500" y1="192" x2="500" y2="253"/><line x1="740" y1="192" x2="740" y2="253"/>
+                  <line x1="440" y1="216" x2="440" y2="254"/><line x1="800" y1="216" x2="800" y2="254"/>
+                  <line x1="380" y1="242" x2="380" y2="255"/><line x1="860" y1="242" x2="860" y2="255"/>
+                </g>
+                <circle cx="620" cy="196" r="13" fill="none" stroke="#0C1821" stroke-width="2" opacity="0.55"/>
+              </g>
+            </g>
+
+          </g><!-- /scene -->
+        </svg>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================================
+       STATEMENT — brand promise
+  ================================================================= -->
+  <section class="statement" aria-labelledby="statement-title">
+    <div class="container">
+      <h2 id="statement-title" class="statement__title" data-reveal-lines>
+        <span>Dependable plumbing.</span>
+        <span>Done right the first&nbsp;time.</span>
+      </h2>
+      <p class="statement__lede" data-reveal>From emergency repairs to complete plumbing installations, our licensed professionals keep your home running exactly as it should.</p>
+      <p class="statement__trust" data-reveal>Licensed · Insured · Local</p>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       TRUST BAND — statistics
+  ================================================================= -->
+  <section class="stats" aria-label="Company statistics">
+    <div class="container">
+      <dl class="stats__row">
+        <div class="stats__item" data-reveal>
+          <dt class="stats__label">Years experience</dt>
+          <dd class="stats__value"><span data-counter data-target="20">0</span><sup>+</sup></dd>
+        </div>
+        <div class="stats__item" data-reveal>
+          <dt class="stats__label">Customer rating</dt>
+          <dd class="stats__value"><span data-counter data-target="4.9" data-decimals="1">0.0</span><sup class="stats__star">★</sup></dd>
+        </div>
+        <div class="stats__item" data-reveal>
+          <dt class="stats__label">Homes served</dt>
+          <dd class="stats__value"><span data-counter data-target="2500" data-comma>0</span><sup>+</sup></dd>
+        </div>
+        <div class="stats__item" data-reveal>
+          <dt class="stats__label">Emergency service</dt>
+          <dd class="stats__value"><span data-counter data-target="24">0</span><sup>/7</sup></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       COMPANY INTRO
+  ================================================================= -->
+  <section class="intro" id="about" aria-labelledby="intro-title">
+    <div class="container intro__grid">
+      <div class="intro__copy">
+        <p class="eyebrow" data-reveal>Local plumbers. Higher standards.</p>
+        <h2 id="intro-title" class="h2" data-reveal-lines>
+          <span>Plumbing you shouldn't</span>
+          <span>have to think&nbsp;about.</span>
+        </h2>
+        <p class="intro__text" data-reveal>The best plumbing work is the kind you forget about. No leaks. No pressure problems. No surprises. Just reliable systems installed and repaired by professionals who take the details seriously.</p>
+        <a class="link-arrow" href="#services" data-reveal>Explore our services</a>
+      </div>
+      <figure class="intro__media" data-reveal-mask>
+        <img src="assets/img/plate-intro.svg" alt="Illustration of a precisely installed home mechanical room: water heater, manifold and neatly routed supply lines" width="960" height="1200" loading="lazy">
+        <figcaption class="intro__caption"><span class="tick"></span>Every line labeled. Every joint tested.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SERVICES — interactive index
+  ================================================================= -->
+  <section class="services" id="services" aria-labelledby="services-title">
+    <div class="container">
+      <header class="section-head">
+        <p class="eyebrow" data-reveal>What we do</p>
+        <h2 id="services-title" class="h2" data-reveal-lines><span>Every system.</span> <span>Every fixture.</span></h2>
+      </header>
+
+      <div class="services__layout">
+        <ul class="services__index" data-service-index>
+          <li class="services__row" data-service="0" data-reveal>
+            <button class="services__trigger" aria-expanded="false">
+              <span class="services__num">01</span>
+              <span class="services__name">Emergency Plumbing</span>
+              <span class="services__marker" aria-hidden="true"></span>
+            </button>
+            <div class="services__detail">
+              <p>Burst pipes, backups and failures don't wait for morning — neither do we. Live dispatch, day and night.</p>
+              <img class="services__detail-img" src="assets/img/plate-svc-emergency.svg" alt="" width="800" height="600" loading="lazy">
+            </div>
+          </li>
+          <li class="services__row" data-service="1" data-reveal>
+            <button class="services__trigger" aria-expanded="false">
+              <span class="services__num">02</span>
+              <span class="services__name">Leak Detection &amp; Repair</span>
+              <span class="services__marker" aria-hidden="true"></span>
+            </button>
+            <div class="services__detail">
+              <p>Acoustic and thermal diagnostics find the source behind walls and under slabs — before we open anything.</p>
+              <img class="services__detail-img" src="assets/img/plate-svc-leak.svg" alt="" width="800" height="600" loading="lazy">
+            </div>
+          </li>
+          <li class="services__row" data-service="2" data-reveal>
+            <button class="services__trigger" aria-expanded="false">
+              <span class="services__num">03</span>
+              <span class="services__name">Drain Cleaning</span>
+              <span class="services__marker" aria-hidden="true"></span>
+            </button>
+            <div class="services__detail">
+              <p>Camera-verified clearing that restores full flow — not a temporary punch-through that clogs again next month.</p>
+              <img class="services__detail-img" src="assets/img/plate-svc-drain.svg" alt="" width="800" height="600" loading="lazy">
+            </div>
+          </li>
+          <li class="services__row" data-service="3" data-reveal>
+            <button class="services__trigger" aria-expanded="false">
+              <span class="services__num">04</span>
+              <span class="services__name">Water Heaters</span>
+              <span class="services__marker" aria-hidden="true"></span>
+            </button>
+            <div class="services__detail">
+              <p>Tank and tankless — sized correctly, installed to code, and tuned for the way your household actually uses hot water.</p>
+              <img class="services__detail-img" src="assets/img/plate-work-tankless.svg" alt="" width="800" height="600" loading="lazy">
+            </div>
+          </li>
+          <li class="services__row" data-service="4" data-reveal>
+            <button class="services__trigger" aria-expanded="false">
+              <span class="services__num">05</span>
+              <span class="services__name">Sewer Line Repair</span>
+              <span class="services__marker" aria-hidden="true"></span>
+            </button>
+            <div class="services__detail">
+              <p>Camera inspection first, then the least invasive fix that actually lasts — from spot repairs to full replacement.</p>
+              <img class="services__detail-img" src="assets/img/plate-work-sewer.svg" alt="" width="800" height="600" loading="lazy">
+            </div>
+          </li>
+          <li class="services__row" data-service="5" data-reveal>
+            <button class="services__trigger" aria-expanded="false">
+              <span class="services__num">06</span>
+              <span class="services__name">Fixture Installation</span>
+              <span class="services__marker" aria-hidden="true"></span>
+            </button>
+            <div class="services__detail">
+              <p>Faucets, toilets, showers and pot fillers — set level, sealed properly, and finished like furniture.</p>
+              <img class="services__detail-img" src="assets/img/plate-svc-fixtures.svg" alt="" width="800" height="600" loading="lazy">
+            </div>
+          </li>
+          <li class="services__row" data-service="6" data-reveal>
+            <button class="services__trigger" aria-expanded="false">
+              <span class="services__num">07</span>
+              <span class="services__name">Repiping</span>
+              <span class="services__marker" aria-hidden="true"></span>
+            </button>
+            <div class="services__detail">
+              <p>Whole-home supply replacement in copper or PEX — planned room by room to keep your household running during the work.</p>
+              <img class="services__detail-img" src="assets/img/plate-work-repipe.svg" alt="" width="800" height="600" loading="lazy">
+            </div>
+          </li>
+          <li class="services__row" data-service="7" data-reveal>
+            <button class="services__trigger" aria-expanded="false">
+              <span class="services__num">08</span>
+              <span class="services__name">Water Filtration</span>
+              <span class="services__marker" aria-hidden="true"></span>
+            </button>
+            <div class="services__detail">
+              <p>Whole-house and point-of-use systems matched to your water test — better taste, softer water, longer-lived fixtures.</p>
+              <img class="services__detail-img" src="assets/img/plate-svc-filtration.svg" alt="" width="800" height="600" loading="lazy">
+            </div>
+          </li>
+        </ul>
+
+        <div class="services__preview" data-service-preview aria-hidden="true">
+          <div class="services__preview-frame">
+            <img src="assets/img/plate-svc-emergency.svg" alt="" data-preview-img="0" class="is-active" width="800" height="600">
+            <img src="assets/img/plate-svc-leak.svg" alt="" data-preview-img="1" width="800" height="600" loading="lazy">
+            <img src="assets/img/plate-svc-drain.svg" alt="" data-preview-img="2" width="800" height="600" loading="lazy">
+            <img src="assets/img/plate-work-tankless.svg" alt="" data-preview-img="3" width="800" height="600" loading="lazy">
+            <img src="assets/img/plate-work-sewer.svg" alt="" data-preview-img="4" width="800" height="600" loading="lazy">
+            <img src="assets/img/plate-svc-fixtures.svg" alt="" data-preview-img="5" width="800" height="600" loading="lazy">
+            <img src="assets/img/plate-work-repipe.svg" alt="" data-preview-img="6" width="800" height="600" loading="lazy">
+            <img src="assets/img/plate-svc-filtration.svg" alt="" data-preview-img="7" width="800" height="600" loading="lazy">
+          </div>
+          <p class="services__preview-note" data-preview-note>Live dispatch, day and night.</p>
+        </div>
+      </div>
+
+      <div class="services__foot" data-reveal>
+        <a class="link-arrow" href="#contact">Explore all services</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       EMERGENCY
+  ================================================================= -->
+  <section class="emergency" aria-labelledby="emergency-title">
+    <div class="emergency__water" aria-hidden="true">
+      <svg viewBox="0 0 1440 500" preserveAspectRatio="xMidYMid slice">
+        <path class="wave wave--1" d="M0 260 C 240 230 420 290 720 260 C 1020 230 1200 290 1440 260" fill="none" stroke="#3E8FB0" stroke-width="1.4"/>
+        <path class="wave wave--2" d="M0 310 C 260 280 460 340 720 310 C 980 280 1180 340 1440 310" fill="none" stroke="#3E8FB0" stroke-width="1.2"/>
+        <path class="wave wave--3" d="M0 360 C 240 335 480 385 720 360 C 960 335 1200 385 1440 360" fill="none" stroke="#3E8FB0" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="container emergency__inner">
+      <p class="eyebrow eyebrow--light" data-reveal>24/7 Emergency Service</p>
+      <h2 id="emergency-title" class="emergency__title" data-reveal-lines><span>When water</span> <span>can't wait.</span></h2>
+      <p class="emergency__lede" data-reveal>Leaks, burst pipes, backups and failed water heaters don't follow business hours.</p>
+      <div class="emergency__actions" data-reveal>
+        <a class="btn btn--paper" href="tel:+15555550123" data-bind-href="phoneHref" data-magnetic><span class="btn__label">Call Emergency Service</span></a>
+        <a class="emergency__phone" href="tel:+15555550123" data-bind-href="phoneHref"><span data-bind="phone">(555) 555-0123</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       PROCESS
+  ================================================================= -->
+  <section class="process" aria-labelledby="process-title">
+    <div class="container">
+      <header class="section-head">
+        <p class="eyebrow" data-reveal>How it works</p>
+        <h2 id="process-title" class="h2" data-reveal-lines><span>Four steps.</span> <span>No surprises.</span></h2>
+      </header>
+
+      <div class="process__track" data-process>
+        <svg class="process__line" viewBox="0 0 1200 8" preserveAspectRatio="none" aria-hidden="true">
+          <line class="process__pipe" x1="0" y1="4" x2="1200" y2="4" stroke-width="2"/>
+          <line class="process__pipe-fill" data-process-fill x1="0" y1="4" x2="1200" y2="4" stroke-width="2"/>
+        </svg>
+        <ol class="process__steps">
+          <li class="process__step" data-reveal>
+            <span class="process__dot" aria-hidden="true"></span>
+            <span class="process__num">01</span>
+            <h3 class="process__name">Contact</h3>
+            <p class="process__text">Tell us what's happening.</p>
+          </li>
+          <li class="process__step" data-reveal>
+            <span class="process__dot" aria-hidden="true"></span>
+            <span class="process__num">02</span>
+            <h3 class="process__name">Diagnose</h3>
+            <p class="process__text">We identify the source of the problem.</p>
+          </li>
+          <li class="process__step" data-reveal>
+            <span class="process__dot" aria-hidden="true"></span>
+            <span class="process__num">03</span>
+            <h3 class="process__name">Repair</h3>
+            <p class="process__text">We explain your options and complete the work properly.</p>
+          </li>
+          <li class="process__step" data-reveal>
+            <span class="process__dot" aria-hidden="true"></span>
+            <span class="process__num">04</span>
+            <h3 class="process__name">Done</h3>
+            <p class="process__text">Your system is tested, cleaned up, and ready.</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       RECENT WORK
+  ================================================================= -->
+  <section class="work" id="work" aria-labelledby="work-title">
+    <div class="container">
+      <header class="section-head section-head--split">
+        <div>
+          <p class="eyebrow" data-reveal>Recent work</p>
+          <h2 id="work-title" class="h2" data-reveal-lines><span>Problems solved.</span></h2>
+        </div>
+        <p class="section-head__aside" data-reveal>A few recent projects from around the county. Swap these for your own photos and case notes.</p>
+      </header>
+
+      <div class="work__grid">
+        <!-- EDIT: projects — replace images, titles and locations -->
+        <article class="work__item work__item--lg" data-reveal-mask>
+          <a class="work__link" href="#contact">
+            <figure class="work__media"><img src="assets/img/plate-work-repipe.svg" alt="Diagram of a whole-home PEX repiping manifold with labeled hot and cold home-run lines" width="1200" height="800" loading="lazy"></figure>
+            <div class="work__meta">
+              <h3 class="work__name">Whole-Home Repiping</h3>
+              <p class="work__loc">Hollywood, MD</p>
+            </div>
+            <span class="work__tag">Supply</span>
+          </a>
+        </article>
+        <article class="work__item" data-reveal-mask>
+          <a class="work__link" href="#contact">
+            <figure class="work__media"><img src="assets/img/plate-work-tankless.svg" alt="Diagram of a wall-mounted tankless water heater with isolation valves and neatly routed lines" width="800" height="1066" loading="lazy"></figure>
+            <div class="work__meta">
+              <h3 class="work__name">Tankless Water Heater Installation</h3>
+              <p class="work__loc">California, MD</p>
+            </div>
+            <span class="work__tag">Heating</span>
+          </a>
+        </article>
+        <article class="work__item" data-reveal-mask>
+          <a class="work__link" href="#contact">
+            <figure class="work__media"><img src="assets/img/plate-work-burst.svg" alt="Detail drawing of a repaired copper supply line with a new brazed coupling" width="1200" height="800" loading="lazy"></figure>
+            <div class="work__meta">
+              <h3 class="work__name">Burst Pipe Repair</h3>
+              <p class="work__loc">Leonardtown, MD</p>
+            </div>
+            <span class="work__tag">Repair</span>
+          </a>
+        </article>
+        <article class="work__item work__item--wide" data-reveal-mask>
+          <a class="work__link" href="#contact">
+            <figure class="work__media"><img src="assets/img/plate-work-sewer.svg" alt="Section drawing of a sewer lateral being camera-inspected from a yard cleanout" width="1200" height="800" loading="lazy"></figure>
+            <div class="work__meta">
+              <h3 class="work__name">Main Sewer Repair</h3>
+              <p class="work__loc">Lexington Park, MD</p>
+            </div>
+            <span class="work__tag">Sewer</span>
+          </a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       WHY US
+  ================================================================= -->
+  <section class="why" id="why" aria-labelledby="why-title">
+    <div class="container">
+      <header class="section-head">
+        <p class="eyebrow eyebrow--light" data-reveal>Why choose us</p>
+        <h2 id="why-title" class="h2" data-reveal-lines><span>The difference is</span> <span>in the details.</span></h2>
+      </header>
+      <ul class="why__ledger">
+        <li class="why__item" data-reveal>
+          <span class="why__index">01</span>
+          <h3 class="why__name">Upfront Pricing</h3>
+          <p class="why__text">You approve the number before we open a toolbox.</p>
+        </li>
+        <li class="why__item" data-reveal>
+          <span class="why__index">02</span>
+          <h3 class="why__name">Licensed &amp; Insured</h3>
+          <p class="why__text">Master-licensed, fully insured, background-checked.</p>
+        </li>
+        <li class="why__item" data-reveal>
+          <span class="why__index">03</span>
+          <h3 class="why__name">Clean Work Areas</h3>
+          <p class="why__text">Floor protection down first. Shop-vac before we leave.</p>
+        </li>
+        <li class="why__item" data-reveal>
+          <span class="why__index">04</span>
+          <h3 class="why__name">Quality Materials</h3>
+          <p class="why__text">Parts we'd put in our own homes — nothing less.</p>
+        </li>
+        <li class="why__item" data-reveal>
+          <span class="why__index">05</span>
+          <h3 class="why__name">Experienced Technicians</h3>
+          <p class="why__text">Career plumbers, not day labor with a logo shirt.</p>
+        </li>
+        <li class="why__item" data-reveal>
+          <span class="why__index">06</span>
+          <h3 class="why__name">Workmanship Guarantee</h3>
+          <p class="why__text">If our work fails, we make it right. In writing.</p>
+        </li>
+        <li class="why__item" data-reveal>
+          <span class="why__index">07</span>
+          <h3 class="why__name">Local Service</h3>
+          <p class="why__text">Based in Leonardtown. Your neighbors, not a franchise.</p>
+        </li>
+        <li class="why__item" data-reveal>
+          <span class="why__index">08</span>
+          <h3 class="why__name">Clear Communication</h3>
+          <p class="why__text">Arrival windows we keep. Updates you don't have to chase.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       TESTIMONIALS
+  ================================================================= -->
+  <section class="reviews" id="reviews" aria-labelledby="reviews-title">
+    <div class="container">
+      <header class="section-head section-head--split">
+        <div>
+          <p class="eyebrow" data-reveal>Reviews</p>
+          <h2 id="reviews-title" class="h2" data-reveal-lines><span>Word gets around.</span></h2>
+        </div>
+        <p class="section-head__aside" data-reveal aria-hidden="true">Drag to explore →</p>
+      </header>
+    </div>
+    <div class="reviews__viewport" data-reviews tabindex="0" role="group" aria-label="Customer testimonials, scroll horizontally">
+      <ul class="reviews__track">
+        <!-- EDIT: testimonials — replace quotes, names and cities -->
+        <li class="reviews__card">
+          <p class="reviews__stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <blockquote class="reviews__quote">Water heater died Sunday night — new one running by Monday afternoon. Upfront price, spotless work area.</blockquote>
+          <footer class="reviews__who"><cite>Dana W.</cite><span>Leonardtown</span></footer>
+        </li>
+        <li class="reviews__card">
+          <p class="reviews__stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <blockquote class="reviews__quote">They found a slab leak two other companies missed, and fixed it without tearing up half the house.</blockquote>
+          <footer class="reviews__who"><cite>Marcus T.</cite><span>Lexington Park</span></footer>
+        </li>
+        <li class="reviews__card">
+          <p class="reviews__stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <blockquote class="reviews__quote">Repiped our whole 1970s rancher in three days. Water pressure is like a different house.</blockquote>
+          <footer class="reviews__who"><cite>Ellen &amp; Rob K.</cite><span>Hollywood</span></footer>
+        </li>
+        <li class="reviews__card">
+          <p class="reviews__stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <blockquote class="reviews__quote">Showed up in the window they promised, explained everything, and the bill matched the quote exactly.</blockquote>
+          <footer class="reviews__who"><cite>Priya S.</cite><span>California</span></footer>
+        </li>
+        <li class="reviews__card">
+          <p class="reviews__stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <blockquote class="reviews__quote">Middle-of-the-night burst pipe. They answered on the second ring and were here within the hour.</blockquote>
+          <footer class="reviews__who"><cite>Jim H.</cite><span>Great Mills</span></footer>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SERVICE AREA
+  ================================================================= -->
+  <section class="areas" id="areas" aria-labelledby="areas-title">
+    <div class="container areas__grid">
+      <div class="areas__copy">
+        <p class="eyebrow" data-reveal>Service area</p>
+        <h2 id="areas-title" class="h2" data-reveal-lines><span>Proudly serving</span> <span data-bind="regionShort">St.&nbsp;Mary's County</span></h2>
+        <p class="areas__lede" data-reveal>If you're anywhere in the county — or just across the line — we're already in the neighborhood.</p>
+        <!-- EDIT: service areas — keep in sync with js/config.js -->
+        <ul class="areas__list" data-areas-list>
+          <li data-reveal><a href="#contact" data-area="0">Leonardtown</a></li>
+          <li data-reveal><a href="#contact" data-area="1">California</a></li>
+          <li data-reveal><a href="#contact" data-area="2">Lexington Park</a></li>
+          <li data-reveal><a href="#contact" data-area="3">Hollywood</a></li>
+          <li data-reveal><a href="#contact" data-area="4">Mechanicsville</a></li>
+          <li data-reveal><a href="#contact" data-area="5">Great Mills</a></li>
+          <li data-reveal><a href="#contact" data-area="6">Charlotte Hall</a></li>
+          <li data-reveal><a href="#contact" data-area="7">Lusby</a></li>
+        </ul>
+      </div>
+      <div class="areas__map" data-reveal aria-hidden="true">
+        <svg viewBox="0 0 520 560" data-areas-map>
+          <defs>
+            <pattern id="dotgrid" width="16" height="16" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1.1" fill="#52616B" opacity="0.35"/>
+            </pattern>
+            <clipPath id="county"><path d="M150 40 C 210 26 268 44 300 86 C 330 124 336 168 366 204 C 398 242 442 264 452 312 C 462 360 430 400 396 434 C 358 472 320 516 262 524 C 216 530 178 500 158 458 C 136 412 148 366 130 322 C 112 276 84 240 92 190 C 100 138 108 96 150 40 Z"/></clipPath>
+          </defs>
+          <path d="M150 40 C 210 26 268 44 300 86 C 330 124 336 168 366 204 C 398 242 442 264 452 312 C 462 360 430 400 396 434 C 358 472 320 516 262 524 C 216 530 178 500 158 458 C 136 412 148 366 130 322 C 112 276 84 240 92 190 C 100 138 108 96 150 40 Z" fill="none" stroke="#52616B" stroke-width="1.5" opacity="0.55"/>
+          <g clip-path="url(#county)"><rect width="520" height="560" fill="url(#dotgrid)"/></g>
+          <!-- water lines (rivers / bay) -->
+          <g fill="none" stroke="#3E8FB0" stroke-width="1.3" opacity="0.5">
+            <path d="M20 120 C 60 150 80 210 70 270 C 62 322 40 370 52 430"/>
+            <path d="M480 180 C 500 240 496 300 508 360 C 516 402 508 450 490 490"/>
+            <path d="M30 132 C 68 162 88 214 78 272" opacity="0.5"/>
+          </g>
+          <!-- town markers: index matches data-area list -->
+          <g data-map-markers>
+            <g class="map-marker" data-marker="0" transform="translate(210,262)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">Leonardtown</text></g>
+            <g class="map-marker" data-marker="1" transform="translate(300,330)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">California</text></g>
+            <g class="map-marker" data-marker="2" transform="translate(330,404)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">Lexington Park</text></g>
+            <g class="map-marker" data-marker="3" transform="translate(282,222)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">Hollywood</text></g>
+            <g class="map-marker" data-marker="4" transform="translate(176,110)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">Mechanicsville</text></g>
+            <g class="map-marker" data-marker="5" transform="translate(282,432)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="-14" y="4" class="svg-label svg-label--map" text-anchor="end">Great Mills</text></g>
+            <g class="map-marker" data-marker="6" transform="translate(140,72)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="14" y="4" class="svg-label svg-label--map" text-anchor="start">Charlotte Hall</text></g>
+            <g class="map-marker" data-marker="7" transform="translate(452,240)"><circle r="5" class="map-marker__dot"/><circle r="11" class="map-marker__ring"/><text x="-14" y="4" class="svg-label svg-label--map" text-anchor="end">Lusby</text></g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       FINAL CTA
+  ================================================================= -->
+  <section class="cta" aria-labelledby="cta-title">
+    <figure class="cta__bg" aria-hidden="true">
+      <img src="assets/img/plate-cta.svg" alt="" width="1680" height="720" loading="lazy">
+    </figure>
+    <div class="container cta__inner">
+      <p class="eyebrow eyebrow--light" data-reveal>Ready when you are.</p>
+      <h2 id="cta-title" class="cta__title" data-reveal-lines><span>Let's get everything</span> <span>flowing again.</span></h2>
+      <p class="cta__lede" data-reveal>Tell us what you're dealing with and we'll help you determine the next step.</p>
+      <div class="cta__actions" data-reveal>
+        <a class="btn btn--paper" href="#contact" data-magnetic><span class="btn__label">Schedule Service</span></a>
+        <a class="cta__call link-underline link-underline--light" href="tel:+15555550123" data-bind-href="phoneHref">Call <span data-bind="phone">(555) 555-0123</span></a>
+      </div>
+      <ul class="cta__ticks" data-reveal>
+        <li>Licensed</li><li>Insured</li><li>Financing Available</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       CONTACT
+  ================================================================= -->
+  <section class="contact" id="contact" aria-labelledby="contact-title">
+    <div class="container contact__grid">
+      <div class="contact__info">
+        <p class="eyebrow" data-reveal>Contact</p>
+        <h2 id="contact-title" class="h2" data-reveal-lines><span>Request service.</span></h2>
+        <p class="contact__lede" data-reveal>Same-day appointments are often available. For emergencies, skip the form and call — we answer around the clock.</p>
+        <dl class="contact__details">
+          <div data-reveal>
+            <dt>Phone</dt>
+            <dd><a class="link-underline" href="tel:+15555550123" data-bind-href="phoneHref"><span data-bind="phone">(555) 555-0123</span></a></dd>
+          </div>
+          <div data-reveal>
+            <dt>Email</dt>
+            <dd><a class="link-underline" href="mailto:service@clearflowplumbing.com" data-bind-href="emailHref"><span data-bind="email">service@clearflowplumbing.com</span></a></dd>
+          </div>
+          <div data-reveal>
+            <dt>Hours</dt>
+            <dd>
+              <span data-bind="hoursWeekdays">Mon – Fri · 7:00a – 6:00p</span><br>
+              <span data-bind="hoursSaturday">Sat · 8:00a – 2:00p</span><br>
+              <em data-bind="hoursEmergency">Emergency service · 24 / 7</em>
+            </dd>
+          </div>
+          <div data-reveal>
+            <dt>License</dt>
+            <dd data-bind="license">MD Master Plumber Lic. #12345</dd>
+          </div>
+        </dl>
+      </div>
+
+      <form class="contact__form" data-contact-form novalidate data-reveal>
+        <div class="field">
+          <label class="field__label" for="f-name">Name</label>
+          <input class="field__input" id="f-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="f-phone">Phone</label>
+            <input class="field__input" id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+          </div>
+          <div class="field">
+            <label class="field__label" for="f-zip">Zip code</label>
+            <input class="field__input" id="f-zip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-email">Email</label>
+          <input class="field__input" id="f-email" name="email" type="email" autocomplete="email">
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-service">Service needed</label>
+          <select class="field__input field__input--select" id="f-service" name="service">
+            <option value="" selected>Select a service…</option>
+            <option>Emergency Plumbing</option>
+            <option>Leak Detection &amp; Repair</option>
+            <option>Drain Cleaning</option>
+            <option>Water Heaters</option>
+            <option>Sewer Line Repair</option>
+            <option>Fixture Installation</option>
+            <option>Repiping</option>
+            <option>Water Filtration</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-message">What's going on?</label>
+          <textarea class="field__input field__input--area" id="f-message" name="message" rows="4"></textarea>
+        </div>
+        <fieldset class="field field--toggle">
+          <legend class="field__label">Is this an emergency?</legend>
+          <div class="toggle-group" role="radiogroup">
+            <label class="toggle"><input type="radio" name="emergency" value="no" checked><span>No</span></label>
+            <label class="toggle"><input type="radio" name="emergency" value="yes"><span>Yes — call me ASAP</span></label>
+          </div>
+        </fieldset>
+        <button class="btn contact__submit" type="submit" data-magnetic><span class="btn__label">Request Service</span></button>
+        <p class="contact__form-note">We reply within one business hour, seven days a week.</p>
+        <div class="contact__success" data-form-success hidden>
+          <p class="contact__success-title">Request received.</p>
+          <p>Thanks — we'll be in touch shortly. If this is urgent, call <a class="link-underline" href="tel:+15555550123" data-bind-href="phoneHref"><span data-bind="phone">(555) 555-0123</span></a>.</p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- ================================================================
+       FOOTER
+  ================================================================= -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__grid">
+        <div class="site-footer__brand">
+          <a class="brand brand--footer" href="#top" aria-label="ClearFlow Plumbing — back to top">
+            <svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+              <path class="brand__mark-pipe" d="M8 30 L8 16 Q8 10 14 10 L30 10" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+              <path class="brand__mark-drop" d="M27 20 q5 6.2 5 9.4 a5 5 0 0 1 -10 0 q0 -3.2 5 -9.4 Z" fill="currentColor"/>
+            </svg>
+            <span class="brand__word"><span data-bind="companyShort">ClearFlow</span><em>Plumbing</em></span>
+          </a>
+          <p class="site-footer__desc">Licensed, insured residential plumbing for <span data-bind="regionShort">St. Mary's County</span>. Repairs, installations and 24/7 emergency service from a local team homeowners trust.</p>
+          <ul class="site-footer__social" data-social>
+            <li><a class="link-underline link-underline--light" href="#">Google</a></li>
+            <li><a class="link-underline link-underline--light" href="#">Facebook</a></li>
+            <li><a class="link-underline link-underline--light" href="#">Instagram</a></li>
+            <li><a class="link-underline link-underline--light" href="#">Nextdoor</a></li>
+          </ul>
+        </div>
+        <nav class="site-footer__col" aria-label="Footer — services">
+          <h3 class="site-footer__head">Services</h3>
+          <ul>
+            <li><a href="#services">Emergency Plumbing</a></li>
+            <li><a href="#services">Leak Detection</a></li>
+            <li><a href="#services">Drain Cleaning</a></li>
+            <li><a href="#services">Water Heaters</a></li>
+            <li><a href="#services">Sewer Line Repair</a></li>
+            <li><a href="#services">Repiping</a></li>
+          </ul>
+        </nav>
+        <nav class="site-footer__col" aria-label="Footer — service areas">
+          <h3 class="site-footer__head">Service Areas</h3>
+          <ul data-footer-areas>
+            <li><a href="#areas">Leonardtown</a></li>
+            <li><a href="#areas">California</a></li>
+            <li><a href="#areas">Lexington Park</a></li>
+            <li><a href="#areas">Hollywood</a></li>
+            <li><a href="#areas">Mechanicsville</a></li>
+            <li><a href="#areas">Great Mills</a></li>
+          </ul>
+        </nav>
+        <div class="site-footer__col">
+          <h3 class="site-footer__head">Contact</h3>
+          <ul>
+            <li><a href="tel:+15555550123" data-bind-href="phoneHref"><span data-bind="phone">(555) 555-0123</span></a></li>
+            <li><a href="mailto:service@clearflowplumbing.com" data-bind-href="emailHref"><span data-bind="email">service@clearflowplumbing.com</span></a></li>
+            <li><span data-bind="address">41780 Commerce Lane, Leonardtown, MD 20650</span></li>
+            <li class="site-footer__hours">
+              <span data-bind="hoursWeekdays">Mon – Fri · 7:00a – 6:00p</span><br>
+              <span data-bind="hoursSaturday">Sat · 8:00a – 2:00p</span><br>
+              <span data-bind="hoursEmergency">Emergency service · 24 / 7</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="site-footer__legal">
+        <p><span data-bind="license">MD Master Plumber Lic. #12345</span></p>
+        <p>© <span data-year>2026</span> <span data-bind="companyName">ClearFlow Plumbing</span>. All rights reserved.</p>
+        <ul class="site-footer__legal-links">
+          <li><a class="link-underline link-underline--light" href="#">Privacy Policy</a></li>
+          <li><a class="link-underline link-underline--light" href="#">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/vendor/gsap.min.js" defer></script>
+  <script src="js/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/hero.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

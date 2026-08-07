@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#13242F"/>
+      <stop offset="1" stop-color="#0C1821"/>
+    </linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0"/><feComposite operator="over" in2="SourceGraphic"/></filter>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+
+  <!-- concentric ripples -->
+  <g fill="none" stroke="#8ED6E8">
+    <circle cx="400" cy="300" r="36" stroke-width="2.4" opacity="0.9"/>
+    <circle cx="400" cy="300" r="86" stroke-width="1.8" opacity="0.55"/>
+    <circle cx="400" cy="300" r="146" stroke-width="1.4" opacity="0.32"/>
+    <circle cx="400" cy="300" r="216" stroke-width="1.1" opacity="0.18"/>
+    <circle cx="400" cy="300" r="296" stroke-width="1" opacity="0.09"/>
+  </g>
+  <!-- falling drop -->
+  <path d="M400 236 q10 13 10 20 a10 10 0 0 1 -20 0 q0 -7 10 -20 Z" fill="#8ED6E8" opacity="0.95"/>
+  <line x1="400" y1="150" x2="400" y2="212" stroke="#8ED6E8" stroke-width="2.4" stroke-linecap="round" opacity="0.5"/>
+  <!-- clock hint (24/7) -->
+  <g fill="none" stroke="#B89A68" stroke-width="2" opacity="0.7">
+    <circle cx="655" cy="115" r="42"/>
+    <path d="M655 90 V115 L673 128" stroke-linecap="round"/>
+  </g>
+  <!-- side droplets -->
+  <g fill="#3E8FB0" opacity="0.6">
+    <circle cx="180" cy="430" r="4"/><circle cx="214" cy="470" r="3"/><circle cx="160" cy="490" r="2.5"/>
+    <circle cx="620" cy="450" r="4"/><circle cx="596" cy="488" r="2.6"/>
+  </g>
+  <rect width="800" height="600" fill="transparent" filter="url(#grain)"/>
+</svg>

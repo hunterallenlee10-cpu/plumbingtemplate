@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#152836"/>
+      <stop offset="1" stop-color="#0C1821"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="0.24" cy="0.2" r="0.85">
+      <stop offset="0" stop-color="#E8C98A" stop-opacity="0.13"/>
+      <stop offset="1" stop-color="#E8C98A" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0"/><feComposite operator="over" in2="SourceGraphic"/></filter>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect width="1200" height="800" fill="url(#lamp)"/>
+
+  <!-- joists -->
+  <g stroke="#F4F2ED" stroke-opacity="0.1" stroke-width="3">
+    <line x1="0" y1="130" x2="1200" y2="130"/>
+    <line x1="0" y1="150" x2="1200" y2="150"/>
+  </g>
+  <g stroke="#F4F2ED" stroke-opacity="0.06" stroke-width="2">
+    <line x1="150" y1="0" x2="150" y2="130"/><line x1="450" y1="0" x2="450" y2="130"/>
+    <line x1="750" y1="0" x2="750" y2="130"/><line x1="1050" y1="0" x2="1050" y2="130"/>
+  </g>
+
+  <!-- manifold body -->
+  <rect x="120" y="260" width="70" height="420" rx="14" fill="none" stroke="#F4F2ED" stroke-opacity="0.9" stroke-width="3.5"/>
+  <path d="M155 260 V150" stroke="#3E8FB0" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+  <!-- home runs -->
+  <g fill="none" stroke-width="6" stroke-linecap="round">
+    <path d="M190 310 H640 Q700 310 700 250 V150" stroke="#3E8FB0"/>
+    <path d="M190 370 H780 Q840 370 840 310 V150" stroke="#B4552D" stroke-opacity="0.85"/>
+    <path d="M190 430 H900 Q960 430 960 370 V150" stroke="#3E8FB0"/>
+    <path d="M190 490 H990 Q1050 490 1050 430 V150" stroke="#3E8FB0"/>
+    <path d="M190 550 H1060 Q1120 550 1120 490 V150" stroke="#B4552D" stroke-opacity="0.85"/>
+    <path d="M190 610 H1140" stroke="#3E8FB0"/>
+  </g>
+  <!-- port valves -->
+  <g fill="#B89A68">
+    <circle cx="225" cy="310" r="7"/><circle cx="225" cy="370" r="7"/><circle cx="225" cy="430" r="7"/>
+    <circle cx="225" cy="490" r="7"/><circle cx="225" cy="550" r="7"/><circle cx="225" cy="610" r="7"/>
+  </g>
+  <!-- clips -->
+  <g stroke="#F4F2ED" stroke-opacity="0.35" stroke-width="2.5">
+    <path d="M500 298 v24 M500 358 v24 M640 418 v24 M700 478 v24 M760 538 v24 M820 598 v24"/>
+  </g>
+  <!-- label tags -->
+  <g fill="none" stroke="#F4F2ED" stroke-opacity="0.4" stroke-width="2">
+    <rect x="330" y="288" width="44" height="16" rx="3"/>
+    <rect x="330" y="408" width="44" height="16" rx="3"/>
+    <rect x="330" y="528" width="44" height="16" rx="3"/>
+  </g>
+  <!-- floor -->
+  <line x1="0" y1="740" x2="1200" y2="740" stroke="#F4F2ED" stroke-opacity="0.25" stroke-width="2"/>
+  <rect width="1200" height="800" fill="transparent" filter="url(#grain)"/>
+</svg>

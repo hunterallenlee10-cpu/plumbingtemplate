@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1200" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#152836"/>
+      <stop offset="1" stop-color="#0C1821"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="0.3" cy="0.12" r="0.9">
+      <stop offset="0" stop-color="#E8C98A" stop-opacity="0.2"/>
+      <stop offset="0.5" stop-color="#E8C98A" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#E8C98A" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0"/><feComposite operator="over" in2="SourceGraphic"/></filter>
+  </defs>
+  <rect width="960" height="1200" fill="url(#bg)"/>
+  <rect width="960" height="1200" fill="url(#lamp)"/>
+
+  <!-- wall panel lines -->
+  <g stroke="#F4F2ED" stroke-opacity="0.06" stroke-width="1.5">
+    <line x1="120" y1="0" x2="120" y2="1200"/><line x1="840" y1="0" x2="840" y2="1200"/>
+    <line x1="0" y1="150" x2="960" y2="150"/>
+  </g>
+  <!-- floor -->
+  <line x1="0" y1="1050" x2="960" y2="1050" stroke="#F4F2ED" stroke-opacity="0.35" stroke-width="2"/>
+  <g stroke="#F4F2ED" stroke-opacity="0.07" stroke-width="1.4">
+    <line x1="60" y1="1090" x2="900" y2="1090"/><line x1="140" y1="1130" x2="820" y2="1130"/>
+  </g>
+
+  <!-- water heater tank -->
+  <g stroke="#F4F2ED" fill="none" stroke-width="3">
+    <rect x="180" y="430" width="250" height="560" rx="48" stroke-opacity="0.9"/>
+    <line x1="180" y1="530" x2="430" y2="530" stroke-opacity="0.25" stroke-width="2"/>
+    <line x1="180" y1="900" x2="430" y2="900" stroke-opacity="0.25" stroke-width="2"/>
+    <rect x="262" y="920" width="86" height="46" rx="6" stroke-opacity="0.5" stroke-width="2"/>
+    <line x1="222" y1="990" x2="222" y2="1050" stroke-opacity="0.8"/>
+    <line x1="388" y1="990" x2="388" y2="1050" stroke-opacity="0.8"/>
+  </g>
+  <circle cx="305" cy="943" r="7" fill="#3E8FB0"/>
+
+  <!-- cold in / hot out -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M238 430 V330 H80" stroke="#3E8FB0" stroke-width="7"/>
+    <path d="M372 430 V270 H620" stroke="#B89A68" stroke-width="6"/>
+    <circle cx="238" cy="372" r="12" fill="#0C1821" stroke="#F4F2ED" stroke-width="2.5" stroke-opacity="0.8"/>
+    <line x1="226" y1="372" x2="250" y2="372" stroke="#F4F2ED" stroke-width="2.5" stroke-opacity="0.8"/>
+  </g>
+
+  <!-- manifold, right wall -->
+  <g fill="none" stroke-linecap="round">
+    <rect x="600" y="360" width="46" height="420" rx="10" stroke="#F4F2ED" stroke-opacity="0.85" stroke-width="3"/>
+    <path d="M646 410 H900" stroke="#3E8FB0" stroke-width="5"/>
+    <path d="M646 480 H900" stroke="#3E8FB0" stroke-width="5"/>
+    <path d="M646 550 H900" stroke="#B4552D" stroke-opacity="0.85" stroke-width="5"/>
+    <path d="M646 620 H900" stroke="#3E8FB0" stroke-width="5"/>
+    <path d="M646 690 H900" stroke="#B4552D" stroke-opacity="0.85" stroke-width="5"/>
+    <g fill="#B89A68" stroke="none">
+      <circle cx="680" cy="410" r="6"/><circle cx="680" cy="480" r="6"/><circle cx="680" cy="550" r="6"/>
+      <circle cx="680" cy="620" r="6"/><circle cx="680" cy="690" r="6"/>
+    </g>
+    <path d="M623 360 V300 H238" stroke="#3E8FB0" stroke-width="6"/>
+  </g>
+
+  <!-- label ticks (abstract) -->
+  <g stroke="#F4F2ED" stroke-opacity="0.3" stroke-width="2">
+    <line x1="760" y1="392" x2="800" y2="392"/><line x1="760" y1="462" x2="812" y2="462"/>
+    <line x1="760" y1="532" x2="795" y2="532"/><line x1="760" y1="602" x2="806" y2="602"/>
+    <line x1="760" y1="672" x2="790" y2="672"/>
+  </g>
+
+  <!-- drip pan + level line details -->
+  <ellipse cx="305" cy="1010" rx="150" ry="14" fill="none" stroke="#F4F2ED" stroke-opacity="0.35" stroke-width="2"/>
+  <rect width="960" height="1200" fill="transparent" filter="url(#grain)"/>
+</svg>

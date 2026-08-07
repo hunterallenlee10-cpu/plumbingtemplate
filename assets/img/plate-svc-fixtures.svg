@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#152836"/>
+      <stop offset="1" stop-color="#0C1821"/>
+    </linearGradient>
+    <radialGradient id="rim" cx="0.35" cy="0.2" r="0.8">
+      <stop offset="0" stop-color="#E8C98A" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#E8C98A" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0"/><feComposite operator="over" in2="SourceGraphic"/></filter>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect width="800" height="600" fill="url(#rim)"/>
+
+  <!-- counter + basin -->
+  <line x1="60" y1="470" x2="740" y2="470" stroke="#F4F2ED" stroke-opacity="0.7" stroke-width="3"/>
+  <path d="M300 470 q0 60 100 60 q100 0 100 -60" fill="none" stroke="#F4F2ED" stroke-opacity="0.45" stroke-width="2.5"/>
+
+  <!-- gooseneck faucet in brass -->
+  <g fill="none" stroke="#B89A68" stroke-linecap="round">
+    <path d="M330 470 V300 Q330 230 400 230 Q456 230 462 282" stroke-width="13"/>
+    <path d="M462 282 V300" stroke-width="11"/>
+    <path d="M290 470 v-26 h30" stroke-width="7"/>
+  </g>
+  <!-- handle -->
+  <line x1="278" y1="430" x2="306" y2="444" stroke="#B89A68" stroke-width="6" stroke-linecap="round"/>
+  <!-- shine -->
+  <path d="M338 380 V310 Q338 254 392 246" fill="none" stroke="#E8C98A" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>
+
+  <!-- water stream + ripple -->
+  <line x1="462" y1="308" x2="462" y2="470" stroke="#8ED6E8" stroke-width="3.4" stroke-linecap="round" opacity="0.9"/>
+  <ellipse cx="462" cy="474" rx="20" ry="4.5" fill="none" stroke="#8ED6E8" stroke-width="2" opacity="0.7"/>
+  <ellipse cx="462" cy="480" rx="34" ry="6.5" fill="none" stroke="#8ED6E8" stroke-width="1.4" opacity="0.35"/>
+  <rect width="800" height="600" fill="transparent" filter="url(#grain)"/>
+</svg>
