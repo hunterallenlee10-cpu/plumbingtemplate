@@ -188,6 +188,12 @@
         .to("[data-caption='1']", CAPTION_OUT, 16);
 
       /* ---- 01 → 02 · X-RAY WIPE --------------------------- */
+      var scrim = q("[data-hero-scrim]");
+      if (scrim && !isMobile) {
+        tl.to(scrim, { autoAlpha: 0.52, duration: 8 }, 18)
+          .to(scrim, { autoAlpha: 0.74, duration: 5 }, 46)
+          .to(scrim, { autoAlpha: 0.5, duration: 6 }, 66);
+      }
       tl.to(scan, { autoAlpha: 0.95, duration: 1.2 }, 18)
         .to(scan, { xPercent: 940, duration: 8, ease: "power1.inOut" }, 18)
         .to(scan, { autoAlpha: 0, duration: 1.2 }, 25.4)

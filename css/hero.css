@@ -20,22 +20,32 @@
 /* ---- scene: photoreal stage stack ------------------------- */
 .hero__scene {
   position: absolute;
-  right: clamp(1rem, 3vw, 4rem);
-  top: 50%;
-  transform: translateY(-50%);
-  width: min(58vw, 1040px);
+  inset: 0;
   pointer-events: none;
 }
 .hero__frame {
-  position: relative;
-  aspect-ratio: 1280 / 768;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  border-radius: 12px;
   background: var(--ink);
-  box-shadow:
-    0 48px 110px -42px rgba(12, 24, 33, 0.55),
-    0 18px 44px -24px rgba(12, 24, 33, 0.35);
   isolation: isolate;
+}
+/* editorial scrim keeps the ink text readable over the photo;
+   hero.js relaxes it once the story takes over */
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg,
+      rgba(244, 242, 237, 0.96) 0%,
+      rgba(244, 242, 237, 0.86) 24%,
+      rgba(244, 242, 237, 0.42) 46%,
+      rgba(244, 242, 237, 0) 62%),
+    linear-gradient(0deg,
+      rgba(244, 242, 237, 0.5) 0%,
+      rgba(244, 242, 237, 0) 13%);
 }
 .hero__camera {
   position: absolute;
@@ -92,11 +102,9 @@
   inset: 0;
   z-index: 6;
   pointer-events: none;
-  border-radius: inherit;
   background:
-    radial-gradient(120% 90% at 20% 0%, rgba(244, 242, 237, 0.08) 0%, rgba(244, 242, 237, 0) 45%),
-    radial-gradient(140% 110% at 50% 112%, rgba(4, 10, 15, 0.34) 0%, rgba(4, 10, 15, 0) 55%);
-  box-shadow: inset 0 0 0 1px rgba(244, 242, 237, 0.1);
+    radial-gradient(120% 90% at 24% 0%, rgba(244, 242, 237, 0.07) 0%, rgba(244, 242, 237, 0) 45%),
+    radial-gradient(150% 120% at 55% 118%, rgba(4, 10, 15, 0.26) 0%, rgba(4, 10, 15, 0) 55%);
 }
 
 /* ---- opening statement ----------------------------------- */
@@ -276,6 +284,13 @@
   margin: 0 auto;
   padding-top: 3rem;
 }
+.hero--static .hero__frame {
+  position: relative;
+  inset: auto;
+  aspect-ratio: 1280 / 768;
+  border-radius: 10px;
+}
+.hero--static .hero__scrim { display: none; }
 .hero--static .hero__stage { opacity: 0 !important; }
 .hero--static .hero__stage[data-stage="4"] { opacity: 1 !important; }
 .hero--static .hero__overlay,
@@ -305,24 +320,22 @@
   .hero__trust { margin-top: 1.5rem; }
   .hero__intro .eyebrow { margin-bottom: 1.2rem; }
   .hero__captions { top: 46%; }
-  .hero__scene { width: min(52vw, 880px); }
 }
 
 /* ---- responsive: purpose-built mobile scene --------------- */
 @media (max-width: 900px) {
+  .hero__scrim { display: none; }
   .hero__scene {
     right: 0;
     left: 0;
     top: max(4.4rem, 7svh);
     bottom: auto;
-    transform: none;
-    width: 100%;
+    inset: auto 0;
   }
   .hero__frame {
-    aspect-ratio: auto;
+    position: relative;
+    inset: auto;
     height: 44svh;
-    border-radius: 0;
-    box-shadow: none;
   }
   .hero__intro {
     left: 0; right: 0;
