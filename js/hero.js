@@ -75,6 +75,7 @@
       var scan = q("[data-scanline]");
       var stage1 = q('[data-stage="1"]');
       var stage2 = q('[data-stage="2"]');
+      var stage2Reveal = q("[data-stage2-reveal]");
       var stage3 = q('[data-stage="3"]');
       var stage4 = q('[data-stage="4"]');
       var flowGroup = document.getElementById("ov-flow");
@@ -100,7 +101,8 @@
       /* ---------------- initial state ---------------------- */
       gsap.set(camera, F.s1a);
       gsap.set(stage1, { autoAlpha: 1 });
-      gsap.set(stage2, { autoAlpha: 1, clipPath: "inset(0% 100% 0% 0%)" });
+      gsap.set(stage2Reveal, { xPercent: 100 });
+      gsap.set(stage2, { autoAlpha: 1, xPercent: -100 });
       gsap.set(stage3, { autoAlpha: 0 });
       gsap.set(stage4, { autoAlpha: 0 });
       gsap.set(scan, { autoAlpha: 0, xPercent: 0 });
@@ -144,13 +146,13 @@
 
       /* ---------------- master timeline -------------------- */
       var tl = gsap.timeline({
-        defaults: { ease: "none" },
+        defaults: { ease: "none", force3D: true },
         scrollTrigger: {
           trigger: "[data-hero-pin]",
           start: "top top",
-          end: "+=" + (isMobile ? 3400 : 4400),
+          end: "+=" + (isMobile ? 3800 : 5200),
           pin: true,
-          scrub: isMobile ? 0.6 : 1,
+          scrub: isMobile ? 0.7 : 1.2,
           anticipatePin: 1,
           onToggle: function (self) {
             hero.classList.toggle("is-scene-active", self.isActive);
@@ -189,7 +191,8 @@
       tl.to(scan, { autoAlpha: 0.95, duration: 1.2 }, 18)
         .to(scan, { xPercent: 940, duration: 8, ease: "power1.inOut" }, 18)
         .to(scan, { autoAlpha: 0, duration: 1.2 }, 25.4)
-        .to(stage2, { clipPath: "inset(0% 0% 0% 0%)", duration: 8, ease: "power1.inOut" }, 18)
+        .to(stage2Reveal, { xPercent: 0, duration: 8, ease: "power1.inOut" }, 18)
+        .to(stage2, { xPercent: 0, duration: 8, ease: "power1.inOut" }, 18)
         .to("#ov-grid-rect", { autoAlpha: 0.4, duration: 3 }, 18)
         .to("#ov-grid-rect", { autoAlpha: 0, duration: 3.5 }, 25)
         .to("#ov-problem", { autoAlpha: 0, duration: 3 }, 18.5)

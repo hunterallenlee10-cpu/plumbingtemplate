@@ -129,8 +129,9 @@ assets/photo/       hero stage photography + dusk CTA (webp; src/ originals)
 - Semantic landmarks, one `h1`, labeled forms, keyboard-operable menu,
   accordion and carousel, visible focus states, skip link.
 - `prefers-reduced-motion` honored everywhere (static hero, no scroll FX).
-- ~350 KB total page weight (fonts + JS + art included), no external
-  requests, no layout shift: images carry explicit dimensions.
+- ~900 KB total page weight (fonts, JS, art and all four hero photographs
+  included), no external requests, no layout shift: images carry explicit
+  dimensions. Hero transitions are compositor-only (transform/opacity).
 
 ## License
 

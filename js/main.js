@@ -125,7 +125,12 @@
   function startLenis() {
     if (lenis || reduced() || !window.Lenis || !window.gsap || !window.ScrollTrigger) return;
     docEl.classList.add("has-lenis");
-    lenis = new Lenis({ duration: 1.05, smoothWheel: true });
+    lenis = new Lenis({
+      duration: 1.22,
+      smoothWheel: true,
+      wheelMultiplier: 0.95,
+      easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); }
+    });
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
     gsap.ticker.lagSmoothing(0);

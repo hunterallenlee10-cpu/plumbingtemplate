@@ -37,14 +37,29 @@
     0 18px 44px -24px rgba(12, 24, 33, 0.35);
   isolation: isolate;
 }
-.hero__camera { position: absolute; inset: 0; will-change: transform; }
+.hero__camera {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.hero__reveal {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  will-change: transform;
+  transform: translateZ(0);
+}
 .hero__stage {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(1.06) contrast(1.04);
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 .hero__stage[data-stage="2"],
 .hero__stage[data-stage="4"] { opacity: 0; }
