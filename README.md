@@ -88,12 +88,15 @@ form demos its success state without sending.
 
 ## The hero animation
 
-`js/hero.js` drives a pinned, scrub-linked GSAP timeline over the inline SVG
-in `index.html`:
+`js/hero.js` drives a pinned, scrub-linked GSAP timeline over four
+photographic stages (`assets/photo/hero-*.webp`) with an SVG diagnostic
+overlay aligned on top:
 
-- **Camera** — stage framing is done by tweening the SVG `viewBox`, so every
-  zoom stays vector-crisp. Framings live in the `CAM` object (desktop and
-  purpose-built mobile variants).
+- **Camera** — a wrapper div; the `cam(fx, fy, scale)` helper computes the
+  transform that centers any photo point at any zoom, with separate desktop
+  and mobile framings in the `F` object. Swap the stage photos and re-anchor
+  the overlay coordinates (one `viewBox` space: 1280x768) to rebrand the
+  sequence.
 - **Stages** — timeline positions are unit-based (0–100). Stage windows:
   problem ≈ 4–18, diagnosis ≈ 18–46, repair ≈ 46–70, restored ≈ 70–100.
 - **Ambient loops** (drips, warning pulses, leak glow) are gated by scroll
@@ -118,6 +121,7 @@ js/main.js          nav, reveals, counters, carousel, form, microinteractions
 js/vendor/          gsap.min.js, ScrollTrigger.min.js (3.12.5)
 assets/fonts/       Fraunces + Hanken Grotesk (woff2, variable)
 assets/img/         SVG illustration plates (swappable)
+assets/photo/       hero stage photography + dusk CTA (webp; src/ originals)
 ```
 
 ## Accessibility & performance

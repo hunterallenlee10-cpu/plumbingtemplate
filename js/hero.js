@@ -1,17 +1,20 @@
 /* ============================================================
-   CLEARFLOW — HERO SCENE CHOREOGRAPHY
+   CLEARFLOW — HERO SCENE CHOREOGRAPHY (photoreal)
    ------------------------------------------------------------
-   A pinned, scroll-scrubbed timeline in four stages:
+   A pinned, scroll-scrubbed sequence over four photographic
+   stages, with a diagnostic SVG overlay on top:
 
-     01 PROBLEM    exterior view, subtle leak indicators
-     02 DIAGNOSIS  facade parts, pipes draw in, scan finds leak
-     03 REPAIR     camera zooms, section replaced, joints sealed
-     04 RESTORED   water flows branch by branch, fixtures wake
+     01 PROBLEM    exterior photo, damp stain + warning pulse
+     02 DIAGNOSIS  x-ray scan wipe into the cutaway photo,
+                   reticle locks onto the failing joint
+     03 REPAIR     camera dives into the wall — close-up photo
+                   of the new copper section, fittings verified
+     04 RESTORED   warm evening cutaway, water flow traced
+                   through the system
 
-   The "camera" is the SVG viewBox, tweened between framings —
-   which keeps every zoom crisp (it's vectors all the way down).
-   Ambient loops (drips, pulses) are gated by scroll progress so
-   nothing runs when it isn't on screen.
+   The "camera" is a wrapper div; cam(fx, fy, s) computes the
+   transform that puts photo-fraction (fx, fy) at frame center
+   at scale s — so zooms track the same spot at any frame size.
    ============================================================ */
 (function () {
   "use strict";
@@ -19,33 +22,17 @@
   var hero = document.querySelector("[data-hero]");
   if (!hero) return;
 
-  var svg = document.getElementById("house");
   var q = function (sel) { return hero.querySelector(sel); };
   var qa = function (sel) { return Array.prototype.slice.call(hero.querySelectorAll(sel)); };
 
-  /* ---------- camera framings (viewBox strings) ---------- */
-  var CAM = {
-    full:   "0 0 1180 840",
-    problem:"120 128 1000 712",   // stage 01: gentle push toward the house,
-    fullM:  "165 55 910 785",    // mobile: house fills the frame
-    joint:  "316 348 500 356",   // tight on the failed coupling
-    lowerM: "180 310 820 585",   // mobile: kitchen + basement zone
-    jointM: "336 360 460 327"    // mobile repair framing
-  };
-
-  /* ---------- static fallback (no JS-motion) -------------- */
-  var STATIC_HIDE = ["#facade", "#scan-trail", "#scan-head", "#pipe-damaged",
-    "#leak-tag", "#leak-glow", "#pulse-int", "#droplets", "#puddle", "#cut-marks"];
-  var STATIC_SHOW = ["#pipe-new", "#notes", "#flow", "#stream-kitchen",
-    "#stream-bath", "#stream-shower", "#ambient", "#light-1", "#light-2"];
-
-  function clearStatic() {
-    STATIC_HIDE.concat(STATIC_SHOW).forEach(function (sel) {
-      var el = svg.querySelector(sel);
-      if (el) { el.style.removeProperty("display"); el.style.removeProperty("opacity"); }
-    });
-    var heaterDot = svg.querySelector("#heater-dot");
-    if (heaterDot) { heaterDot.style.removeProperty("fill"); heaterDot.style.removeProperty("opacity"); }
+  /* camera helper: focus point (fractions of frame) + scale */
+  function cam(fx, fy, s) {
+    return {
+      scale: s,
+      xPercent: (0.5 - fx) * 100 * s,
+      yPercent: (0.5 - fy) * 100 * s,
+      transformOrigin: "50% 50%"
+    };
   }
 
   function goStatic() {
@@ -55,17 +42,14 @@
       title.setAttribute("data-motion-title", title.innerHTML);
       title.innerHTML = "Restore your home.";
     }
-    // show the restored cutaway: facade off, flow on, notes on
-    STATIC_HIDE.forEach(function (sel) {
-      var el = svg.querySelector(sel);
-      if (el) el.style.display = "none";
-    });
-    STATIC_SHOW.forEach(function (sel) {
-      var el = svg.querySelector(sel);
-      if (el) el.style.opacity = 1;
-    });
-    var heaterDot = svg.querySelector("#heater-dot");
-    if (heaterDot) { heaterDot.style.fill = "#3E8FB0"; heaterDot.style.opacity = 1; }
+  }
+  function clearStatic() {
+    hero.classList.remove("hero--static");
+    var title = hero.querySelector(".hero__title");
+    if (title && title.hasAttribute("data-motion-title")) {
+      title.innerHTML = title.getAttribute("data-motion-title");
+      title.removeAttribute("data-motion-title");
+    }
   }
 
   if (!window.gsap || !window.ScrollTrigger) { goStatic(); return; }
@@ -83,65 +67,72 @@
     function (ctx) {
       var c = ctx.conditions;
 
-      if (c.reduce) { goStatic(); return function () { hero.classList.remove("hero--static"); }; }
-      hero.classList.remove("hero--static");
+      if (c.reduce) { goStatic(); return function () { clearStatic(); }; }
       clearStatic();
-      var titleEl = hero.querySelector(".hero__title");
-      if (titleEl && titleEl.hasAttribute("data-motion-title")) {
-        titleEl.innerHTML = titleEl.getAttribute("data-motion-title");
-        titleEl.removeAttribute("data-motion-title");
-      }
 
       var isMobile = c.mobile;
+      var camera = q("[data-hero-camera]");
+      var scan = q("[data-scanline]");
+      var stage1 = q('[data-stage="1"]');
+      var stage2 = q('[data-stage="2"]');
+      var stage3 = q('[data-stage="3"]');
+      var stage4 = q('[data-stage="4"]');
+      var flowGroup = document.getElementById("ov-flow");
 
-      /* =====================================================
-         INITIAL STATE
-      ====================================================== */
-      gsap.set(svg, { attr: { viewBox: isMobile ? CAM.fullM : CAM.full } });
-      gsap.set("#notes, #flow, #pipe-new, #cut-marks", { autoAlpha: 0 });
-      gsap.set("#stream-kitchen, #stream-bath, #stream-shower", { autoAlpha: 0 });
-      gsap.set("#stain, #drips-ext, #pulse-ext, #pulse-ext-dot, #pulse-int, #leak-glow, #leak-tag, #puddle", { autoAlpha: 0 });
-      gsap.set("#scan-trail, #scan-head", { autoAlpha: 0 });
-      gsap.set("#ambient, #light-1, #light-2", { autoAlpha: 0 });
-      gsap.set(".facade-panel", { autoAlpha: 1, x: 0, y: 0 });
-      gsap.set("#pipe-damaged", { autoAlpha: 1, y: 0 });
-      gsap.set(".droplet", { autoAlpha: 0 });
+      /* camera framings: desktop shows the full plate; mobile
+         crops in, so every framing carries a higher base scale */
+      var F = isMobile ? {
+        s1a: cam(0.47, 0.52, 1.35), s1b: cam(0.47, 0.54, 1.28),
+        wipe: cam(0.48, 0.55, 1.3),
+        diagA: cam(0.48, 0.55, 1.3), diagB: cam(0.5, 0.55, 1.5),
+        joint: cam(0.497, 0.545, 1.85),
+        rest: cam(0.5, 0.55, 1.32), restB: cam(0.5, 0.52, 1.26),
+        settle: cam(0.5, 0.52, 1.28)
+      } : {
+        s1a: cam(0.5, 0.54, 1.08), s1b: cam(0.5, 0.53, 1.03),
+        wipe: cam(0.5, 0.52, 1.0),
+        diagA: cam(0.5, 0.52, 1.0), diagB: cam(0.5, 0.53, 1.07),
+        joint: cam(0.497, 0.545, 1.6),
+        rest: cam(0.5, 0.53, 1.05), restB: cam(0.5, 0.5, 1.0),
+        settle: cam(0.5, 0.5, 1.03)
+      };
+
+      /* ---------------- initial state ---------------------- */
+      gsap.set(camera, F.s1a);
+      gsap.set(stage1, { autoAlpha: 1 });
+      gsap.set(stage2, { autoAlpha: 1, clipPath: "inset(0% 100% 0% 0%)" });
+      gsap.set(stage3, { autoAlpha: 0 });
+      gsap.set(stage4, { autoAlpha: 0 });
+      gsap.set(scan, { autoAlpha: 0, xPercent: 0 });
+      gsap.set("#ov-problem, #ov-grid-rect, #ov-reticle, #ov-tag, #ov-flow, #ov-heater-ring", { autoAlpha: 0 });
+      gsap.set("#ov-fit-l, #ov-fit-r, #ov-sealed", { autoAlpha: 0 });
       gsap.set("[data-hero-final]", { autoAlpha: 0, y: 26 });
       gsap.set("[data-hero-rail]", { autoAlpha: 0 });
+      if (flowGroup) flowGroup.classList.remove("is-flowing");
+
       var railFill = q("[data-rail-fill]");
       var railSet = railFill ? gsap.quickSetter(railFill, "scaleY") : null;
       var railSteps = qa("[data-rail-step]");
       var captions = qa("[data-caption]");
       gsap.set(captions, { autoAlpha: 0, y: 30 });
-      document.getElementById("flow").classList.remove("is-flowing");
 
-      /* =====================================================
-         AMBIENT LOOPS (gated by scroll progress)
-      ====================================================== */
+      /* ---------------- ambient loops ---------------------- */
       var loops = {};
 
-      loops.pulseExt = gsap.timeline({ repeat: -1, paused: true })
-        .fromTo("#pulse-ext", { attr: { r: 10 }, autoAlpha: 0.95 },
-          { attr: { r: 44 }, autoAlpha: 0, duration: 1.6, ease: "power1.out" })
-        .fromTo("#pulse-ext-dot", { autoAlpha: 0.9 }, { autoAlpha: 0.25, duration: 1.6 }, 0)
+      loops.pulse = gsap.timeline({ repeat: -1, paused: true })
+        .fromTo("#ov-pulse", { attr: { r: 12 }, autoAlpha: 0.95 },
+          { attr: { r: 46 }, autoAlpha: 0, duration: 1.6, ease: "power1.out" })
+        .fromTo("#ov-pulse-dot", { autoAlpha: 0.95 }, { autoAlpha: 0.3, duration: 1.6 }, 0)
         .to({}, { duration: 0.4 });
 
-      loops.pulseInt = gsap.timeline({ repeat: -1, paused: true })
-        .fromTo("#pulse-int", { attr: { r: 9 }, autoAlpha: 0.9 },
-          { attr: { r: 26 }, autoAlpha: 0, duration: 1.4, ease: "power1.out" })
-        .to({}, { duration: 0.35 });
+      loops.retGlow = gsap.timeline({ repeat: -1, yoyo: true, paused: true })
+        .fromTo("#ov-reticle-glow", { autoAlpha: 0.3 },
+          { autoAlpha: 0.75, duration: 0.7, ease: "sine.inOut" });
 
-      loops.drip = gsap.timeline({ repeat: -1, paused: true });
-      qa(".droplet").forEach(function (d, i) {
-        loops.drip.fromTo(d,
-          { attr: { cy: 529 }, autoAlpha: 0 },
-          { attr: { cy: 539 }, autoAlpha: 1, duration: 0.55, ease: "power2.in",
-            onComplete: function () { gsap.set(d, { autoAlpha: 0 }); } },
-          i * 0.6);
-      });
-
-      loops.glow = gsap.timeline({ repeat: -1, yoyo: true, paused: true })
-        .fromTo("#leak-glow", { autoAlpha: 0.25 }, { autoAlpha: 0.6, duration: 0.7, ease: "sine.inOut" });
+      loops.heater = gsap.timeline({ repeat: -1, paused: true })
+        .fromTo("#ov-heater-ring", { attr: { r: 14 }, autoAlpha: 0.85 },
+          { attr: { r: 38 }, autoAlpha: 0, duration: 1.5, ease: "power1.out" })
+        .to({}, { duration: 0.5 });
 
       function gate(loop, on, el) {
         if (on && loop.paused()) { loop.play(0); }
@@ -151,9 +142,7 @@
         }
       }
 
-      /* =====================================================
-         MASTER TIMELINE  (100 arbitrary units, scrubbed)
-      ====================================================== */
+      /* ---------------- master timeline -------------------- */
       var tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
@@ -165,18 +154,16 @@
           anticipatePin: 1,
           onToggle: function (self) {
             hero.classList.toggle("is-scene-active", self.isActive);
-            if (!self.isActive) document.getElementById("flow").classList.remove("is-flowing");
+            if (!self.isActive && flowGroup) flowGroup.classList.remove("is-flowing");
           },
           onUpdate: function (self) {
             var p = self.progress;
-            gate(loops.pulseExt, p > 0.04 && p < 0.2, "#pulse-ext, #pulse-ext-dot");
-            gate(loops.pulseInt, p > 0.2 && p < 0.44, "#pulse-int");
-            gate(loops.drip, p > 0.2 && p < 0.52, ".droplet");
-            gate(loops.glow, p > 0.4 && p < 0.5, null);
-            document.getElementById("flow").classList.toggle("is-flowing", self.isActive && p > 0.7);
-            // progress rail
+            gate(loops.pulse, p > 0.04 && p < 0.19, "#ov-pulse, #ov-pulse-dot");
+            gate(loops.retGlow, p > 0.36 && p < 0.46, "#ov-reticle-glow");
+            gate(loops.heater, p > 0.72 && p < 0.82, "#ov-heater-ring");
+            if (flowGroup) flowGroup.classList.toggle("is-flowing", self.isActive && p > 0.72);
             if (railSet) railSet(p);
-            var stage = p < 0.2 ? 1 : p < 0.46 ? 2 : p < 0.7 ? 3 : 4;
+            var stage = p < 0.2 ? 1 : p < 0.46 ? 2 : p < 0.68 ? 3 : 4;
             railSteps.forEach(function (s) {
               s.classList.toggle("is-active", +s.getAttribute("data-rail-step") === stage);
             });
@@ -190,112 +177,70 @@
       /* ---- 0 · settle in ---------------------------------- */
       tl.to("[data-hero-intro]", { autoAlpha: 0, y: -46, duration: 5, ease: "power1.in" }, 0)
         .to("[data-hero-cue]", { autoAlpha: 0, duration: 3 }, 0)
-        .to("[data-hero-rail]", { autoAlpha: 1, duration: 3 }, 2)
-        .fromTo("#backdrop", { x: 10 }, { x: -14, duration: 100, ease: "none" }, 0)
-        .to("#sun-halo", { opacity: 0.55, duration: 20 }, 20)
-        .to("#sun-halo", { opacity: 1, duration: 16 }, 72);
+        .to("[data-hero-rail]", { autoAlpha: 1, duration: 3 }, 2);
 
       /* ---- 01 · THE PROBLEM ------------------------------- */
-      tl.to("[data-caption='1']", CAPTION_IN, 4)
-        .to("#stain", { autoAlpha: 0.85, duration: 6 }, 5)
-        .to(".win-glow", { autoAlpha: 0.25, duration: 8 }, 4)
-        .to("#drips-ext", { autoAlpha: 0.9, duration: 4 }, 8)
+      tl.to(camera, Object.assign({ duration: 18 }, F.s1b), 0)
+        .to("[data-caption='1']", CAPTION_IN, 4)
+        .to("#ov-problem", { autoAlpha: 1, duration: 6 }, 6)
         .to("[data-caption='1']", CAPTION_OUT, 16);
 
-      if (!isMobile) {
-        tl.to(svg, { attr: { viewBox: CAM.problem }, duration: 10, ease: "power1.inOut" }, 4)
-          .to(svg, { attr: { viewBox: CAM.full }, duration: 7, ease: "power1.inOut" }, 19);
-      }
+      /* ---- 01 → 02 · X-RAY WIPE --------------------------- */
+      tl.to(scan, { autoAlpha: 0.95, duration: 1.2 }, 18)
+        .to(scan, { xPercent: 940, duration: 8, ease: "power1.inOut" }, 18)
+        .to(scan, { autoAlpha: 0, duration: 1.2 }, 25.4)
+        .to(stage2, { clipPath: "inset(0% 0% 0% 0%)", duration: 8, ease: "power1.inOut" }, 18)
+        .to("#ov-grid-rect", { autoAlpha: 0.4, duration: 3 }, 18)
+        .to("#ov-grid-rect", { autoAlpha: 0, duration: 3.5 }, 25)
+        .to("#ov-problem", { autoAlpha: 0, duration: 3 }, 18.5)
+        .to(camera, Object.assign({ duration: 8, ease: "power1.inOut" }, F.wipe), 18);
 
       /* ---- 02 · DIAGNOSIS --------------------------------- */
-      // facade parts: panels drift apart and dissolve
-      tl.to("[data-panel='ground']", { autoAlpha: 0, y: 16, duration: 6, ease: "power2.inOut" }, 18.5)
-        .to("[data-panel='1']", { autoAlpha: 0, x: -46, duration: 6, ease: "power2.inOut" }, 19)
-        .to("[data-panel='3']", { autoAlpha: 0, x: 46, duration: 6, ease: "power2.inOut" }, 20)
-        .to("[data-panel='2']", { autoAlpha: 0, y: 24, duration: 6, ease: "power2.inOut" }, 21)
-        .to("[data-panel='2b']", { autoAlpha: 0, y: -30, duration: 6, ease: "power2.inOut" }, 21.5);
-
-      if (isMobile) {
-        tl.to(svg, { attr: { viewBox: CAM.lowerM }, duration: 8, ease: "power1.inOut" }, 20);
-      }
-
       tl.to("[data-caption='2']", CAPTION_IN, 21)
-        .to("#puddle", { autoAlpha: 0.5, duration: 4 }, 24)
-        .to("#puddle", { attr: { rx: 24 }, duration: 18 }, 26)
-        .to("#notes", { autoAlpha: 1, duration: 4 }, 26);
+        .to(camera, Object.assign({ duration: 20 }, F.diagB), 26)
+        .fromTo("#ov-reticle",
+          { autoAlpha: 0, scale: 0.55, svgOrigin: "685 419" },
+          { autoAlpha: 1, scale: 1, duration: 3.5, ease: "back.out(1.4)", immediateRender: false }, 31)
+        .to("#ov-tag", { autoAlpha: 1, duration: 2.5 }, 36)
+        .to("[data-caption='2']", CAPTION_OUT, 43);
 
-      // scan traveller
-      var scanPath = svg.querySelector("#scan-path");
-      var scanTrail = svg.querySelector("#scan-trail");
-      var scanHead = svg.querySelector("#scan-head");
-      var scanLen = scanPath.getTotalLength();
-      scanTrail.style.strokeDasharray = scanLen;
-      scanTrail.style.strokeDashoffset = scanLen;
-      var scanState = { p: 0 };
+      /* ---- 02 → 03 · DIVE INTO THE WALL ------------------- */
+      tl.to("#ov-reticle, #ov-tag", { autoAlpha: 0, duration: 2 }, 46)
+        .to(camera, Object.assign({ duration: 6, ease: "power2.inOut" }, F.joint), 46)
+        .to(stage3, { autoAlpha: 1, duration: 3.5 }, 48.5)
+        .to("[data-caption='3']", CAPTION_IN, 47);
 
-      tl.to("#scan-trail, #scan-head", { autoAlpha: 1, duration: 1.5 }, 29)
-        .to(scanState, {
-          p: 1, duration: 10, ease: "power1.inOut",
-          onUpdate: function () {
-            var pt = scanPath.getPointAtLength(scanState.p * scanLen);
-            scanHead.setAttribute("cx", pt.x);
-            scanHead.setAttribute("cy", pt.y);
-            scanTrail.style.strokeDashoffset = scanLen * (1 - scanState.p);
-          }
-        }, 29.5)
-        .to("#leak-glow", { autoAlpha: 0.55, duration: 1.5 }, 39)
-        .to("#leak-tag", { autoAlpha: 1, duration: 2 }, 39.5)
-        .to("#scan-head", { autoAlpha: 0, duration: 2 }, 40.5)
-        .to("#scan-trail", { autoAlpha: 0, duration: 3 }, 41);
+      /* camera resets invisibly behind the close-up */
+      tl.set(camera, F.rest, 52.4);
 
       /* ---- 03 · THE REPAIR -------------------------------- */
-      tl.to("[data-caption='2']", CAPTION_OUT, 43)
-        .to(svg, {
-          attr: { viewBox: isMobile ? CAM.jointM : CAM.joint },
-          duration: 6, ease: "power2.inOut"
-        }, 43.5)
-        .to("[data-caption='3']", CAPTION_IN, 46)
-        .to("#leak-tag", { autoAlpha: 0, duration: 2 }, 46)
-        .to("#notes", { autoAlpha: 0, duration: 3 }, 44);
+      tl.fromTo("#ov-fit-l",
+          { autoAlpha: 0, scale: 0.5, svgOrigin: "847 402" },
+          { autoAlpha: 1, scale: 1, duration: 3, ease: "back.out(1.5)", immediateRender: false }, 54)
+        .fromTo("#ov-fit-r",
+          { autoAlpha: 0, scale: 0.5, svgOrigin: "1067 402" },
+          { autoAlpha: 1, scale: 1, duration: 3, ease: "back.out(1.5)", immediateRender: false }, 55.5)
+        .to("#ov-sealed", { autoAlpha: 1, duration: 2.5, ease: "power2.out" }, 59.5)
+        .to("#ov-fit-l, #ov-fit-r", { autoAlpha: 0.5, duration: 3 }, 62)
+        .to("[data-caption='3']", CAPTION_OUT, 64);
 
-      tl.to("#cut-marks", { autoAlpha: 1, duration: 1.5 }, 48)
-        .to("#leak-glow", { autoAlpha: 0, duration: 3 }, 49)
-        .to("#pipe-damaged", { y: 42, autoAlpha: 0, duration: 5, ease: "power2.in" }, 50.5)
-        .to("#puddle", { autoAlpha: 0, duration: 4 }, 52)
-        .fromTo("#pipe-new", { y: -54, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, duration: 5, ease: "back.out(1.3)" }, 55)
-        .to("#cut-marks", { autoAlpha: 0, duration: 1.5 }, 56)
-        .to("#fitting-l", { rotation: 100, transformOrigin: "50% 50%", duration: 2.5, ease: "power2.inOut" }, 60)
-        .to("#fitting-r", { rotation: -100, transformOrigin: "50% 50%", duration: 2.5, ease: "power2.inOut" }, 61)
-        .fromTo("#seal-l", { attr: { r: 6 }, autoAlpha: 0.9 },
-          { attr: { r: 20 }, autoAlpha: 0, duration: 2.5, ease: "power1.out", immediateRender: false }, 62.5)
-        .fromTo("#seal-r", { attr: { r: 6 }, autoAlpha: 0.9 },
-          { attr: { r: 20 }, autoAlpha: 0, duration: 2.5, ease: "power1.out", immediateRender: false }, 63.5);
-
-      /* ---- 04 · RESTORED ---------------------------------- */
-      tl.to("[data-caption='3']", CAPTION_OUT, 65)
-        .to(svg, { attr: { viewBox: isMobile ? CAM.fullM : CAM.full }, duration: 6, ease: "power2.inOut" }, 65.5)
+      /* ---- 03 → 04 · RESTORED ----------------------------- */
+      tl.set(stage4, { autoAlpha: 1 }, 63.5)
+        .to("#ov-fit-l, #ov-fit-r, #ov-sealed", { autoAlpha: 0, duration: 2 }, 65)
+        .to(stage3, { autoAlpha: 0, duration: 5, ease: "power1.inOut" }, 66)
+        .to(camera, Object.assign({ duration: 12, ease: "power1.out" }, F.restB), 66)
         .to("[data-caption='4']", CAPTION_IN, 71);
 
-      tl.to("#flow", { autoAlpha: 1, duration: 1 }, 70);
-      var flowPaths = qa(".flow-path");
-      flowPaths.forEach(function (p, i) {
-        tl.fromTo(p, { autoAlpha: 0 }, { autoAlpha: 0.95, duration: 3.5, ease: "power1.in" }, 70.5 + i * 2.2);
+      tl.to("#ov-flow", { autoAlpha: 1, duration: 1 }, 72);
+      qa(".flow-path").forEach(function (path, i) {
+        tl.fromTo(path, { autoAlpha: 0 },
+          { autoAlpha: 0.85, duration: 3.5, ease: "power1.in", immediateRender: false }, 72.5 + i * 2.6);
       });
 
-      tl.to("#heater-dot", { fill: "#3E8FB0", autoAlpha: 1, duration: 3 }, 74)
-        .to("#ambient", { autoAlpha: 1, duration: 8 }, 74)
-        .fromTo("#stream-kitchen", { autoAlpha: 0, scaleY: 0.2, svgOrigin: "500 492" },
-          { autoAlpha: 1, scaleY: 1, duration: 3, ease: "power2.out" }, 79)
-        .fromTo("#stream-bath", { autoAlpha: 0, scaleY: 0.2, svgOrigin: "684 346" },
-          { autoAlpha: 1, scaleY: 1, duration: 2.5, ease: "power2.out" }, 82)
-        .fromTo("#stream-shower", { autoAlpha: 0 }, { autoAlpha: 0.9, duration: 3 }, 84.5)
-        .to("#light-1", { autoAlpha: 0.9, duration: 3 }, 81)
-        .to("#light-2", { autoAlpha: 0.9, duration: 3 }, 84);
-
       /* ---- finale ----------------------------------------- */
-      tl.to("[data-hero-final]", { autoAlpha: 1, y: 0, duration: 5, ease: "power2.out" }, 90)
-        .to({}, { duration: 6 }); // breathing room at the end
+      tl.to(camera, Object.assign({ duration: 14 }, F.settle), 86)
+        .to("[data-hero-final]", { autoAlpha: 1, y: 0, duration: 5, ease: "power2.out" }, 90)
+        .to({}, { duration: 6 });
 
       return function () {
         Object.keys(loops).forEach(function (k) { loops[k].kill(); });

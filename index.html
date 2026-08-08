@@ -16,6 +16,8 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 
   <!-- Self-hosted fonts (no external requests) -->
+  <link rel="preload" href="assets/photo/hero-1-exterior.webp" as="image" type="image/webp">
+  <link rel="preload" href="assets/photo/hero-2-cutaway.webp" as="image" type="image/webp">
   <link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/hanken-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 
@@ -178,406 +180,75 @@
       </div>
 
       <!-- ===========================================================
-           THE SCENE — architectural cross-section, hand drawn
-           All ids referenced from js/hero.js
+           THE SCENE - photoreal stage stack + diagnostic overlay
+           Stages: 1 exterior / 2 cutaway / 3 repair close-up / 4 restored
+           The "camera" is .hero__camera (Ken Burns + focus pushes).
+           Annotations live in two SVG overlays aligned to the photos.
       ============================================================ -->
-      <div class="hero__scene" data-hero-scene>
-        <svg id="house" viewBox="0 0 1180 840" role="img" aria-label="Architectural cross-section of a home showing its plumbing system being diagnosed, repaired and restored" preserveAspectRatio="xMidYMax meet">
-          <defs>
-            <filter id="soft-glow" x="-80%" y="-80%" width="260%" height="260%">
-              <feGaussianBlur stdDeviation="4" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <pattern id="soil" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <line x1="0" y1="0" x2="0" y2="14" stroke="#0C1821" stroke-opacity="0.09" stroke-width="1"/>
-            </pattern>
-            <radialGradient id="warmlight" cx="50%" cy="30%" r="75%">
-              <stop offset="0%" stop-color="#E8C98A" stop-opacity="0.16"/>
-              <stop offset="100%" stop-color="#E8C98A" stop-opacity="0"/>
-            </radialGradient>
-            <linearGradient id="sky-wash" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#F9EFDA" stop-opacity="0.75"/>
-              <stop offset="0.55" stop-color="#F5EDDD" stop-opacity="0.28"/>
-              <stop offset="1" stop-color="#F5EDDD" stop-opacity="0"/>
-            </linearGradient>
-            <radialGradient id="sun-glow" cx="50%" cy="50%" r="50%">
-              <stop offset="0" stop-color="#F2D9A4" stop-opacity="0.5"/>
-              <stop offset="0.6" stop-color="#F2D9A4" stop-opacity="0.16"/>
-              <stop offset="1" stop-color="#F2D9A4" stop-opacity="0"/>
-            </radialGradient>
-            <linearGradient id="siding-shade" x1="0" y1="0" x2="0.65" y2="1">
-              <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.4"/>
-              <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.05"/>
-              <stop offset="1" stop-color="#0C1821" stop-opacity="0.1"/>
-            </linearGradient>
-            <linearGradient id="eave-shadow" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#0C1821" stop-opacity="0.16"/>
-              <stop offset="1" stop-color="#0C1821" stop-opacity="0"/>
-            </linearGradient>
-            <radialGradient id="cast-shadow" cx="50%" cy="50%" r="50%">
-              <stop offset="0" stop-color="#0C1821" stop-opacity="0.22"/>
-              <stop offset="1" stop-color="#0C1821" stop-opacity="0"/>
-            </radialGradient>
-            <linearGradient id="room-warmth" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#E8C98A" stop-opacity="0.07"/>
-              <stop offset="1" stop-color="#E8C98A" stop-opacity="0.015"/>
-            </linearGradient>
-            <radialGradient id="stain-grad" cx="50%" cy="20%" r="80%">
-              <stop offset="0%" stop-color="#33525f" stop-opacity="0.5"/>
-              <stop offset="100%" stop-color="#33525f" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-
-          <g id="scene">
-
-            <!-- ............ backdrop: sky, sun, treelines .............. -->
-            <g id="backdrop">
-              <rect x="0" y="0" width="1180" height="545" fill="url(#sky-wash)"/>
-              <rect id="sun-halo" x="580" y="-80" width="620" height="520" fill="url(#sun-glow)"/>
-              <g fill="#66757B">
-                <path d="M0 542 q40 -46 95 -44 q50 2 78 24 q36 -34 86 -30 q42 4 62 26 q20 -12 42 -10 l0 34 Z" opacity="0.13"/>
-                <path d="M30 542 q50 -30 100 -26 q55 5 80 22 q30 -20 65 -16 l0 20 Z" opacity="0.1"/>
-                <path d="M980 542 q40 -40 96 -38 q56 2 104 30 l0 8 Z" opacity="0.12"/>
-                <path d="M1040 542 q46 -24 140 -20 l0 20 Z" opacity="0.09"/>
+      <div class="hero__scene hero__scene--photo" data-hero-scene>
+        <div class="hero__frame" role="img" aria-label="A home is restored in four stages: the exterior with a hidden leak, a cutaway view revealing the plumbing system, a precision copper repair inside the wall, and finally warm light with water flowing to every fixture.">
+          <div class="hero__camera" data-hero-camera>
+            <img class="hero__stage" data-stage="1" src="assets/photo/hero-1-exterior.webp" alt="" width="1280" height="768" fetchpriority="high">
+            <img class="hero__stage" data-stage="2" src="assets/photo/hero-2-cutaway.webp" alt="" width="1280" height="768">
+            <img class="hero__stage" data-stage="4" src="assets/photo/hero-4-restored.webp" alt="" width="1280" height="768">
+            <svg class="hero__overlay" viewBox="0 0 1280 768" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs>
+                <filter id="ov-glow" x="-80%" y="-80%" width="260%" height="260%">
+                  <feGaussianBlur stdDeviation="4" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <pattern id="ov-grid" width="46" height="46" patternUnits="userSpaceOnUse">
+                  <path d="M46 0 H0 V46" fill="none" stroke="#8ED6E8" stroke-width="1" stroke-opacity="0.5"/>
+                </pattern>
+              </defs>
+              <!-- stage 01: exterior problem cues -->
+              <g id="ov-problem" opacity="0">
+                <ellipse cx="618" cy="562" rx="62" ry="11" fill="#0C1821" opacity="0.32"/>
+                <path d="M604 508 q3 9 -1 18 q-3 8 1 16" fill="none" stroke="#26404d" stroke-width="2.2" opacity="0.6"/>
+                <path d="M634 514 q-2 10 1 19" fill="none" stroke="#26404d" stroke-width="1.8" opacity="0.45"/>
+                <circle id="ov-pulse" cx="618" cy="540" r="12" fill="none" stroke="#B4552D" stroke-width="2.4" opacity="0"/>
+                <circle id="ov-pulse-dot" cx="618" cy="540" r="3.5" fill="#B4552D" opacity="0"/>
               </g>
+              <!-- diagnostic wipe grid -->
+              <rect id="ov-grid-rect" width="1280" height="768" fill="url(#ov-grid)" opacity="0"/>
+              <!-- stage 02: scan reticle + tag -->
+              <g id="ov-reticle" opacity="0">
+                <circle cx="685" cy="419" r="34" fill="none" stroke="#8ED6E8" stroke-width="2"/>
+                <circle cx="685" cy="419" r="54" fill="none" stroke="#8ED6E8" stroke-width="1" opacity="0.5"/>
+                <path d="M685 357 v22 M685 459 v22 M623 419 h22 M725 419 h22" stroke="#8ED6E8" stroke-width="2" fill="none"/>
+                <circle id="ov-reticle-glow" cx="685" cy="419" r="10" fill="#B4552D" opacity="0" filter="url(#ov-glow)"/>
+              </g>
+              <g id="ov-tag" opacity="0">
+                <line x1="685" y1="381" x2="685" y2="330" stroke="#B4552D" stroke-width="1.4"/>
+                <text x="685" y="316" class="svg-label svg-label--warn">LEAK DETECTED</text>
+              </g>
+              <!-- stage 04: water flow + heater -->
+              <g id="ov-flow" opacity="0" fill="none" stroke="#8ED6E8" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+                <path class="flow-path" d="M226 586 H648 V620"/>
+                <path class="flow-path" d="M688 598 V492 H468"/>
+                <path class="flow-path" d="M688 492 V236 H1086"/>
+              </g>
+              <circle id="ov-heater-ring" cx="688" cy="642" r="16" fill="none" stroke="#8ED6E8" stroke-width="2.5" opacity="0"/>
+            </svg>
+          </div>
+          <img class="hero__stage hero__stage--top" data-stage="3" src="assets/photo/hero-3-repair.webp" alt="" width="1280" height="768" loading="lazy">
+          <svg class="hero__overlay hero__overlay--top" viewBox="0 0 1280 768" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <g id="ov-fit-l" opacity="0">
+              <circle cx="847" cy="402" r="27" fill="none" stroke="#F2D9A4" stroke-width="2.5"/>
+              <path d="M847 368 v-13 M847 436 v13" stroke="#F2D9A4" stroke-width="2" fill="none"/>
             </g>
-
-            <!-- ..................... site / ground ..................... -->
-            <g id="site">
-              <rect x="0" y="556" width="92" height="284" fill="#0C1821" opacity="0.06"/>
-              <path d="M0 542 H90 V558 H0" fill="none" stroke="#0C1821" stroke-width="1.4" opacity="0.5"/>
-              <line x1="0" y1="558" x2="90" y2="558" stroke="#0C1821" stroke-width="2"/>
-              <line x1="90" y1="542" x2="300" y2="542" stroke="#0C1821" stroke-width="2"/>
-              <line x1="980" y1="542" x2="1180" y2="542" stroke="#0C1821" stroke-width="2"/>
-              <!-- soil hatch -->
-              <rect x="0" y="558" width="92" height="282" fill="url(#soil)"/>
-              <rect x="90" y="542" width="210" height="298" fill="url(#soil)"/>
-              <rect x="980" y="542" width="200" height="298" fill="url(#soil)"/>
-              <rect x="300" y="716" width="680" height="124" fill="url(#soil)"/>
-              <!-- house cast shadow -->
-              <ellipse cx="700" cy="546" rx="430" ry="11" fill="url(#cast-shadow)"/>
-              <!-- grass ticks -->
-              <g stroke="#52616B" stroke-width="1.2" opacity="0.55">
-                <path d="M140 542 l3 -7 M180 542 l-3 -7 M236 542 l3 -8 M268 542 l-2 -6"/>
-                <path d="M1012 542 l3 -7 M1052 542 l-3 -7 M1150 542 l3 -8"/>
-              </g>
-              <!-- tree, right -->
-              <g fill="#6C7A6B" stroke="none">
-                <circle cx="1092" cy="446" r="34" opacity="0.16"/>
-                <circle cx="1070" cy="462" r="18" opacity="0.12"/>
-                <circle cx="1116" cy="458" r="16" opacity="0.12"/>
-              </g>
-              <g stroke="#52616B" fill="none" opacity="0.7">
-                <path d="M1092 542 C1090 500 1094 486 1092 470" stroke-width="2.5"/>
-                <path d="M1092 500 C1080 492 1074 486 1070 478 M1092 486 C1102 478 1108 472 1112 462" stroke-width="1.6"/>
-                <circle cx="1092" cy="446" r="34" stroke-width="1.6"/>
-                <circle cx="1070" cy="462" r="18" stroke-width="1.2" opacity="0.7"/>
-                <circle cx="1116" cy="458" r="16" stroke-width="1.2" opacity="0.7"/>
-              </g>
+            <g id="ov-fit-r" opacity="0">
+              <circle cx="1067" cy="402" r="27" fill="none" stroke="#F2D9A4" stroke-width="2.5"/>
+              <path d="M1067 368 v-13 M1067 436 v13" stroke="#F2D9A4" stroke-width="2" fill="none"/>
             </g>
-
-            <!-- ................. utilities under the street ............ -->
-            <g id="utilities">
-              <!-- water main -->
-              <line x1="0" y1="640" x2="96" y2="640" stroke="#3E8FB0" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
-              <circle cx="96" cy="640" r="5" fill="none" stroke="#3E8FB0" stroke-width="2.5"/>
-              <!-- sewer lateral (house → street) -->
-              <path id="pipe-sewer" d="M646 676 L300 676 L86 688 L0 690" fill="none" stroke="#52616B" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+            <g id="ov-sealed" opacity="0">
+              <circle cx="957" cy="492" r="17" fill="#0C1821" opacity="0.88"/>
+              <path d="M948 492 l7 7 l13 -14" fill="none" stroke="#8ED6E8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
             </g>
-
-            <!-- ................ house shell (section poché) ............ -->
-            <g id="shell">
-              <!-- interior background -->
-              <rect x="316" y="250" width="648" height="450" fill="#F8F6F1"/>
-              <rect x="316" y="250" width="648" height="290" fill="url(#room-warmth)"/>
-              <!-- warm ambient (stage 04) -->
-              <rect id="ambient" x="316" y="250" width="648" height="450" fill="url(#warmlight)" opacity="0"/>
-              <!-- windows “beyond” (faint) -->
-              <g stroke="#52616B" stroke-width="1.4" fill="none" opacity="0.28">
-                <rect x="420" y="430" width="140" height="76"/>
-                <line x1="490" y1="430" x2="490" y2="506"/>
-                <rect x="700" y="418" width="220" height="118"/>
-                <line x1="810" y1="418" x2="810" y2="536"/>
-                <rect x="380" y="280" width="140" height="80"/>
-                <line x1="450" y1="280" x2="450" y2="360"/>
-                <rect x="800" y="278" width="80" height="62"/>
-              </g>
-              <!-- floor slabs & walls (cut = solid) -->
-              <rect x="300" y="258" width="16" height="458" fill="#0C1821"/>
-              <rect x="964" y="256" width="16" height="460" fill="#0C1821"/>
-              <rect x="316" y="390" width="648" height="13" fill="#0C1821"/>
-              <rect x="316" y="540" width="648" height="14" fill="#0C1821"/>
-              <rect x="296" y="700" width="688" height="16" fill="#0C1821"/>
-              <line x1="316" y1="250" x2="964" y2="250" stroke="#0C1821" stroke-width="3"/>
-              <!-- interior partitions with plumbing chase -->
-              <rect x="636" y="403" width="20" height="137" fill="#0C1821" opacity="0.88"/>
-              <rect x="636" y="250" width="20" height="140" fill="#0C1821" opacity="0.88"/>
-              <!-- roof -->
-              <path d="M268 272 L620 126 L1010 264" fill="none" stroke="#0C1821" stroke-width="13" stroke-linecap="square"/>
-              <path d="M268 282 L620 136 L1010 274" fill="none" stroke="#0C1821" stroke-width="1.4" opacity="0.45"/>
-              <!-- vent through roof -->
-              <line x1="646" y1="145" x2="646" y2="112" stroke="#52616B" stroke-width="5" stroke-linecap="round" opacity="0.65"/>
-              <line x1="640" y1="112" x2="652" y2="112" stroke="#52616B" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
-            </g>
-
-            <!-- .................. furnishings (line hints) ............. -->
-            <g id="rooms" stroke="#52616B" fill="none" stroke-width="1.6" opacity="0.66">
-              <!-- kitchen: counters + sink + upper cabinets -->
-              <path d="M430 540 V506 H640"/>
-              <path d="M430 506 H462 M530 506 H640"/>
-              <path d="M462 506 v8 h68 v-8"/>
-              <line x1="500" y1="514" x2="500" y2="540" opacity="0.7"/>
-              <line x1="560" y1="506" x2="560" y2="540" opacity="0.5"/>
-              <line x1="610" y1="506" x2="610" y2="540" opacity="0.5"/>
-              <!-- kitchen faucet -->
-              <path d="M492 506 v-10 q0 -6 8 -6 h4" stroke-width="2.4"/>
-              <path d="M430 430 h116 v30 h-116 z" opacity="0.55"/>
-              <line x1="488" y1="430" x2="488" y2="460" opacity="0.5"/>
-              <!-- living: table + sofa -->
-              <path d="M700 540 v-26 h96 v26 M712 514 v26 M784 514 v26" opacity="0.5"/>
-              <path d="M842 540 v-22 q0 -8 10 -8 h74 q10 0 10 8 v22 M842 522 h94" opacity="0.55"/>
-              <!-- bedroom: bed + table -->
-              <path d="M360 390 v-22 h150 v22 M360 372 h150" opacity="0.55"/>
-              <path d="M368 368 v-16 h30 M524 390 v-26 h26 v26" opacity="0.45"/>
-              <!-- bath: vanity, mirror, toilet, shower -->
-              <path d="M660 390 v-34 h62 M660 356 h62 v34"/>
-              <path d="M676 348 h32" opacity="0.5"/>
-              <path d="M672 300 h40 v34 h-40 z" opacity="0.45"/>
-              <path d="M744 390 v-16 q0 -8 9 -8 h18 q9 0 9 8 v16 M748 366 a12 10 0 0 1 24 0" opacity="0.55"/>
-              <path d="M820 390 L820 282" stroke-width="1.4" opacity="0.6"/>
-              <path d="M816 388 h140" stroke-width="2.2"/>
-              <!-- basement: shelf -->
-              <path d="M720 700 v-56 h150 v56 M720 672 h150" opacity="0.4"/>
-            </g>
-
-            <!-- ................... water heater ........................ -->
-            <g id="heater">
-              <rect x="430" y="598" width="64" height="96" rx="10" fill="#F4F2ED" stroke="#0C1821" stroke-width="2.5"/>
-              <line x1="430" y1="622" x2="494" y2="622" stroke="#0C1821" stroke-width="1.2" opacity="0.35"/>
-              <rect x="446" y="676" width="32" height="10" rx="2" fill="none" stroke="#0C1821" stroke-width="1.4" opacity="0.5"/>
-              <circle id="heater-dot" cx="462" cy="662" r="4" fill="#52616B" opacity="0.45"/>
-              <line x1="440" y1="694" x2="440" y2="700" stroke="#0C1821" stroke-width="2.5"/>
-              <line x1="484" y1="694" x2="484" y2="700" stroke="#0C1821" stroke-width="2.5"/>
-            </g>
-
-            <!-- ................ supply piping (cold/hot) ............... -->
-            <g id="pipes" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <!-- COLD service + distribution -->
-              <path class="pipe pipe--cold" d="M96 640 H336"/>
-              <rect x="336" y="628" width="26" height="24" rx="3" fill="#F4F2ED" stroke="#0C1821" stroke-width="2"/>
-              <path class="pipe pipe--cold" d="M362 640 H400"/>
-              <path class="pipe pipe--cold" d="M400 640 V600 H446 V598"/>
-              <path class="pipe pipe--cold" d="M400 640 V572 H642 V524"/>
-              <!-- kitchen branch: split around the damaged segment -->
-              <path class="pipe pipe--cold" d="M642 524 H596"/>
-              <path class="pipe pipe--cold" d="M536 524 H496 V510"/>
-              <!-- riser to bath + shower -->
-              <path class="pipe pipe--cold" d="M642 524 V368 H678 V354"/>
-              <path class="pipe pipe--cold" d="M642 368 V300 H852 V288 H864"/>
-              <!-- HOT from heater -->
-              <path class="pipe pipe--hot" d="M478 598 V580 H650 V530 H504 V512"/>
-              <path class="pipe pipe--hot" d="M650 530 V376 H672 V358"/>
-              <path class="pipe pipe--hot" d="M650 376 V308 H846 V296"/>
-              <!-- shower valve -->
-              <circle cx="852" cy="330" r="7" fill="#F8F6F1" stroke="#0C1821" stroke-width="2"/>
-              <circle cx="852" cy="330" r="2.2" fill="#0C1821"/>
-            </g>
-
-            <!-- ..................... drain piping ...................... -->
-            <g id="drains" fill="none" stroke="#52616B" stroke-linecap="round" stroke-linejoin="round" opacity="0.55">
-              <path class="pipe pipe--drain" d="M486 514 V556 M486 556 V588 H646"/>
-              <path class="pipe pipe--drain" d="M686 362 V416 H646"/>
-              <path class="pipe pipe--drain" d="M874 388 V410 H646"/>
-              <path class="pipe pipe--drain" d="M646 410 V676"/>
-              <path class="pipe pipe--drain" d="M646 410 V145" stroke-dasharray="none" opacity="0.8"/>
-            </g>
-
-            <!-- ......... blueprint annotations (stage 02) .............. -->
-            <g id="notes" opacity="0">
-              <g class="note">
-                <line x1="180" y1="628" x2="180" y2="606" stroke="#52616B" stroke-width="1"/>
-                <circle cx="180" cy="640" r="2.4" fill="#52616B"/>
-                <text x="180" y="596" class="svg-label">MAIN SUPPLY</text>
-              </g>
-              <g class="note">
-                <line x1="462" y1="592" x2="462" y2="576" stroke="#52616B" stroke-width="1"/>
-                <text x="462" y="566" class="svg-label">WATER HEATER</text>
-              </g>
-              <g class="note">
-                <line x1="646" y1="440" x2="700" y2="440" stroke="#52616B" stroke-width="1"/>
-                <text x="706" y="444" class="svg-label" text-anchor="start">STACK</text>
-              </g>
-            </g>
-
-            <!-- ........... the leak (problem elements) ................. -->
-            <g id="leak">
-              <!-- damaged segment of the kitchen cold branch -->
-              <g id="pipe-damaged">
-                <line x1="536" y1="524" x2="596" y2="524" class="pipe pipe--cold-line"/>
-                <rect x="556" y="518" width="20" height="12" rx="2" fill="#F4F2ED" stroke="#0C1821" stroke-width="2"/>
-                <path d="M562 518 l4 6 l-3 6 M572 518 l-3 5" stroke="#B4552D" stroke-width="1.6" fill="none"/>
-              </g>
-              <!-- replacement segment (starts hidden above) -->
-              <g id="pipe-new" opacity="0">
-                <line x1="538" y1="524" x2="594" y2="524" stroke="#3E8FB0" stroke-width="5" stroke-linecap="round"/>
-                <g id="fitting-l"><rect x="540" y="517" width="10" height="14" rx="2" fill="#B89A68" stroke="#0C1821" stroke-width="1.4"/></g>
-                <g id="fitting-r"><rect x="582" y="517" width="10" height="14" rx="2" fill="#B89A68" stroke="#0C1821" stroke-width="1.4"/></g>
-              </g>
-              <!-- cut marks (flash during repair) -->
-              <g id="cut-marks" opacity="0" stroke="#0C1821" stroke-width="2">
-                <line x1="538" y1="514" x2="538" y2="534"/>
-                <line x1="594" y1="514" x2="594" y2="534"/>
-              </g>
-              <!-- seal flash rings -->
-              <circle id="seal-l" cx="545" cy="524" r="6" fill="none" stroke="#8ED6E8" stroke-width="2.5" opacity="0"/>
-              <circle id="seal-r" cx="587" cy="524" r="6" fill="none" stroke="#8ED6E8" stroke-width="2.5" opacity="0"/>
-              <!-- droplets + puddle + warning pulse -->
-              <g id="droplets">
-                <circle class="droplet" cx="566" cy="530" r="2.4" fill="#3E8FB0"/>
-                <circle class="droplet" cx="566" cy="530" r="2" fill="#3E8FB0"/>
-              </g>
-              <ellipse id="puddle" cx="566" cy="539" rx="14" ry="2.6" fill="#3E8FB0" opacity="0"/>
-              <circle id="pulse-int" cx="566" cy="524" r="10" fill="none" stroke="#B4552D" stroke-width="1.6" opacity="0"/>
-              <circle id="leak-glow" cx="566" cy="524" r="7" fill="#B4552D" opacity="0" filter="url(#soft-glow)"/>
-              <g id="leak-tag" opacity="0">
-                <line x1="566" y1="512" x2="566" y2="488" stroke="#B4552D" stroke-width="1"/>
-                <text x="566" y="478" class="svg-label svg-label--warn">LEAK DETECTED</text>
-              </g>
-            </g>
-
-            <!-- ............ scan (diagnosis traveller) ................. -->
-            <g id="scan">
-              <path id="scan-path" d="M349 640 H400 V572 H642 V524 H566" fill="none" stroke="none"/>
-              <path id="scan-trail" d="M349 640 H400 V572 H642 V524 H566" fill="none" stroke="#8ED6E8" stroke-width="2.4" stroke-linecap="round" opacity="0"/>
-              <circle id="scan-head" r="5" cx="349" cy="640" fill="#8ED6E8" filter="url(#soft-glow)" opacity="0"/>
-            </g>
-
-            <!-- ............... water flow (stage 04) ................... -->
-            <g id="flow" fill="none" stroke="#8ED6E8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" opacity="0">
-              <path class="flow-path" d="M96 640 H336 M362 640 H400 V572 H642 V524 H496 V510"/>
-              <path class="flow-path" d="M400 640 V600 H446 V598"/>
-              <path class="flow-path flow-path--hot" d="M478 598 V580 H650 V530 H504 V512"/>
-              <path class="flow-path" d="M642 524 V368 H678 V354"/>
-              <path class="flow-path" d="M642 368 V300 H852 V288 H864"/>
-            </g>
-
-            <!-- ............ fixture activation (stage 04) .............. -->
-            <g id="fixtures">
-              <g id="stream-kitchen" opacity="0">
-                <line x1="500" y1="492" x2="500" y2="512" stroke="#8ED6E8" stroke-width="2.6" stroke-linecap="round"/>
-                <ellipse cx="500" cy="513" rx="7" ry="1.8" fill="none" stroke="#8ED6E8" stroke-width="1.4"/>
-              </g>
-              <g id="stream-bath" opacity="0">
-                <line x1="684" y1="346" x2="684" y2="356" stroke="#8ED6E8" stroke-width="2.2" stroke-linecap="round"/>
-              </g>
-              <g id="stream-shower" opacity="0" stroke="#8ED6E8" stroke-width="1.8" stroke-linecap="round">
-                <line x1="866" y1="294" x2="858" y2="330"/>
-                <line x1="870" y1="295" x2="870" y2="334"/>
-                <line x1="874" y1="294" x2="882" y2="330"/>
-                <line x1="878" y1="292" x2="892" y2="326"/>
-              </g>
-              <circle id="light-1" cx="520" cy="418" r="3" fill="#E8C98A" opacity="0" filter="url(#soft-glow)"/>
-              <circle id="light-2" cx="800" cy="264" r="3" fill="#E8C98A" opacity="0" filter="url(#soft-glow)"/>
-            </g>
-
-            <!-- .......... facade (covers section initially) ............ -->
-            <g id="facade">
-              <!-- ground cover: hides everything below grade until diagnosis -->
-              <g class="facade-panel" data-panel="ground">
-                <rect x="0" y="544" width="1180" height="296" fill="#F1EFE8"/>
-                <rect x="0" y="544" width="1180" height="296" fill="url(#soil)" opacity="0.45"/>
-                <line x1="0" y1="558" x2="90" y2="558" stroke="#0C1821" stroke-width="2"/>
-                <path d="M90 544 V558" stroke="#0C1821" stroke-width="1.6" fill="none"/>
-                <rect x="0" y="559" width="90" height="7" fill="#0C1821" opacity="0.12"/>
-              </g>
-              <g class="facade-panel" data-panel="1">
-                <rect x="300" y="256" width="240" height="286" fill="#EDEAE0"/>
-                <g stroke="#0C1821" stroke-opacity="0.08" stroke-width="1">
-                  <line x1="300" y1="292" x2="540" y2="292"/><line x1="300" y1="328" x2="540" y2="328"/>
-                  <line x1="300" y1="364" x2="540" y2="364"/><line x1="300" y1="400" x2="540" y2="400"/>
-                  <line x1="300" y1="436" x2="540" y2="436"/><line x1="300" y1="472" x2="540" y2="472"/>
-                  <line x1="300" y1="508" x2="540" y2="508"/>
-                </g>
-                <rect x="300" y="256" width="240" height="286" fill="url(#siding-shade)"/>
-                <rect x="300" y="256" width="240" height="34" fill="url(#eave-shadow)"/>
-                <g>
-                  <rect x="420" y="430" width="120" height="80" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
-                  <rect class="win-glow" x="424" y="434" width="112" height="72" fill="#E8C98A" opacity="0.13"/>
-                  <polygon points="428,510 462,430 484,430 450,510" fill="#F4F2ED" opacity="0.09"/>
-                  <polygon points="456,510 478,458 488,458 466,510" fill="#F4F2ED" opacity="0.05"/>
-                  <line x1="480" y1="430" x2="480" y2="510" stroke="#0C1821" stroke-width="2"/>
-                  <rect x="380" y="280" width="140" height="84" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
-                  <rect class="win-glow" x="384" y="284" width="132" height="76" fill="#E8C98A" opacity="0.1"/>
-                  <polygon points="390,364 428,280 452,280 414,364" fill="#F4F2ED" opacity="0.09"/>
-                  <line x1="450" y1="280" x2="450" y2="364" stroke="#0C1821" stroke-width="2"/>
-                </g>
-                <!-- stage 01: exterior hint of trouble -->
-                <ellipse id="stain" cx="500" cy="528" rx="100" ry="24" fill="url(#stain-grad)" opacity="0"/>
-                <g id="drips-ext" opacity="0">
-                  <path d="M496 512 q2 6 -1 12 q-2 5 1 12" fill="none" stroke="#33525f" stroke-width="2" opacity="0.55"/>
-                  <path d="M508 514 q-2 7 1 14" fill="none" stroke="#33525f" stroke-width="1.6" opacity="0.4"/>
-                  <g fill="#3E8FB0">
-                    <circle cx="486" cy="524" r="2"/><circle cx="502" cy="532" r="1.7"/><circle cx="516" cy="528" r="1.9"/>
-                  </g>
-                </g>
-                <circle id="pulse-ext" cx="500" cy="522" r="10" fill="none" stroke="#B4552D" stroke-width="2.2" opacity="0"/>
-                <circle id="pulse-ext-dot" cx="500" cy="522" r="3" fill="#B4552D" opacity="0"/>
-              </g>
-              <g class="facade-panel" data-panel="2">
-                <rect x="540" y="256" width="220" height="286" fill="#EDEAE0"/>
-                <polygon points="540,290 620,256 620,126 540,160" fill="#EDEAE0" opacity="0"/>
-                <path d="M292 268 L620 132 L986 260 L986 268 L620 142 L292 276 Z" fill="#EDEAE0" opacity="0"/>
-                <g stroke="#0C1821" stroke-opacity="0.08" stroke-width="1">
-                  <line x1="540" y1="292" x2="760" y2="292"/><line x1="540" y1="328" x2="760" y2="328"/>
-                  <line x1="540" y1="364" x2="760" y2="364"/><line x1="540" y1="400" x2="760" y2="400"/>
-                  <line x1="540" y1="436" x2="760" y2="436"/><line x1="540" y1="472" x2="760" y2="472"/>
-                  <line x1="540" y1="508" x2="760" y2="508"/>
-                </g>
-                <rect x="540" y="256" width="220" height="286" fill="url(#siding-shade)"/>
-                <rect x="540" y="256" width="220" height="34" fill="url(#eave-shadow)"/>
-                <!-- entry door + step + sconce -->
-                <rect x="620" y="446" width="64" height="96" fill="#0C1821"/>
-                <rect x="626" y="452" width="52" height="90" fill="#B89A68" opacity="0.22"/>
-                <circle cx="672" cy="496" r="2.5" fill="#B89A68"/>
-                <rect x="608" y="542" width="88" height="8" fill="#0C1821" opacity="0.85"/>
-                <circle id="sconce" cx="604" cy="452" r="3" fill="#E8C98A" opacity="0.25"/>
-              </g>
-              <g class="facade-panel" data-panel="3">
-                <rect x="760" y="256" width="220" height="286" fill="#EDEAE0"/>
-                <g stroke="#0C1821" stroke-opacity="0.08" stroke-width="1">
-                  <line x1="760" y1="292" x2="980" y2="292"/><line x1="760" y1="328" x2="980" y2="328"/>
-                  <line x1="760" y1="364" x2="980" y2="364"/><line x1="760" y1="400" x2="980" y2="400"/>
-                  <line x1="760" y1="436" x2="980" y2="436"/><line x1="760" y1="472" x2="980" y2="472"/>
-                  <line x1="760" y1="508" x2="980" y2="508"/>
-                </g>
-                <rect x="760" y="256" width="220" height="286" fill="url(#siding-shade)"/>
-                <rect x="760" y="256" width="220" height="34" fill="url(#eave-shadow)"/>
-                <rect x="790" y="420" width="150" height="116" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
-                <rect class="win-glow" x="794" y="424" width="142" height="108" fill="#E8C98A" opacity="0.12"/>
-                <polygon points="800,536 846,420 872,420 826,536" fill="#F4F2ED" opacity="0.09"/>
-                <polygon points="836,536 864,468 874,468 846,536" fill="#F4F2ED" opacity="0.05"/>
-                <line x1="865" y1="420" x2="865" y2="536" stroke="#0C1821" stroke-width="2"/>
-                <rect x="800" y="278" width="84" height="66" fill="#16293A" stroke="#0C1821" stroke-width="2.5"/>
-                <rect class="win-glow" x="804" y="282" width="76" height="58" fill="#E8C98A" opacity="0.1"/>
-                <polygon points="808,344 834,278 852,278 826,344" fill="#F4F2ED" opacity="0.08"/>
-              </g>
-              <!-- gable field above facade panels -->
-              <g class="facade-panel" data-panel="2b">
-                <polygon points="300,256 620,126 980,256" fill="#E9E5DA"/>
-                <polygon points="300,256 620,126 980,256" fill="url(#siding-shade)" opacity="0.7"/>
-                <g stroke="#0C1821" stroke-opacity="0.07" stroke-width="1">
-                  <line x1="620" y1="140" x2="620" y2="250"/>
-                  <line x1="560" y1="166" x2="560" y2="252"/><line x1="680" y1="166" x2="680" y2="252"/>
-                  <line x1="500" y1="192" x2="500" y2="253"/><line x1="740" y1="192" x2="740" y2="253"/>
-                  <line x1="440" y1="216" x2="440" y2="254"/><line x1="800" y1="216" x2="800" y2="254"/>
-                  <line x1="380" y1="242" x2="380" y2="255"/><line x1="860" y1="242" x2="860" y2="255"/>
-                </g>
-                <circle cx="620" cy="196" r="13" fill="none" stroke="#0C1821" stroke-width="2" opacity="0.55"/>
-              </g>
-            </g>
-
-          </g><!-- /scene -->
-        </svg>
+          </svg>
+          <div class="hero__scanline" data-scanline aria-hidden="true"></div>
+          <div class="hero__frame-glaze" aria-hidden="true"></div>
+        </div>
       </div>
 
     </div>
@@ -1055,7 +726,7 @@
   ================================================================= -->
   <section class="cta" aria-labelledby="cta-title">
     <figure class="cta__bg" aria-hidden="true">
-      <img src="assets/img/plate-cta.svg" alt="" width="1680" height="720" loading="lazy">
+      <img src="assets/photo/cta-dusk.webp" alt="" width="1280" height="768" loading="lazy">
     </figure>
     <div class="container cta__inner">
       <p class="eyebrow eyebrow--light" data-reveal>Ready when you are.</p>
