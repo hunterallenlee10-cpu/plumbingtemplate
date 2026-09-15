@@ -31,7 +31,11 @@
     (function (d, S) {
       d.classList.add("js");
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      d.classList.add("is-loading");
+      // has-lenis now: ScrollTrigger caches scroll-behavior when it first
+      // runs, and a cached "smooth" would keep the browser's own fragment
+      // scroll animating past the deep-link landing (main.js drops the
+      // class again if Lenis cannot start)
+      d.classList.add("is-loading", "has-lenis");
       var curtain = !(S && S.intro === false) && !window.location.hash;
       try { if (window.sessionStorage.getItem("cf-intro")) curtain = false; } catch (e) {}
       if (curtain) d.classList.add("is-curtain");

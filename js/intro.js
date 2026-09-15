@@ -37,6 +37,8 @@
   function finish() {
     if (done) return;
     done = true;
+    // the curtain was shown (or skipped): never replay it this session
+    if (wantsCurtain) { try { window.sessionStorage.setItem("cf-intro", "1"); } catch (e) {} }
     docEl.classList.remove("is-loading", "is-curtain");
     if (curtain && curtain.parentNode) curtain.parentNode.removeChild(curtain);
   }
@@ -103,6 +105,7 @@
   /* ---------------- the hero sequence ---------------------- */
   var q = gsap.utils.selector(hero);
   var title = q(".hero__title")[0];
+  if (!title) { clearTimeout(deadline); finish(); return; }
   var frame = q(".hero__frame");
   var group = q(".hero__intro .eyebrow, .hero__lede, .hero__actions, .hero__trust, [data-hero-cue]");
   var photo = hero.querySelector('[data-stage="1"]');
@@ -137,15 +140,19 @@
     return tl;
   }
 
-  // the user scrolls → the entrance is over, immediately (curtain included)
-  var onScroll = function () {
-    if (window.scrollY <= 10) return;
+  // the user scrolls, or reaches for the keyboard (Tab would land on the
+  // skip link under the curtain) → the entrance is over, immediately
+  function skipEntrance() {
     window.removeEventListener("scroll", onScroll);
+    window.removeEventListener("keydown", onKey, true);
     if (curtain && curtain.parentNode) curtain.parentNode.removeChild(curtain);
     if (tl) { if (tl.progress() < 1) tl.progress(1); }
     else finish();
-  };
+  }
+  var onScroll = function () { if (window.scrollY > 10) skipEntrance(); };
+  var onKey = function (e) { if (e.key === "Tab") skipEntrance(); };
   window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("keydown", onKey, true);
 
   var after = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
   var fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
@@ -158,9 +165,11 @@
   var assetsReady = Promise.all([fontsReady, painted]);
 
   function play() {
+    var t = null;
+    try { t = build(); } catch (e) { if (window.console) console.error("entrance:", e); }
     clearTimeout(deadline);
-    var t = build();
-    if (t) t.play();
+    if (!t) { finish(); return; }
+    t.play();
   }
 
   /* ---------------- the curtain ---------------------------- */

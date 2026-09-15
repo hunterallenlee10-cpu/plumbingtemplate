@@ -210,8 +210,24 @@
       var counters = qa("[data-counter]");
       if (counters.length) {
         var counted = false;
+        /* assistive technology keeps the real value: a visually-hidden
+           twin carries it and only the aria-hidden number animates */
+        var twins = [];
+        var ensureTwins = function () {
+          if (twins.length) return;
+          counters.forEach(function (el) {
+            var real = document.createElement("span");
+            real.className = "sr-only";
+            real.textContent = counterFormat(el, counterValue(el));
+            el.parentNode.insertBefore(real, el);
+            el.setAttribute("aria-hidden", "true");
+            twins.push(real);
+          });
+        };
         afterHydration(function () {
-          if (!counted) counters.forEach(function (el) { el.textContent = counterFormat(el, 0); });
+          if (counted) return;
+          ensureTwins();
+          counters.forEach(function (el) { el.textContent = counterFormat(el, 0); });
         });
         ScrollTrigger.create({
           trigger: ".stats__row",
@@ -219,6 +235,7 @@
           once: true,
           onEnter: function () {
             counted = true;
+            ensureTwins();
             counters.forEach(function (el, i) {
               var state = { p: 0 };
               gsap.to(state, {
@@ -229,7 +246,12 @@
             });
           }
         });
-        cleanups.push(function () { counted = true; counters.forEach(counterFinish); });
+        cleanups.push(function () {
+          counted = true;
+          counters.forEach(function (el) { counterFinish(el); el.removeAttribute("aria-hidden"); });
+          twins.forEach(function (t) { if (t.parentNode) t.parentNode.removeChild(t); });
+          twins = [];
+        });
       }
 
       /* ======================================================

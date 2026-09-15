@@ -126,7 +126,8 @@
   var lenis = null;
   var lenisTick = null;
   function startLenis() {
-    if (lenis || reduced() || !window.Lenis || !window.gsap || !window.ScrollTrigger) return;
+    if (lenis) return;
+    if (reduced() || !window.Lenis || !window.gsap || !window.ScrollTrigger) { docEl.classList.remove("has-lenis"); return; }
     docEl.classList.add("has-lenis");
     lenis = new Lenis({
       duration: 1.22,
@@ -173,7 +174,11 @@
     lastY = window.scrollY;
     header.classList.remove("is-hidden");
   }
-  if (window.location.hash) {
+  // (not on reload / back-forward: there the browser restores the saved
+  // position, which overflow-anchor:none already keeps exact)
+  var navEntry = performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
+  var restoring = !!navEntry && (navEntry.type === "reload" || navEntry.type === "back_forward");
+  if (window.location.hash && !restoring) {
     var land = function () { requestAnimationFrame(function () { requestAnimationFrame(landOnHash); }); };
     if (document.readyState === "complete") land(); else window.addEventListener("load", land);
   }
@@ -191,6 +196,7 @@
     var target = id && document.getElementById(id);
     if (!target || id === "main") return;
     e.preventDefault();
+    if (menuOpen) setMenu(false); // the brand rides above the open panel: close first, so focus leaves the dialog and Lenis runs
     if (!target.hasAttribute("tabindex")) {
       target.setAttribute("tabindex", "-1");
       target.addEventListener("blur", function () { target.removeAttribute("tabindex"); }, { once: true });
@@ -391,6 +397,9 @@
       var xTo = null, yTo = null;
       el.addEventListener("mouseenter", function () {
         if (reduced()) return;
+        // a quick re-entry must cancel the spring release, or its final
+        // x:0,y:0 lands after the follow tween has completed
+        gsap.killTweensOf(el, "x,y");
         // fresh setters per hover: the spring release below overwrites them
         xTo = gsap.quickTo(el, "x", { duration: 0.35, ease: "power3.out" });
         yTo = gsap.quickTo(el, "y", { duration: 0.35, ease: "power3.out" });
@@ -421,9 +430,10 @@
     var ghost = document.createElement("span");
     ghost.className = "btn__label-ghost";
     ghost.setAttribute("aria-hidden", "true");
-    ghost.innerHTML = text.innerHTML;
-    // the twin is a visual copy only: drop hydration hooks
-    ghost.querySelectorAll("[data-bind]").forEach(function (n) { n.removeAttribute("data-bind"); });
+    // painted by CSS from data-label: no DOM text, so find-in-page,
+    // select/copy and reader tools see the label once (hydration has
+    // already run, so this carries the bound phone number)
+    ghost.setAttribute("data-label", text.textContent.replace(/\s+/g, " ").trim());
     label.appendChild(text);
     label.appendChild(ghost);
   });
@@ -441,7 +451,12 @@
   function activateService(idx) {
     if (idx === activeIdx) return;
     // the incoming plate arrives from the direction the pointer travelled
-    if (previewFrame) previewFrame.setAttribute("data-dir", idx < activeIdx ? "up" : "down");
+    if (previewFrame) {
+      previewFrame.setAttribute("data-dir", idx < activeIdx ? "up" : "down");
+      // commit the new --from to the idle plates before the class toggles:
+      // in the same recalc the incoming plate would still start from the old side
+      void previewFrame.offsetWidth;
+    }
     activeIdx = idx;
     serviceRows.forEach(function (row) {
       row.classList.toggle("is-active", +row.getAttribute("data-service") === idx);

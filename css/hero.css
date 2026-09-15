@@ -137,13 +137,12 @@
   font-weight: 470;
 }
 /* js/intro.js splits the headline into its visual lines for the
-   load-in; each line rises out of its own overflow mask (with ink room
-   for descenders, see [data-reveal-lines] in main.css) */
+   load-in; each line rises out of its own clip window (the natural line
+   box plus ink room for descenders — a clip-path, not padding, so the
+   split state lays out exactly like the restored markup) */
 .hero__title > .line {
   display: block;
-  overflow: clip;
-  padding-block: 0.1em 0.2em;
-  margin-block: -0.1em -0.2em;
+  clip-path: inset(-0.1em 0 -0.2em);
 }
 .hero__title .line-inner { display: block; }
 .hero__lede {

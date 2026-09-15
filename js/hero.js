@@ -190,8 +190,29 @@
       tl.to("[data-hero-intro]", { opacity: 0, y: -46, duration: 7, ease: "power1.in" }, 2)
         .set("[data-hero-intro]", { pointerEvents: "none" }, 9)
         .set("[data-hero-intro] .hero__actions", { visibility: "hidden" }, 9)
-        .to("[data-hero-cue]", { autoAlpha: 0, duration: 3 }, 0)
-        .to("[data-hero-rail]", { autoAlpha: 1, duration: 3 }, 2);
+        .to("[data-hero-cue]", { autoAlpha: 0, duration: 3 }, 0);
+      var cueTween = tl.recent();
+      tl.to("[data-hero-rail]", { autoAlpha: 1, duration: 3 }, 2);
+
+      /* The load-in hold (html.is-loading → .hero__cue { opacity: 0 },
+         released by js/intro.js) is still on when ScrollTrigger's load
+         refresh renders this timeline at 0, so the cue tween would record
+         its start as 0 → 0 and never show the cue again after a scroll.
+         Once the hold lifts, drop what the tween wrote and let it re-read
+         (the clearProps matters: a scroll during the curtain ends the
+         entrance without intro.js's own clearProps). */
+      var docEl = document.documentElement;
+      var hold = null;
+      if (docEl.classList.contains("is-loading")) {
+        hold = new MutationObserver(function () {
+          if (docEl.classList.contains("is-loading")) return;
+          hold.disconnect();
+          hold = null;
+          gsap.set("[data-hero-cue]", { clearProps: "opacity,visibility" });
+          cueTween.invalidate();
+        });
+        hold.observe(docEl, { attributes: true, attributeFilter: ["class"] });
+      }
 
       /* ---- 01 · THE PROBLEM ------------------------------- */
       tl.to(camera, Object.assign({ duration: 18 }, F.s1b), 0)
@@ -265,6 +286,7 @@
         .to({}, { duration: 6 });
 
       return function () {
+        if (hold) hold.disconnect();
         Object.keys(loops).forEach(function (k) { loops[k].kill(); });
       };
     }

@@ -201,14 +201,13 @@ body::after {
   padding-bottom: 0.5rem;
 }
 
-/* split-line reveal targets. The mask carries ink room above and below
-   (padding pulled back by negative margins so the leading is unchanged)
-   because at line-height 1.04 Fraunces descenders overhang the line box. */
+/* split-line reveal targets. Each line rises out of its own clip window:
+   the natural line box plus ink room above and below (a clip-path, not
+   padding, so the layout is exactly the un-split one — at line-height
+   1.04 Fraunces descenders overhang the line box). */
 [data-reveal-lines] > span {
   display: block;
-  overflow: clip;
-  padding-block: 0.1em 0.2em;
-  margin-block: -0.1em -0.2em;
+  clip-path: inset(-0.1em 0 -0.2em);
 }
 [data-reveal-lines] > span > .line-inner { display: block; }
 
@@ -262,6 +261,7 @@ body::after {
   inset: 0;
   transform: translateY(110%);
 }
+.btn__label-ghost::after { content: attr(data-label); }
 .btn:hover .btn__label-text,
 .btn:focus-visible .btn__label-text { transform: translateY(-110%); }
 .btn:hover .btn__label-ghost,
@@ -325,6 +325,19 @@ body::after {
 .svg-label--map { font-size: 13.5px; letter-spacing: 0.08em; text-transform: none; fill: var(--ink); font-weight: 540; }
 .svg-label[text-anchor="start"] { text-anchor: start; }
 .svg-label[text-anchor="end"] { text-anchor: end; }
+
+/* visually hidden, still read by assistive technology */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 .tick {
   display: inline-block;
@@ -456,8 +469,16 @@ body::after {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
-.menu-open .site-header .brand { color: var(--paper); }
-.menu-open .site-header .brand__word em { color: var(--slate-2); }
+/* the panel (26rem, anchored right) covers the brand only up to
+   26rem + the 1.25rem gutter; wider than that its edge would cross the
+   brand or leave it on the 45% backdrop, so the brand steps aside */
+@media (max-width: 27.25rem) {
+  .menu-open .site-header .brand { color: var(--paper); }
+  .menu-open .site-header .brand__word em { color: var(--slate-2); }
+}
+@media (min-width: 27.26rem) {
+  .menu-open .site-header .brand { visibility: hidden; }
+}
 .nav-toggle[aria-expanded="true"] .nav-toggle__line:nth-child(1) { top: 50%; transform: rotate(45deg); }
 .nav-toggle[aria-expanded="true"] .nav-toggle__line:nth-child(2) { top: 50%; transform: rotate(-45deg); }
 
@@ -650,6 +671,8 @@ body::after {
 
 /* image mask reveal */
 [data-reveal-mask] { position: relative; overflow: clip; overflow-clip-margin: 6px; }
+/* the frame already clips the scaled image; the figure must not clip the frame's shadow */
+.intro__media[data-reveal-mask] { overflow: visible; }
 .work__item[data-reveal-mask] .work__media { will-change: transform; }
 
 /* --- Services ---------------------------------------------- */
@@ -753,6 +776,11 @@ body::after {
   object-fit: cover;
   opacity: 0;
   transform: translateY(var(--from)) scale(1.1);
+  /* idle plates snap when --from flips; only the active/leaving pair animates transform */
+  transition: opacity 0.5s var(--ease-out);
+}
+.services__preview-frame img.is-active,
+.services__preview-frame img.is-leaving {
   transition: opacity 0.5s var(--ease-out), transform 0.95s var(--ease-out);
 }
 .services__preview-frame img.is-leaving {
@@ -1412,7 +1440,8 @@ body::after {
    intro.js (or by the bootstrap's safety timeout). */
 .is-loading .hero__intro > *,
 .is-loading .hero__cue { opacity: 0; }
-.is-loading .hero__frame { --veil: 1; }
+.is-loading .hero__frame { --veil: 1; will-change: transform; } /* settle on a fixed raster scale */
+.is-loading .hero__frame::after { will-change: opacity; }        /* the veil fades on its own layer */
 
 .curtain {
   position: fixed;
