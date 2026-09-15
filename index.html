@@ -15,6 +15,27 @@
 
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 
+  <!-- Business configuration loads first (tiny, synchronous) so the
+       motion bootstrap below can read SITE.intro -->
+  <script src="js/config.js"></script>
+
+  <!-- Motion bootstrap: mark JS support before first paint so reveal
+       targets never flash, and hold the hero for its load-in (js/intro.js):
+         .is-loading  hero + header wait for the entrance sequence
+         .is-curtain  brand-mark curtain, first visit of the session only
+       The timeout is a safety net if the scripts fail to load. -->
+  <script>
+    (function (d, S) {
+      d.classList.add("js");
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      d.classList.add("is-loading");
+      var curtain = !(S && S.intro === false) && !window.location.hash;
+      try { if (window.sessionStorage.getItem("cf-intro")) curtain = false; } catch (e) {}
+      if (curtain) d.classList.add("is-curtain");
+      setTimeout(function () { d.classList.remove("is-loading", "is-curtain"); }, 4000);
+    })(document.documentElement, window.SITE);
+  </script>
+
   <!-- Self-hosted fonts (no external requests) -->
   <link rel="preload" href="assets/photo/hero-1-exterior.webp" as="image" type="image/webp">
   <link rel="preload" href="assets/photo/hero-2-cutaway.webp" as="image" type="image/webp">
@@ -55,6 +76,17 @@
 <body>
 
   <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Curtain — first-visit entrance: the mark draws itself, then the
+       curtain lifts to reveal the hero (js/intro.js, SITE.intro to disable) -->
+  <div class="curtain" data-curtain aria-hidden="true">
+    <div class="curtain__mark">
+      <svg viewBox="0 0 40 40">
+        <path class="curtain__pipe" d="M8 30 L8 16 Q8 10 14 10 L30 10" pathLength="1"/>
+        <path class="curtain__drop" d="M27 20 q5 6.2 5 9.4 a5 5 0 0 1 -10 0 q0 -3.2 5 -9.4 Z"/>
+      </svg>
+    </div>
+  </div>
 
   <!-- Page water gauge — fills as the page scrolls (js/scrollfx.js) -->
   <div class="page-gauge" data-page-gauge aria-hidden="true">
@@ -288,7 +320,7 @@
   ================================================================= -->
   <section class="stats" aria-label="Company statistics">
     <div class="container">
-      <dl class="stats__row">
+      <dl class="stats__row" data-reveal-group>
         <div class="stats__item" data-reveal>
           <dt class="stats__label">Years experience</dt>
           <dd class="stats__value"><span data-counter data-target="20">0</span><sup>+</sup></dd>
@@ -358,7 +390,7 @@
   ================================================================= -->
   <section class="intro" id="about" aria-labelledby="intro-title">
     <div class="container intro__grid">
-      <div class="intro__copy">
+      <div class="intro__copy" data-reveal-group>
         <p class="eyebrow" data-reveal>Local plumbers. Higher standards.</p>
         <h2 id="intro-title" class="h2" data-reveal-lines>
           <span>Plumbing you shouldn't</span>
@@ -368,7 +400,9 @@
         <a class="link-arrow" href="#services" data-reveal>Explore our services</a>
       </div>
       <figure class="intro__media" data-reveal-mask>
-        <img src="assets/img/plate-intro.svg" alt="Illustration of a precisely installed home mechanical room: water heater, manifold and neatly routed supply lines" width="960" height="1200" loading="lazy" data-parallax-img>
+        <div class="intro__frame">
+          <img src="assets/img/plate-intro.svg" alt="Illustration of a precisely installed home mechanical room: water heater, manifold and neatly routed supply lines" width="960" height="1200" loading="lazy" data-parallax-img>
+        </div>
         <figcaption class="intro__caption"><span class="tick"></span>Every line labeled. Every joint tested.</figcaption>
       </figure>
     </div>
@@ -379,13 +413,13 @@
   ================================================================= -->
   <section class="services" id="services" aria-labelledby="services-title">
     <div class="container">
-      <header class="section-head">
+      <header class="section-head" data-reveal-group>
         <p class="eyebrow" data-reveal>What we do</p>
         <h2 id="services-title" class="h2" data-reveal-lines><span>Every system.</span> <span>Every fixture.</span></h2>
       </header>
 
       <div class="services__layout">
-        <ul class="services__index" data-service-index>
+        <ul class="services__index" data-service-index data-reveal-group>
           <li class="services__row" data-service="0" data-reveal>
             <button class="services__trigger" aria-expanded="false">
               <span class="services__num">01</span>
@@ -508,7 +542,7 @@
         <path class="wave wave--3" d="M0 360 C 240 335 480 385 720 360 C 960 335 1200 385 1440 360" fill="none" stroke="#3E8FB0" stroke-width="1"/>
       </svg>
     </div>
-    <div class="container emergency__inner">
+    <div class="container emergency__inner" data-reveal-group>
       <div class="emergency__content">
         <p class="eyebrow eyebrow--light" data-reveal>24/7 Emergency Service</p>
         <h2 id="emergency-title" class="emergency__title" data-reveal-lines><span>When water</span> <span>can't wait.</span></h2>
@@ -529,7 +563,7 @@
   ================================================================= -->
   <section class="process" aria-labelledby="process-title">
     <div class="container">
-      <header class="section-head">
+      <header class="section-head" data-reveal-group>
         <p class="eyebrow" data-reveal>How it works</p>
         <h2 id="process-title" class="h2" data-reveal-lines><span>Four steps.</span> <span>No surprises.</span></h2>
       </header>
@@ -539,7 +573,7 @@
           <line class="process__pipe" x1="0" y1="4" x2="1200" y2="4" stroke-width="2"/>
           <line class="process__pipe-fill" data-process-fill x1="0" y1="4" x2="1200" y2="4" stroke-width="2"/>
         </svg>
-        <ol class="process__steps">
+        <ol class="process__steps" data-reveal-group>
           <li class="process__step" data-reveal>
             <span class="process__dot" aria-hidden="true"></span>
             <span class="process__num">01</span>
@@ -574,7 +608,7 @@
   ================================================================= -->
   <section class="work" id="work" aria-labelledby="work-title">
     <div class="container">
-      <header class="section-head section-head--split">
+      <header class="section-head section-head--split" data-reveal-group>
         <div>
           <p class="eyebrow" data-reveal>Recent work</p>
           <h2 id="work-title" class="h2" data-reveal-lines><span>Problems solved.</span></h2>
@@ -633,11 +667,11 @@
   ================================================================= -->
   <section class="why" id="why" aria-labelledby="why-title">
     <div class="container">
-      <header class="section-head">
+      <header class="section-head" data-reveal-group>
         <p class="eyebrow eyebrow--light" data-reveal>Why choose us</p>
         <h2 id="why-title" class="h2" data-reveal-lines><span>The difference is</span> <span>in the details.</span></h2>
       </header>
-      <ul class="why__ledger">
+      <ul class="why__ledger" data-reveal-group>
         <li class="why__item" data-reveal>
           <span class="why__index">01</span>
           <h3 class="why__name">Upfront Pricing</h3>
@@ -687,7 +721,7 @@
   ================================================================= -->
   <section class="reviews" id="reviews" aria-labelledby="reviews-title">
     <div class="container">
-      <header class="section-head section-head--split">
+      <header class="section-head section-head--split" data-reveal-group>
         <div>
           <p class="eyebrow" data-reveal>Reviews</p>
           <h2 id="reviews-title" class="h2" data-reveal-lines><span>Word gets around.</span></h2>
@@ -732,7 +766,7 @@
   ================================================================= -->
   <section class="areas" id="areas" aria-labelledby="areas-title">
     <div class="container areas__grid">
-      <div class="areas__copy">
+      <div class="areas__copy" data-reveal-group>
         <p class="eyebrow" data-reveal>Service area</p>
         <h2 id="areas-title" class="h2" data-reveal-lines><span>Proudly serving</span> <span data-bind="regionShort">St.&nbsp;Mary's County</span></h2>
         <p class="areas__lede" data-reveal>If you're anywhere in the county — or just across the line — we're already in the neighborhood.</p>
@@ -756,7 +790,7 @@
             </pattern>
             <clipPath id="county"><path d="M150 40 C 210 26 268 44 300 86 C 330 124 336 168 366 204 C 398 242 442 264 452 312 C 462 360 430 400 396 434 C 358 472 320 516 262 524 C 216 530 178 500 158 458 C 136 412 148 366 130 322 C 112 276 84 240 92 190 C 100 138 108 96 150 40 Z"/></clipPath>
           </defs>
-          <path d="M150 40 C 210 26 268 44 300 86 C 330 124 336 168 366 204 C 398 242 442 264 452 312 C 462 360 430 400 396 434 C 358 472 320 516 262 524 C 216 530 178 500 158 458 C 136 412 148 366 130 322 C 112 276 84 240 92 190 C 100 138 108 96 150 40 Z" fill="none" stroke="#52616B" stroke-width="1.5" opacity="0.55"/>
+          <path class="county-outline" d="M150 40 C 210 26 268 44 300 86 C 330 124 336 168 366 204 C 398 242 442 264 452 312 C 462 360 430 400 396 434 C 358 472 320 516 262 524 C 216 530 178 500 158 458 C 136 412 148 366 130 322 C 112 276 84 240 92 190 C 100 138 108 96 150 40 Z" pathLength="1" fill="none" stroke="#52616B" stroke-width="1.5" opacity="0.55"/>
           <g clip-path="url(#county)"><rect width="520" height="560" fill="url(#dotgrid)"/></g>
           <!-- water lines (rivers / bay) -->
           <g fill="none" stroke="#3E8FB0" stroke-width="1.3" opacity="0.5">
@@ -787,7 +821,7 @@
     <figure class="cta__bg" aria-hidden="true">
       <img src="assets/photo/cta-dusk.webp" alt="" width="1280" height="768" loading="lazy">
     </figure>
-    <div class="container cta__inner">
+    <div class="container cta__inner" data-reveal-group>
       <p class="eyebrow eyebrow--light" data-reveal>Ready when you are.</p>
       <h2 id="cta-title" class="cta__title" data-reveal-lines><span>Let's get everything</span> <span>flowing again.</span></h2>
       <p class="cta__lede" data-reveal>Tell us what you're dealing with and we'll help you determine the next step.</p>
@@ -806,7 +840,7 @@
   ================================================================= -->
   <section class="contact" id="contact" aria-labelledby="contact-title">
     <div class="container contact__grid">
-      <div class="contact__info">
+      <div class="contact__info" data-reveal-group>
         <p class="eyebrow" data-reveal>Contact</p>
         <h2 id="contact-title" class="h2" data-reveal-lines><span>Request service.</span></h2>
         <p class="contact__lede" data-reveal>Same-day appointments are often available. For emergencies, skip the form and call — we answer around the clock.</p>
@@ -964,9 +998,9 @@
   <script src="js/vendor/gsap.min.js" defer></script>
   <script src="js/vendor/ScrollTrigger.min.js" defer></script>
   <script src="js/vendor/lenis.min.js" defer></script>
-  <script src="js/config.js" defer></script>
   <script src="js/hero.js" defer></script>
   <script src="js/scrollfx.js" defer></script>
   <script src="js/main.js" defer></script>
+  <script src="js/intro.js" defer></script>
 </body>
 </html>

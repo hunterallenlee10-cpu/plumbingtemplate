@@ -84,7 +84,39 @@ Set `formEndpoint` in `js/config.js` to your handler (Formspree, Basin,
 Netlify Forms, custom endpoint — anything accepting a POST). Left empty, the
 form demos its success state without sending.
 
+### 7. Entrance
+
+The first visit of a session opens with the brand mark drawing itself on a
+paper curtain that lifts to reveal the hero (about a second, never longer
+than two even on a slow connection). Set `intro: false` in `js/config.js` to
+skip it; the hero's line-by-line reveal still plays.
+
 ---
+
+## The motion language
+
+Every animation on the page, CSS or GSAP, speaks one vocabulary (tokens at
+the top of `css/main.css`):
+
+- **Easing** — entrances use expo-out (`--ease-out`,
+  `cubic-bezier(0.16, 1, 0.3, 1)`); hover states settle with a slight
+  overshoot (`--ease-back`); scroll-scrubbed motion is linear so the reader
+  drives it.
+- **Timing** — micro-interactions 150–300 ms, entrances 600–1000 ms, and
+  nothing all at once: reveal targets inside a `[data-reveal-group]` arrive
+  60 ms apart (`--stagger`), eyebrow → headline lines → copy → actions.
+- **Signature moves** — masked line-by-line headline reveals (the hero's
+  lines are split at runtime so every visual line gets its own mask),
+  images that settle from a 1.15× over-zoom as their curtain mask lifts,
+  a first-visit curtain, magnetic CTAs that release on a soft spring,
+  two-layer button labels, direction-aware service previews, a service-area
+  map that draws itself in.
+- **Restraint** — reduced motion turns all of it off and shows the finished
+  page; any scroll during the entrance ends it immediately.
+
+`js/intro.js` owns the entrance (curtain + hero sequence); the `<head>`
+bootstrap in `index.html` marks JS support before first paint so nothing
+flashes, and holds the hero until the sequence plays.
 
 ## The hero animation
 
@@ -117,9 +149,10 @@ css/main.css        design tokens · base · components · sections
 css/hero.css        hero layout + scene styles
 css/effects.css     scroll-choreography layer (gauge, marquee, cursor…)
 js/config.js        ← business configuration (start here)
+js/intro.js         entrance: first-visit curtain + hero load-in
 js/hero.js          hero scroll choreography
 js/scrollfx.js      site-wide scroll choreography (see below)
-js/main.js          nav, reveals, counters, carousel, form, microinteractions
+js/main.js          nav, staggered reveals, counters, carousel, form, microinteractions
 js/vendor/          gsap.min.js, ScrollTrigger.min.js, lenis.min.js
 assets/fonts/       Fraunces + Hanken Grotesk (woff2, variable)
 assets/img/         SVG illustration plates (swappable)
@@ -150,7 +183,8 @@ through the rest of the page (all GSAP ScrollTrigger, no new dependencies):
 `js/scrollfx.js` loads before `js/main.js` and claims the counters and the
 process pipe via `sfx-*` classes on `<html>`; under reduced motion or
 without JavaScript, `main.js`'s IntersectionObserver reveals and static
-fallbacks take over untouched.
+fallbacks take over untouched. Mark any container `data-reveal-group` and
+its `data-reveal*` children arrive one stagger step apart.
 
 ## Accessibility & performance
 

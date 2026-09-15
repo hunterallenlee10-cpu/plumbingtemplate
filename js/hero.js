@@ -99,6 +99,8 @@
       };
 
       /* ---------------- initial state ---------------------- */
+      // keep the moving layers on the compositor for the whole scene
+      gsap.set([camera, stage1, stage2, stage2Reveal, stage3, stage4, scan], { force3D: true });
       gsap.set(camera, F.s1a);
       gsap.set(stage1, { autoAlpha: 1 });
       gsap.set(stage2Reveal, { xPercent: 100 });
@@ -146,7 +148,7 @@
 
       /* ---------------- master timeline -------------------- */
       var tl = gsap.timeline({
-        defaults: { ease: "none", force3D: true },
+        defaults: { ease: "none" },
         scrollTrigger: {
           trigger: "[data-hero-pin]",
           start: "top top",

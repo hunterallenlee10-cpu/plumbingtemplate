@@ -221,15 +221,31 @@
         });
       });
       qa("[data-parallax-img]").forEach(function (img) {
-        gsap.fromTo(img, { yPercent: -7, scale: 1.16 }, {
+        var frame = img.closest("figure") || img;
+        var mask = img.closest("[data-reveal-mask]");
+        // interior drift: pre-scaled so no edges show, y scrubbed by scroll
+        gsap.set(img, { scale: 1.16 });
+        gsap.fromTo(img, { yPercent: -7 }, {
           yPercent: 7,
-          scale: 1.16,
           ease: "none",
           scrollTrigger: {
-            trigger: img.closest("figure") || img,
+            trigger: frame,
             start: "top bottom",
             end: "bottom top",
             scrub: 0.6
+          }
+        });
+        // entrance: the image settles from an over-zoom as its curtain
+        // mask lifts (same trigger geometry as the IntersectionObserver
+        // reveal in main.js: top of the mask crossing 88% of the viewport)
+        gsap.fromTo(img, { scale: 1.34 }, {
+          scale: 1.16,
+          duration: 1.5,
+          ease: "expo.out",
+          scrollTrigger: {
+            trigger: mask || frame,
+            start: "top 88%",
+            once: true
           }
         });
       });
@@ -319,7 +335,7 @@
           onEnter: function () {
             gsap.to(reviewCards, {
               y: 0, autoAlpha: 1, rotation: 0,
-              duration: 1, ease: "power3.out", stagger: 0.09
+              duration: 1.1, ease: "expo.out", stagger: 0.07
             });
           }
         });

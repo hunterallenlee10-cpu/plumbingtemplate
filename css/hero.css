@@ -121,6 +121,10 @@
   font-size: var(--text-hero);
   font-weight: 470;
 }
+/* js/intro.js splits the headline into its visual lines for the
+   load-in; each line rises out of its own overflow mask */
+.hero__title > .line { display: block; overflow: clip; }
+.hero__title .line-inner { display: block; }
 .hero__lede {
   margin-top: 1.9rem;
   font-size: var(--text-lede);

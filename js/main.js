@@ -134,11 +134,13 @@
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
     gsap.ticker.lagSmoothing(0);
+    window.siteLenis = lenis; // js/intro.js holds the page while the curtain is up
   }
   function stopLenis() {
     if (!lenis) return;
     lenis.destroy();
     lenis = null;
+    window.siteLenis = null;
     docEl.classList.remove("has-lenis");
   }
   startLenis();
@@ -152,7 +154,12 @@
     var target = id && document.getElementById(id);
     if (!target) return;
     e.preventDefault();
-    lenis.scrollTo(target, { offset: id === "top" ? 0 : -64 });
+    // a longer expo glide than the wheel: the page travels, it doesn't jump
+    lenis.scrollTo(target, {
+      offset: id === "top" ? 0 : -64,
+      duration: 1.5,
+      easing: function (t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+    });
   });
 
   /* ==========================================================
@@ -215,6 +222,9 @@
     span.appendChild(inner);
   });
 
+  var REVEAL_SEL = "[data-reveal], [data-reveal-lines], [data-reveal-mask]";
+  var STAGGER = 0.06; // seconds between siblings (mirrors --stagger)
+
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
@@ -224,8 +234,36 @@
     });
   }, { rootMargin: "0px 0px -12% 0px", threshold: 0.05 });
 
-  document.querySelectorAll("[data-reveal], [data-reveal-lines], [data-reveal-mask]")
-    .forEach(function (el) { io.observe(el); });
+  /* [data-reveal-group]: the group is observed as one unit and its
+     reveal targets arrive one stagger step apart (--d feeds the CSS
+     transition-delay). Children still below the fold when the group
+     enters fall back to their own observation so nothing animates
+     off-screen. */
+  var grouped = [];
+  var groupIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      groupIO.unobserve(entry.target);
+      var limit = window.innerHeight * 0.94;
+      var slot = 0;
+      Array.prototype.slice.call(entry.target.querySelectorAll(REVEAL_SEL)).forEach(function (el) {
+        if (el.getBoundingClientRect().top < limit) {
+          el.style.setProperty("--d", (slot++ * STAGGER).toFixed(2) + "s");
+          el.classList.add("is-inview");
+        } else {
+          io.observe(el);
+        }
+      });
+    });
+  }, { rootMargin: "0px 0px -12% 0px", threshold: 0 });
+
+  document.querySelectorAll("[data-reveal-group]").forEach(function (group) {
+    Array.prototype.push.apply(grouped, Array.prototype.slice.call(group.querySelectorAll(REVEAL_SEL)));
+    groupIO.observe(group);
+  });
+  document.querySelectorAll(REVEAL_SEL).forEach(function (el) {
+    if (grouped.indexOf(el) === -1) io.observe(el);
+  });
 
   /* nav scrollspy: aria-current on the section in view */
   var spyLinks = Array.prototype.slice.call(document.querySelectorAll(".site-nav__link"));
@@ -283,17 +321,45 @@
   if (window.matchMedia("(pointer: fine)").matches && window.gsap) {
     document.querySelectorAll("[data-magnetic]").forEach(function (el) {
       var strength = 14;
-      var xTo = gsap.quickTo(el, "x", { duration: 0.4, ease: "power3.out" });
-      var yTo = gsap.quickTo(el, "y", { duration: 0.4, ease: "power3.out" });
-      el.addEventListener("mousemove", function (e) {
+      var xTo = null, yTo = null;
+      el.addEventListener("mouseenter", function () {
         if (reduced()) return;
+        // fresh setters per hover: the spring release below overwrites them
+        xTo = gsap.quickTo(el, "x", { duration: 0.45, ease: "power3.out" });
+        yTo = gsap.quickTo(el, "y", { duration: 0.45, ease: "power3.out" });
+      });
+      el.addEventListener("mousemove", function (e) {
+        if (reduced() || !xTo) return;
         var r = el.getBoundingClientRect();
         xTo(((e.clientX - r.left) / r.width - 0.5) * strength);
         yTo(((e.clientY - r.top) / r.height - 0.5) * strength);
       });
-      el.addEventListener("mouseleave", function () { xTo(0); yTo(0); });
+      el.addEventListener("mouseleave", function () {
+        xTo = yTo = null;
+        // settles home on a soft spring: one small overshoot, then rest
+        gsap.to(el, { x: 0, y: 0, duration: 0.85, ease: "elastic.out(1, 0.62)", overwrite: "auto" });
+      });
     });
   }
+
+  /* ==========================================================
+     05b · BUTTON LABELS — split into text + an aria-hidden twin
+     so the label can slide out and back in on hover (CSS).
+  ========================================================== */
+  document.querySelectorAll(".btn__label").forEach(function (label) {
+    if (label.querySelector(".btn__label-text")) return;
+    var text = document.createElement("span");
+    text.className = "btn__label-text";
+    while (label.firstChild) text.appendChild(label.firstChild);
+    var ghost = document.createElement("span");
+    ghost.className = "btn__label-ghost";
+    ghost.setAttribute("aria-hidden", "true");
+    ghost.innerHTML = text.innerHTML;
+    // the twin is a visual copy only: drop hydration hooks
+    ghost.querySelectorAll("[data-bind]").forEach(function (n) { n.removeAttribute("data-bind"); });
+    label.appendChild(text);
+    label.appendChild(ghost);
+  });
 
   /* ==========================================================
      06 · SERVICES INDEX — hover preview (desktop) + accordion
@@ -301,14 +367,22 @@
   var serviceRows = Array.prototype.slice.call(document.querySelectorAll("[data-service]"));
   var previewImgs = Array.prototype.slice.call(document.querySelectorAll("[data-preview-img]"));
   var previewNote = document.querySelector("[data-preview-note]");
+  var previewFrame = document.querySelector(".services__preview-frame");
   var isDesktopSvc = function () { return window.matchMedia("(min-width: 1101px)").matches; };
+  var activeIdx = -1;
 
   function activateService(idx) {
+    if (idx === activeIdx) return;
+    // the incoming plate arrives from the direction the pointer travelled
+    if (previewFrame) previewFrame.setAttribute("data-dir", idx < activeIdx ? "up" : "down");
+    activeIdx = idx;
     serviceRows.forEach(function (row) {
       row.classList.toggle("is-active", +row.getAttribute("data-service") === idx);
     });
     previewImgs.forEach(function (img) {
-      img.classList.toggle("is-active", +img.getAttribute("data-preview-img") === idx);
+      var on = +img.getAttribute("data-preview-img") === idx;
+      img.classList.toggle("is-leaving", !on && img.classList.contains("is-active"));
+      img.classList.toggle("is-active", on);
     });
     var active = serviceRows[idx];
     if (previewNote && active) {
@@ -413,6 +487,7 @@
      09 · SERVICE AREA — list hover highlights map markers
   ========================================================== */
   var markers = Array.prototype.slice.call(document.querySelectorAll("[data-marker]"));
+  markers.forEach(function (m, i) { m.style.setProperty("--i", i); });
   document.querySelectorAll("[data-area]").forEach(function (link) {
     var idx = +link.getAttribute("data-area");
     var marker = markers.filter(function (m) { return +m.getAttribute("data-marker") === idx; })[0];
