@@ -34,11 +34,27 @@
     return Array.prototype.slice.call((root || document).querySelectorAll(sel));
   };
 
-  /* Claim the counters + process pipe from main.js (which runs
-     after this file) whenever motion is allowed at load. */
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    docEl.classList.add("sfx-counters", "sfx-process");
+  /* Claim the counters + process pipe from main.js (which runs after
+     this file) whenever GSAP is here: the reduced-motion branch below
+     settles them itself, so ownership never changes hands at runtime. */
+  docEl.classList.add("sfx-counters", "sfx-process");
+
+  /* main.js hydrates data-target from config.js after this file runs;
+     a static settle must wait for it */
+  function afterHydration(fn) {
+    if (document.readyState !== "loading") setTimeout(fn, 0);
+    else document.addEventListener("DOMContentLoaded", fn);
   }
+
+  /* on paper: final numbers, no pins */
+  window.addEventListener("beforeprint", function () {
+    qa("[data-counter]").forEach(counterFinish);
+    ScrollTrigger.getAll().forEach(function (t) { t.disable(true); });
+  });
+  window.addEventListener("afterprint", function () {
+    ScrollTrigger.getAll().forEach(function (t) { t.enable(); });
+    ScrollTrigger.refresh();
+  });
 
   /* counter formatting mirrors main.js — values are read from the
      DOM on every update so config.js hydration (which runs later)
@@ -56,6 +72,7 @@
   function splitWords(el) {
     if (el.hasAttribute("data-words-ready")) return qa(".w", el);
     var text = el.textContent;
+    el.setAttribute("aria-label", text.replace(/\s+/g, " ").trim()); // read as one sentence
     el.textContent = "";
     var frag = document.createDocumentFragment();
     text.split(/(\s+)/).forEach(function (chunk) {
@@ -75,7 +92,8 @@
 
   mm.add(
     {
-      desktop: "(min-width: 1101px)",
+      // exact complement of the CSS breakpoint (no gap at fractional widths)
+      desktop: "not all and (max-width: 1100px)",
       compact: "(max-width: 1100px)",
       reduce: "(prefers-reduced-motion: reduce)",
       fine: "(pointer: fine)"
@@ -86,14 +104,10 @@
 
       /* -------- reduced motion → settle owned pieces -------- */
       if (c.reduce) {
-        if (docEl.classList.contains("sfx-counters")) {
-          qa("[data-counter]").forEach(counterFinish);
-        }
-        if (docEl.classList.contains("sfx-process")) {
-          var fillStatic = q("[data-process-fill]");
-          if (fillStatic) fillStatic.style.strokeDashoffset = 0;
-          qa(".process__step").forEach(function (s) { s.classList.add("is-passed"); });
-        }
+        afterHydration(function () { qa("[data-counter]").forEach(counterFinish); });
+        var fillStatic = q("[data-process-fill]");
+        if (fillStatic) fillStatic.style.strokeDashoffset = 0;
+        qa(".process__step").forEach(function (s) { s.classList.add("is-passed"); });
         return;
       }
 
@@ -160,18 +174,25 @@
       var mTrack = q("[data-marquee-track]");
       if (marquee && mTrack) {
         marquee.classList.add("marquee--js");
-        var loop = gsap.to(mTrack, { xPercent: -50, ease: "none", duration: 34, repeat: -1 });
+        var loop = gsap.to(mTrack, { xPercent: -50, ease: "none", duration: 34, repeat: -1, paused: true });
         var mDir = 1;
+        // runs only while the strip is on screen
+        ScrollTrigger.create({
+          trigger: marquee, start: "top bottom", end: "bottom top",
+          onToggle: function (self) { loop.paused(!self.isActive); }
+        });
+        var mClamp = c.desktop ? 4 : 2.5;
         ScrollTrigger.create({
           onUpdate: function (self) {
             var v = self.getVelocity();
-            if (Math.abs(v) > 60) {
+            if (Math.abs(v) > 60 && !loop.paused()) {
               mDir = v > 0 ? 1 : -1;
-              loop.timeScale(gsap.utils.clamp(-4, 4, v / 380));
+              loop.timeScale(gsap.utils.clamp(-mClamp, mClamp, v / 380));
             }
           }
         });
         var marqueeTick = function () {
+          if (loop.paused()) return;
           loop.timeScale(gsap.utils.interpolate(loop.timeScale(), mDir, 0.05));
         };
         gsap.ticker.add(marqueeTick);
@@ -182,24 +203,56 @@
       }
 
       /* ======================================================
-         04 · STAT COUNTERS — the numbers are driven by the
-         scrollbar itself instead of a one-shot tween.
+         04 · STAT COUNTERS — count up once as the band arrives,
+         70ms apart, and always land exactly on the real value
+         (a reader pausing mid-scroll never sees "3.6 stars").
       ====================================================== */
-      qa("[data-counter]").forEach(function (el) {
-        var state = { p: 0 };
-        gsap.to(state, {
-          p: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: el.closest(".stats__item") || el,
-            start: "top 94%",
-            end: "top 52%",
-            scrub: 0.5
-          },
-          onUpdate: function () { el.textContent = counterFormat(el, counterValue(el) * state.p); }
+      var counters = qa("[data-counter]");
+      if (counters.length) {
+        var counted = false;
+        /* assistive technology keeps the real value: a visually-hidden
+           twin carries it and only the aria-hidden number animates */
+        var twins = [];
+        var ensureTwins = function () {
+          if (twins.length) return;
+          counters.forEach(function (el) {
+            var real = document.createElement("span");
+            real.className = "sr-only";
+            real.textContent = counterFormat(el, counterValue(el));
+            el.parentNode.insertBefore(real, el);
+            el.setAttribute("aria-hidden", "true");
+            twins.push(real);
+          });
+        };
+        afterHydration(function () {
+          if (counted) return;
+          ensureTwins();
+          counters.forEach(function (el) { el.textContent = counterFormat(el, 0); });
         });
-      });
-      cleanups.push(function () { qa("[data-counter]").forEach(counterFinish); });
+        ScrollTrigger.create({
+          trigger: ".stats__row",
+          start: "top 85%",
+          once: true,
+          onEnter: function () {
+            counted = true;
+            ensureTwins();
+            counters.forEach(function (el, i) {
+              var state = { p: 0 };
+              gsap.to(state, {
+                p: 1, duration: 1.4, delay: i * 0.07, ease: "expo.out",
+                onUpdate: function () { el.textContent = counterFormat(el, counterValue(el) * state.p); },
+                onComplete: function () { counterFinish(el); }
+              });
+            });
+          }
+        });
+        cleanups.push(function () {
+          counted = true;
+          counters.forEach(function (el) { counterFinish(el); el.removeAttribute("aria-hidden"); });
+          twins.forEach(function (t) { if (t.parentNode) t.parentNode.removeChild(t); });
+          twins = [];
+        });
+      }
 
       /* ======================================================
          05 · PARALLAX — depth drift for annotated elements.
@@ -221,18 +274,42 @@
         });
       });
       qa("[data-parallax-img]").forEach(function (img) {
-        gsap.fromTo(img, { yPercent: -7, scale: 1.16 }, {
-          yPercent: 7,
-          scale: 1.16,
+        var frame = img.closest("figure") || img;
+        var mask = img.closest("[data-reveal-mask]");
+        // interior drift: pre-scaled so no edges show, y scrubbed by scroll
+        gsap.set(img, { scale: 1.08 });
+        gsap.fromTo(img, { yPercent: -4 }, {
+          yPercent: 4,
           ease: "none",
           scrollTrigger: {
-            trigger: img.closest("figure") || img,
+            trigger: frame,
             start: "top bottom",
             end: "bottom top",
             scrub: 0.6
           }
         });
+        // entrance: the image settles from an over-zoom as its curtain
+        // mask lifts. The same trigger raises the mask (main.js's
+        // observer would add the class a few frames later)
+        gsap.fromTo(img, { scale: 1.2 }, {
+          scale: 1.08,
+          duration: 1.3,
+          ease: "expo.out",
+          scrollTrigger: {
+            trigger: mask || frame,
+            start: "top 88%",
+            once: true,
+            onEnter: function () { if (mask) mask.classList.add("is-inview"); }
+          }
+        });
       });
+
+      /* emergency waves drift only while the section is on screen */
+      var emergency = q(".emergency");
+      if (emergency) {
+        ScrollTrigger.create({ trigger: emergency, start: "top bottom", end: "bottom top", toggleClass: "is-onscreen" });
+        cleanups.push(function () { emergency.classList.remove("is-onscreen"); });
+      }
 
       /* CTA background: slow push-in while the section passes */
       var ctaImg = q(".cta__bg img");
@@ -307,20 +384,13 @@
       ====================================================== */
       var reviewCards = qa(".reviews__card");
       if (reviewCards.length) {
-        gsap.set(reviewCards, {
-          y: 64,
-          autoAlpha: 0,
-          rotation: function (i) { return i % 2 ? 1.4 : -1.4; }
-        });
+        gsap.set(reviewCards, { y: 48, autoAlpha: 0 });
         ScrollTrigger.create({
           trigger: "[data-reviews]",
           start: "top 88%",
           once: true,
           onEnter: function () {
-            gsap.to(reviewCards, {
-              y: 0, autoAlpha: 1, rotation: 0,
-              duration: 1, ease: "power3.out", stagger: 0.09
-            });
+            gsap.to(reviewCards, { y: 0, autoAlpha: 1, duration: 1, ease: "expo.out", stagger: 0.08 });
           }
         });
       }
@@ -346,27 +416,49 @@
          10 · VELOCITY SKEW — media leans into fast scrolling,
          then settles. The signature "the page is liquid" feel.
       ====================================================== */
-      var skewTargets = qa(".work__media, .reviews__card, .intro__media, .services__preview-frame");
+      var skewTargets = c.desktop && c.fine ? qa(".work__media, .intro__media") : [];
       if (skewTargets.length) {
         var skewSetters = skewTargets.map(function (el) {
           return gsap.quickSetter(el, "skewY", "deg");
         });
+        // only targets on screen are written to (and promoted while they are)
+        var skewInView = [];
+        var skewIO = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            var i = skewTargets.indexOf(e.target);
+            var at = skewInView.indexOf(i);
+            if (e.isIntersecting) {
+              if (at === -1) skewInView.push(i);
+              e.target.style.willChange = "transform";
+            } else {
+              if (at !== -1) skewInView.splice(at, 1);
+              skewSetters[i](0);
+              e.target.style.willChange = "";
+            }
+          });
+        }, { rootMargin: "15% 0px" });
+        skewTargets.forEach(function (el) { skewIO.observe(el); });
         var skewProxy = { s: 0 };
         var applySkew = function () {
-          skewSetters.forEach(function (set) { set(skewProxy.s); });
+          skewInView.forEach(function (i) { skewSetters[i](skewProxy.s); });
         };
-        var clampSkew = gsap.utils.clamp(-3.2, 3.2);
+        var clampSkew = gsap.utils.clamp(-2, 2);
         ScrollTrigger.create({
           onUpdate: function (self) {
-            var s = clampSkew(self.getVelocity() / 400);
+            if (!skewInView.length) return;
+            var s = clampSkew(self.getVelocity() / 550);
             if (Math.abs(s) > Math.abs(skewProxy.s)) {
               skewProxy.s = s;
               gsap.to(skewProxy, {
-                s: 0, duration: 0.75, ease: "power3.out",
+                s: 0, duration: 0.6, ease: "power3.out",
                 overwrite: true, onUpdate: applySkew
               });
             }
           }
+        });
+        cleanups.push(function () {
+          skewIO.disconnect();
+          skewTargets.forEach(function (el, i) { el.style.willChange = ""; skewSetters[i](0); });
         });
       }
 

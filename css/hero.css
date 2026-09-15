@@ -37,6 +37,7 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
+  will-change: opacity; /* scrubbed by hero.js: keep it on its own layer */
   background:
     linear-gradient(90deg,
       rgba(244, 242, 237, 0.96) 0%,
@@ -97,6 +98,20 @@
     rgba(223, 244, 250, 0.95) 97%,
     rgba(223, 244, 250, 0) 100%);
 }
+/* load-in: a paper veil above the photo fades out (js/intro.js) so the
+   photo itself is painted from the first frame */
+.hero__frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  background: var(--paper);
+  opacity: var(--veil, 0);
+}
+/* diagnostic overlay hosts fade as whole layers (see index.html) */
+.hero__fx { will-change: opacity; }
+.hero__overlay .svg-label { text-rendering: geometricPrecision; }
 .hero__frame-glaze {
   position: absolute;
   inset: 0;
@@ -121,6 +136,15 @@
   font-size: var(--text-hero);
   font-weight: 470;
 }
+/* js/intro.js splits the headline into its visual lines for the
+   load-in; each line rises out of its own clip window (the natural line
+   box plus ink room for descenders — a clip-path, not padding, so the
+   split state lays out exactly like the restored markup) */
+.hero__title > .line {
+  display: block;
+  clip-path: inset(-0.1em 0 -0.2em);
+}
+.hero__title .line-inner { display: block; }
 .hero__lede {
   margin-top: 1.9rem;
   font-size: var(--text-lede);
@@ -168,7 +192,8 @@
 .hero__cue svg path {
   animation: cue-drop 2.2s var(--ease-inout) infinite;
 }
-.hero:not(.is-scene-active) .hero__cue svg path { animation-play-state: paused; }
+.hero:not(.is-scene-active) .hero__cue svg path,
+.hero.is-cue-hidden .hero__cue svg path { animation-play-state: paused; }
 @keyframes cue-drop {
   0%, 15% { transform: translateY(-6px); opacity: 0; }
   45%, 70% { transform: none; opacity: 1; }

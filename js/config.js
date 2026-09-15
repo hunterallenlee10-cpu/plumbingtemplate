@@ -48,6 +48,13 @@ window.SITE = {
     { value: 24,   suffix: "/7", label: "Emergency service" }
   ],
 
+  /* ---- Entrance ----------------------------------------------
+     First visit of a session opens with the brand mark drawing
+     itself on a paper curtain that lifts to reveal the hero
+     (about one second). Set to false to skip straight to the
+     hero's line-by-line reveal. */
+  intro: true,
+
   /* ---- Form ------------------------------------------------
      Point this at your form handler (Formspree, Netlify Forms,
      Basin, your own endpoint...). Leave empty to demo the

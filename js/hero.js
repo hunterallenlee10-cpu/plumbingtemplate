@@ -60,7 +60,8 @@
 
   mm.add(
     {
-      desktop: "(min-width: 901px)",
+      // exact complement of the CSS breakpoint (no gap at fractional widths)
+      desktop: "not all and (max-width: 900px)",
       mobile: "(max-width: 900px)",
       reduce: "(prefers-reduced-motion: reduce)"
     },
@@ -99,6 +100,8 @@
       };
 
       /* ---------------- initial state ---------------------- */
+      // keep the moving layers on the compositor for the whole scene
+      gsap.set([camera, stage1, stage2, stage2Reveal, stage3, stage4, scan], { force3D: true });
       gsap.set(camera, F.s1a);
       gsap.set(stage1, { autoAlpha: 1 });
       gsap.set(stage2Reveal, { xPercent: 100 });
@@ -106,7 +109,11 @@
       gsap.set(stage3, { autoAlpha: 0 });
       gsap.set(stage4, { autoAlpha: 0 });
       gsap.set(scan, { autoAlpha: 0, xPercent: 0 });
-      gsap.set("#ov-problem, #ov-grid-rect, #ov-reticle, #ov-tag, #ov-flow, #ov-heater-ring", { autoAlpha: 0 });
+      // overlay hosts fade as whole layers; the grid host keeps its layer
+      // alive (opacity only) so its pattern is not re-rastered on every wipe
+      gsap.set('[data-fx="problem"], [data-fx="reticle"], [data-fx="tag"], [data-fx="flow"]', { autoAlpha: 0 });
+      gsap.set('[data-fx="grid"]', { opacity: 0 });
+      gsap.set("#ov-heater-ring", { autoAlpha: 0 });
       gsap.set("#ov-fit-l, #ov-fit-r, #ov-sealed", { autoAlpha: 0 });
       gsap.set("[data-hero-final]", { autoAlpha: 0, y: 26 });
       gsap.set("[data-hero-rail]", { autoAlpha: 0 });
@@ -121,19 +128,21 @@
       /* ---------------- ambient loops ---------------------- */
       var loops = {};
 
+      // immediateRender: false — a paused loop must not paint its first
+      // frame (the heater ring used to sit on the lawn from first paint)
       loops.pulse = gsap.timeline({ repeat: -1, paused: true })
         .fromTo("#ov-pulse", { attr: { r: 12 }, autoAlpha: 0.95 },
-          { attr: { r: 46 }, autoAlpha: 0, duration: 1.6, ease: "power1.out" })
-        .fromTo("#ov-pulse-dot", { autoAlpha: 0.95 }, { autoAlpha: 0.3, duration: 1.6 }, 0)
+          { attr: { r: 46 }, autoAlpha: 0, duration: 1.6, ease: "power1.out", immediateRender: false })
+        .fromTo("#ov-pulse-dot", { autoAlpha: 0.95 }, { autoAlpha: 0.3, duration: 1.6, immediateRender: false }, 0)
         .to({}, { duration: 0.4 });
 
       loops.retGlow = gsap.timeline({ repeat: -1, yoyo: true, paused: true })
         .fromTo("#ov-reticle-glow", { autoAlpha: 0.3 },
-          { autoAlpha: 0.75, duration: 0.7, ease: "sine.inOut" });
+          { autoAlpha: 0.75, duration: 0.7, ease: "sine.inOut", immediateRender: false });
 
       loops.heater = gsap.timeline({ repeat: -1, paused: true })
         .fromTo("#ov-heater-ring", { attr: { r: 14 }, autoAlpha: 0.85 },
-          { attr: { r: 38 }, autoAlpha: 0, duration: 1.5, ease: "power1.out" })
+          { attr: { r: 38 }, autoAlpha: 0, duration: 1.5, ease: "power1.out", immediateRender: false })
         .to({}, { duration: 0.5 });
 
       function gate(loop, on, el) {
@@ -146,7 +155,7 @@
 
       /* ---------------- master timeline -------------------- */
       var tl = gsap.timeline({
-        defaults: { ease: "none", force3D: true },
+        defaults: { ease: "none" },
         scrollTrigger: {
           trigger: "[data-hero-pin]",
           start: "top top",
@@ -164,6 +173,7 @@
             gate(loops.retGlow, p > 0.36 && p < 0.46, "#ov-reticle-glow");
             gate(loops.heater, p > 0.72 && p < 0.82, "#ov-heater-ring");
             if (flowGroup) flowGroup.classList.toggle("is-flowing", self.isActive && p > 0.72);
+            hero.classList.toggle("is-cue-hidden", p > 0.03); // its drip stops animating once faded
             if (railSet) railSet(p);
             var stage = p < 0.2 ? 1 : p < 0.46 ? 2 : p < 0.68 ? 3 : 4;
             railSteps.forEach(function (s) {
@@ -177,14 +187,37 @@
       var CAPTION_OUT = { autoAlpha: 0, y: -26, duration: 2.5, ease: "power2.in" };
 
       /* ---- 0 · settle in ---------------------------------- */
-      tl.to("[data-hero-intro]", { autoAlpha: 0, y: -46, duration: 5, ease: "power1.in" }, 0)
-        .to("[data-hero-cue]", { autoAlpha: 0, duration: 3 }, 0)
-        .to("[data-hero-rail]", { autoAlpha: 1, duration: 3 }, 2);
+      tl.to("[data-hero-intro]", { opacity: 0, y: -46, duration: 7, ease: "power1.in" }, 2)
+        .set("[data-hero-intro]", { pointerEvents: "none" }, 9)
+        .set("[data-hero-intro] .hero__actions", { visibility: "hidden" }, 9)
+        .to("[data-hero-cue]", { autoAlpha: 0, duration: 3 }, 0);
+      var cueTween = tl.recent();
+      tl.to("[data-hero-rail]", { autoAlpha: 1, duration: 3 }, 2);
+
+      /* The load-in hold (html.is-loading → .hero__cue { opacity: 0 },
+         released by js/intro.js) is still on when ScrollTrigger's load
+         refresh renders this timeline at 0, so the cue tween would record
+         its start as 0 → 0 and never show the cue again after a scroll.
+         Once the hold lifts, drop what the tween wrote and let it re-read
+         (the clearProps matters: a scroll during the curtain ends the
+         entrance without intro.js's own clearProps). */
+      var docEl = document.documentElement;
+      var hold = null;
+      if (docEl.classList.contains("is-loading")) {
+        hold = new MutationObserver(function () {
+          if (docEl.classList.contains("is-loading")) return;
+          hold.disconnect();
+          hold = null;
+          gsap.set("[data-hero-cue]", { clearProps: "opacity,visibility" });
+          cueTween.invalidate();
+        });
+        hold.observe(docEl, { attributes: true, attributeFilter: ["class"] });
+      }
 
       /* ---- 01 · THE PROBLEM ------------------------------- */
       tl.to(camera, Object.assign({ duration: 18 }, F.s1b), 0)
         .to("[data-caption='1']", CAPTION_IN, 4)
-        .to("#ov-problem", { autoAlpha: 1, duration: 6 }, 6)
+        .to('[data-fx="problem"]', { autoAlpha: 1, duration: 6 }, 6)
         .to("[data-caption='1']", CAPTION_OUT, 16);
 
       /* ---- 01 → 02 · X-RAY WIPE --------------------------- */
@@ -199,22 +232,23 @@
         .to(scan, { autoAlpha: 0, duration: 1.2 }, 25.4)
         .to(stage2Reveal, { xPercent: 0, duration: 8, ease: "power1.inOut" }, 18)
         .to(stage2, { xPercent: 0, duration: 8, ease: "power1.inOut" }, 18)
-        .to("#ov-grid-rect", { autoAlpha: 0.4, duration: 3 }, 18)
-        .to("#ov-grid-rect", { autoAlpha: 0, duration: 3.5 }, 25)
-        .to("#ov-problem", { autoAlpha: 0, duration: 3 }, 18.5)
+        .to('[data-fx="grid"]', { opacity: 0.4, duration: 3 }, 18)
+        .to('[data-fx="grid"]', { opacity: 0, duration: 3.5 }, 25)
+        .to('[data-fx="problem"]', { autoAlpha: 0, duration: 3 }, 18.5)
         .to(camera, Object.assign({ duration: 8, ease: "power1.inOut" }, F.wipe), 18);
 
       /* ---- 02 · DIAGNOSIS --------------------------------- */
       tl.to("[data-caption='2']", CAPTION_IN, 21)
         .to(camera, Object.assign({ duration: 20 }, F.diagB), 26)
+        .fromTo('[data-fx="reticle"]', { autoAlpha: 0 }, { autoAlpha: 1, duration: 3.5, immediateRender: false }, 31)
         .fromTo("#ov-reticle",
-          { autoAlpha: 0, scale: 0.55, svgOrigin: "685 419" },
-          { autoAlpha: 1, scale: 1, duration: 3.5, ease: "back.out(1.4)", immediateRender: false }, 31)
-        .to("#ov-tag", { autoAlpha: 1, duration: 2.5 }, 36)
+          { scale: 0.55, svgOrigin: "685 419" },
+          { scale: 1, duration: 3.5, ease: "back.out(1.4)", immediateRender: false }, 31)
+        .to('[data-fx="tag"]', { autoAlpha: 1, duration: 2.5 }, 36)
         .to("[data-caption='2']", CAPTION_OUT, 43);
 
       /* ---- 02 → 03 · DIVE INTO THE WALL ------------------- */
-      tl.to("#ov-reticle, #ov-tag", { autoAlpha: 0, duration: 2 }, 46)
+      tl.to('[data-fx="reticle"], [data-fx="tag"]', { autoAlpha: 0, duration: 2 }, 46)
         .to(camera, Object.assign({ duration: 6, ease: "power2.inOut" }, F.joint), 46)
         .to(stage3, { autoAlpha: 1, duration: 3.5 }, 48.5)
         .to("[data-caption='3']", CAPTION_IN, 47);
@@ -240,7 +274,7 @@
         .to(camera, Object.assign({ duration: 12, ease: "power1.out" }, F.restB), 66)
         .to("[data-caption='4']", CAPTION_IN, 71);
 
-      tl.to("#ov-flow", { autoAlpha: 1, duration: 1 }, 72);
+      tl.to('[data-fx="flow"]', { autoAlpha: 1, duration: 1 }, 72);
       qa(".flow-path").forEach(function (path, i) {
         tl.fromTo(path, { autoAlpha: 0 },
           { autoAlpha: 0.85, duration: 3.5, ease: "power1.in", immediateRender: false }, 72.5 + i * 2.6);
@@ -252,6 +286,7 @@
         .to({}, { duration: 6 });
 
       return function () {
+        if (hold) hold.disconnect();
         Object.keys(loops).forEach(function (k) { loops[k].kill(); });
       };
     }

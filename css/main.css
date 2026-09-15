@@ -45,10 +45,16 @@
   --gutter: clamp(1.25rem, 4vw, 4rem);
   --container: 1440px;
 
-  /* motion */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* motion language — one vocabulary for CSS and GSAP:
+     expo-out entrances (600–1000ms), 150–300ms micro-interactions,
+     siblings 60ms apart, hover states settle with a slight overshoot */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);        /* expo-out */
+  --ease-back: cubic-bezier(0.34, 1.45, 0.64, 1);   /* slight overshoot (hover) */
   --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
   --dur: 0.65s;
+  --dur-micro: 0.24s;
+  --dur-enter: 0.9s;
+  --stagger: 0.06s;
 }
 
 /* ------------------------------------------------------------
@@ -75,6 +81,7 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-anchor: none; /* pinned sections change height; reload must land where it left */
 }
 /* Lenis owns scrolling when active */
 html.has-lenis { scroll-behavior: auto; }
@@ -104,6 +111,10 @@ address, cite, em { font-style: normal; }
   outline-offset: 3px;
   border-radius: 2px;
 }
+/* in-page links move focus to their section (see main.js): no ring
+   around a whole landmark, and room under the header on a native jump */
+main:focus, section:focus { outline: none; }
+section[id] { scroll-margin-top: 4.5rem; }
 
 /* filmic grain over the whole page */
 body::after {
@@ -114,6 +125,9 @@ body::after {
   pointer-events: none;
   opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (pointer: coarse) {
+  body::after { display: none; } /* a full-screen blend every frame is not worth the battery on phones */
 }
 
 .skip-link {
@@ -187,10 +201,13 @@ body::after {
   padding-bottom: 0.5rem;
 }
 
-/* split-line reveal targets */
+/* split-line reveal targets. Each line rises out of its own clip window:
+   the natural line box plus ink room above and below (a clip-path, not
+   padding, so the layout is exactly the un-split one — at line-height
+   1.04 Fraunces descenders overhang the line box). */
 [data-reveal-lines] > span {
   display: block;
-  overflow: clip;
+  clip-path: inset(-0.1em 0 -0.2em);
 }
 [data-reveal-lines] > span > .line-inner { display: block; }
 
@@ -230,9 +247,25 @@ body::after {
 .btn__label {
   position: relative;
   display: inline-block;
-  transition: transform 0.35s var(--ease-out);
+  overflow: clip;
 }
-.btn:hover .btn__label { transform: translateY(-1px); }
+/* js/main.js splits the label into text + an aria-hidden twin: on hover
+   the text rises out of the clip while the twin rises in behind it */
+.btn__label-text,
+.btn__label-ghost {
+  display: block;
+  transition: transform 0.4s var(--ease-out);
+}
+.btn__label-ghost {
+  position: absolute;
+  inset: 0;
+  transform: translateY(110%);
+}
+.btn__label-ghost::after { content: attr(data-label); }
+.btn:hover .btn__label-text,
+.btn:focus-visible .btn__label-text { transform: translateY(-110%); }
+.btn:hover .btn__label-ghost,
+.btn:focus-visible .btn__label-ghost { transform: none; }
 .btn--sm { padding: 0.72rem 1.4rem; font-size: 0.8rem; }
 .btn--ghost {
   background: transparent;
@@ -293,6 +326,19 @@ body::after {
 .svg-label[text-anchor="start"] { text-anchor: start; }
 .svg-label[text-anchor="end"] { text-anchor: end; }
 
+/* visually hidden, still read by assistive technology */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .tick {
   display: inline-block;
   width: 1.25rem;
@@ -319,6 +365,7 @@ body::after {
   box-shadow: 0 1px 0 var(--line);
 }
 .site-header.is-hidden { transform: translateY(-100%); }
+.site-header.is-hidden:focus-within { transform: none; }
 .site-header__inner {
   max-width: var(--container);
   margin-inline: auto;
@@ -413,6 +460,25 @@ body::after {
 .nav-toggle__line:nth-child(1) { top: calc(50% - 4px); }
 .nav-toggle__line:nth-child(2) { top: calc(50% + 4px); }
 .nav-toggle[aria-expanded="true"] { color: var(--paper); }
+/* while the menu is open the header rides above the panel (its own
+   z-index would otherwise trap the close button underneath it) */
+.menu-open .site-header {
+  z-index: 125;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+/* the panel (26rem, anchored right) covers the brand only up to
+   26rem + the 1.25rem gutter; wider than that its edge would cross the
+   brand or leave it on the 45% backdrop, so the brand steps aside */
+@media (max-width: 27.25rem) {
+  .menu-open .site-header .brand { color: var(--paper); }
+  .menu-open .site-header .brand__word em { color: var(--slate-2); }
+}
+@media (min-width: 27.26rem) {
+  .menu-open .site-header .brand { visibility: hidden; }
+}
 .nav-toggle[aria-expanded="true"] .nav-toggle__line:nth-child(1) { top: 50%; transform: rotate(45deg); }
 .nav-toggle[aria-expanded="true"] .nav-toggle__line:nth-child(2) { top: 50%; transform: rotate(-45deg); }
 
@@ -571,10 +637,13 @@ body::after {
 }
 .intro__media { position: relative; }
 .intro__media img { width: 100%; }
-.intro__media,
+/* the parallax layer scales the image; this frame clips it so it can
+   never drift over the caption below */
+.intro__frame { overflow: clip; }
+.intro__frame,
 .work__media,
 .services__preview-frame { position: relative; isolation: isolate; }
-.intro__media::after,
+.intro__frame::after,
 .work__media::after,
 .services__preview-frame::after {
   content: "";
@@ -591,7 +660,7 @@ body::after {
 .work__media img,
 .services__preview-frame img,
 .cta__bg img { filter: saturate(1.07) contrast(1.05); }
-.intro__media,
+.intro__frame,
 .services__preview-frame { box-shadow: 0 32px 70px -34px rgba(12, 24, 33, 0.45); }
 .work__media { box-shadow: 0 24px 56px -30px rgba(12, 24, 33, 0.4); }
 .intro__caption {
@@ -601,10 +670,10 @@ body::after {
 }
 
 /* image mask reveal */
-[data-reveal-mask] { position: relative; overflow: clip; }
-[data-reveal-mask] > figure, [data-reveal-mask] > img, .work__item[data-reveal-mask] .work__media {
-  will-change: transform;
-}
+[data-reveal-mask] { position: relative; overflow: clip; overflow-clip-margin: 6px; }
+/* the frame already clips the scaled image; the figure must not clip the frame's shadow */
+.intro__media[data-reveal-mask] { overflow: visible; }
+.work__item[data-reveal-mask] .work__media { will-change: transform; }
 
 /* --- Services ---------------------------------------------- */
 .services {
@@ -695,6 +764,10 @@ body::after {
   overflow: clip;
   background: var(--ink);
 }
+.services__preview-frame {
+  --from: 6%; /* incoming image arrives from the direction of travel */
+}
+.services__preview-frame[data-dir="up"] { --from: -6%; }
 .services__preview-frame img {
   position: absolute;
   inset: 0;
@@ -702,10 +775,18 @@ body::after {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transform: scale(1.045);
-  transition: opacity 0.55s var(--ease-out), transform 0.9s var(--ease-out);
+  transform: translateY(var(--from)) scale(1.1);
+  /* idle plates snap when --from flips; only the active/leaving pair animates transform */
+  transition: opacity 0.5s var(--ease-out);
 }
-.services__preview-frame img.is-active { opacity: 1; transform: scale(1); }
+.services__preview-frame img.is-active,
+.services__preview-frame img.is-leaving {
+  transition: opacity 0.5s var(--ease-out), transform 0.95s var(--ease-out);
+}
+.services__preview-frame img.is-leaving {
+  transform: translateY(calc(var(--from) * -0.6)) scale(1.03);
+}
+.services__preview-frame img.is-active { opacity: 1; transform: none; }
 .services__preview-note {
   margin-top: 1rem;
   font-size: 0.85rem;
@@ -737,6 +818,7 @@ body::after {
   height: 100%;
   animation: wave-drift 46s ease-in-out infinite alternate;
 }
+.js .emergency:not(.is-onscreen) .emergency__water svg { animation-play-state: paused; }
 .wave { opacity: 0.7; }
 .emergency__inner {
   position: relative;
@@ -1041,6 +1123,32 @@ body::after {
 .areas__list li:nth-child(even) a:hover { padding-left: 2.3rem; }
 .areas__list a:hover::before { transform: translateY(-50%) scale(1); }
 .areas__map svg { width: 100%; height: auto; }
+/* reveal: the county outline draws itself, then the towns arrive 60ms
+   apart. The resting state is a normal declaration on .is-inview; the
+   keyframes (backwards fill) only hold the start state through each
+   delay, so hover transitions and reduced motion are untouched. */
+.js .areas__map[data-reveal] .county-outline { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.js .areas__map[data-reveal].is-inview .county-outline {
+  stroke-dashoffset: 0;
+  animation: county-draw 1.4s var(--ease-out) 0.15s backwards;
+}
+.js .areas__map[data-reveal] .map-marker__dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+}
+.js .areas__map[data-reveal].is-inview .map-marker__dot {
+  transform: none;
+  animation: marker-pop 0.7s var(--ease-out) calc(0.5s + var(--i, 0) * var(--stagger)) backwards;
+}
+.js .areas__map[data-reveal] .map-marker text { fill-opacity: 0; }
+.js .areas__map[data-reveal].is-inview .map-marker text {
+  fill-opacity: 1;
+  animation: marker-fade 0.6s var(--ease-out) calc(0.6s + var(--i, 0) * var(--stagger)) backwards;
+}
+@keyframes county-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes marker-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes marker-fade { from { fill-opacity: 0; } to { fill-opacity: 1; } }
 .map-marker__dot { fill: var(--water); transition: fill 0.3s; }
 .map-marker__ring {
   fill: none;
@@ -1207,7 +1315,8 @@ body::after {
   border-color: var(--ink);
 }
 .toggle input:focus-visible + span { outline: 2px solid var(--water); outline-offset: 2px; }
-.contact__submit { justify-self: start; }
+.contact__submit { justify-self: start; transition: transform 0.15s var(--ease-out), color 0.35s var(--ease-out); }
+.contact__submit:active { transform: scale(0.98); }
 .contact__form-note { font-size: 0.82rem; color: var(--slate); }
 .contact__form-error {
   font-size: 0.88rem;
@@ -1291,16 +1400,23 @@ body::after {
    08 · UTILITIES / RESPONSIVE / MOTION
 ------------------------------------------------------------- */
 
-/* reveal defaults (JS enhances; visible without JS) */
-.js [data-reveal] { opacity: 0; transform: translateY(28px); }
-.js [data-reveal].is-inview { opacity: 1; transform: none; transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
-.js [data-reveal-lines] > span > .line-inner { transform: translateY(110%); }
+/* reveal defaults (JS enhances; visible without JS).
+   --d is the child's slot inside a [data-reveal-group]: js/main.js sets
+   it so siblings arrive one stagger step apart instead of all at once */
+.js [data-reveal] { opacity: 0; transform: translateY(24px); }
+.js [data-reveal].is-inview {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--dur-enter) var(--ease-out) var(--d, 0s),
+              transform var(--dur-enter) var(--ease-out) var(--d, 0s);
+}
+.js [data-reveal-lines] > span > .line-inner { transform: translateY(130%); }
 .js [data-reveal-lines].is-inview > span > .line-inner {
   transform: none;
-  transition: transform 0.9s var(--ease-out);
+  transition: transform 1s var(--ease-out) var(--d, 0s);
 }
-.js [data-reveal-lines].is-inview > span:nth-child(2) > .line-inner { transition-delay: 0.09s; }
-.js [data-reveal-lines].is-inview > span:nth-child(3) > .line-inner { transition-delay: 0.18s; }
+.js [data-reveal-lines].is-inview > span:nth-child(2) > .line-inner { transition-delay: calc(var(--d, 0s) + 0.08s); }
+.js [data-reveal-lines].is-inview > span:nth-child(3) > .line-inner { transition-delay: calc(var(--d, 0s) + 0.16s); }
 .js [data-reveal-mask]::after {
   content: "";
   position: absolute;
@@ -1314,9 +1430,53 @@ body::after {
 }
 .js [data-reveal-mask].is-inview::after {
   transform: scaleY(0);
-  transition: transform 0.95s var(--ease-inout);
+  transition: transform 1s var(--ease-inout) var(--d, 0s);
 }
 .js .intro [data-reveal-mask]::after { background-color: var(--paper); }
+
+/* ---------------- load-in (js/intro.js) ----------------
+   .is-loading holds the hero + header until the entrance plays;
+   .is-curtain shows the first-visit curtain. Both are removed by
+   intro.js (or by the bootstrap's safety timeout). */
+.is-loading .hero__intro > *,
+.is-loading .hero__cue { opacity: 0; }
+.is-loading .hero__frame { --veil: 1; will-change: transform; } /* settle on a fixed raster scale */
+.is-loading .hero__frame::after { will-change: opacity; }        /* the veil fades on its own layer */
+
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 290; /* above the header + menu, under the grain + cursor */
+  display: none;
+  place-items: center;
+  background: var(--paper);
+  will-change: transform;
+}
+.is-curtain .curtain { display: grid; }
+.curtain__mark { width: clamp(4.4rem, 7vw, 6rem); }
+.curtain__mark svg { width: 100%; overflow: visible; }
+.curtain__pipe {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: curtain-pipe 0.5s var(--ease-inout) 0.05s forwards;
+}
+.curtain__drop {
+  fill: var(--water);
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  transform: scale(0);
+  animation: curtain-drop 0.35s var(--ease-back) 0.38s forwards;
+}
+@keyframes curtain-pipe { to { stroke-dashoffset: 0; } }
+@keyframes curtain-drop { to { transform: scale(1); } }
+/* intro.js freezes the drawn mark before lifting: the lift's first frame
+   would otherwise restart the keyframes */
+.curtain.is-drawn .curtain__pipe { animation: none; stroke-dashoffset: 0; }
+.curtain.is-drawn .curtain__drop { animation: none; transform: scale(1); }
 
 /* ---------------- responsive ---------------- */
 @media (max-width: 1100px) {
@@ -1335,6 +1495,8 @@ body::after {
 }
 
 @media (max-width: 860px) {
+  :root { --dur-enter: 0.7s; }
+  .js [data-reveal] { transform: translateY(16px); }
   .stats__row { grid-template-columns: 1fr 1fr; border-top: 0; }
   .stats__item { border-top: 1px solid var(--line); padding-right: 1rem; }
   .stats__item + .stats__item { padding-left: 0; }
@@ -1380,14 +1542,37 @@ body::after {
   .emergency__actions { align-items: flex-start; flex-direction: column; gap: 1.5rem; }
 }
 
+/* ---------------- print ---------------- */
+/* nothing waits for an observer or an entrance on paper */
+@media print {
+  .js [data-reveal], .js [data-reveal-lines] > span > .line-inner { opacity: 1; transform: none; }
+  .js [data-reveal-mask]::after { display: none; }
+  .js .areas__map[data-reveal] .county-outline { stroke-dashoffset: 0; }
+  .js .areas__map[data-reveal] .map-marker__dot { transform: none; }
+  .js .areas__map[data-reveal] .map-marker text { opacity: 0.75; }
+  .is-loading .hero__intro > *, .is-loading .hero__cue { opacity: 1; }
+  .is-loading .hero__frame { --veil: 0; }
+  .js .areas__map[data-reveal] .map-marker text { fill-opacity: 1; }
+  .curtain, .page-gauge, .cursor-dot, .cursor-ring, body::after { display: none !important; }
+}
+
 /* ---------------- reduced motion ---------------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.001s !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001s !important;
+    transition-delay: 0s !important;
   }
   .js [data-reveal], .js [data-reveal-lines] > span > .line-inner { opacity: 1; transform: none; }
   .js [data-reveal-mask]::after { display: none; }
+  .js .areas__map[data-reveal] .county-outline { stroke-dashoffset: 0; animation: none; }
+  .js .areas__map[data-reveal] .map-marker__dot { transform: none; animation: none; }
+  .js .areas__map[data-reveal] .map-marker text { fill-opacity: 1; animation: none; }
+  .is-loading .hero__intro > *,
+  .is-loading .hero__cue { opacity: 1; }
+  .is-loading .hero__frame { --veil: 0; }
+  .curtain { display: none !important; }
 }
