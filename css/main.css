@@ -1482,6 +1482,19 @@ body::after {
   .emergency__actions { align-items: flex-start; flex-direction: column; gap: 1.5rem; }
 }
 
+/* ---------------- print ---------------- */
+/* nothing waits for an observer or an entrance on paper */
+@media print {
+  .js [data-reveal], .js [data-reveal-lines] > span > .line-inner { opacity: 1; transform: none; }
+  .js [data-reveal-mask]::after { display: none; }
+  .js .areas__map[data-reveal] .county-outline { stroke-dashoffset: 0; }
+  .js .areas__map[data-reveal] .map-marker__dot { transform: none; }
+  .js .areas__map[data-reveal] .map-marker text { opacity: 0.75; }
+  .is-loading .hero__intro > *, .is-loading .hero__cue, .is-loading .hero__frame,
+  .is-loading .site-header__inner > * { opacity: 1; }
+  .curtain, .page-gauge, .cursor-dot, .cursor-ring, body::after { display: none !important; }
+}
+
 /* ---------------- reduced motion ---------------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
