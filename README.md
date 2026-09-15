@@ -115,14 +115,42 @@ Adjust the total scroll length via the `end: "+=4400"` (desktop) and
 index.html          all sections, inline hero SVG, JSON-LD schema
 css/main.css        design tokens · base · components · sections
 css/hero.css        hero layout + scene styles
+css/effects.css     scroll-choreography layer (gauge, marquee, cursor…)
 js/config.js        ← business configuration (start here)
 js/hero.js          hero scroll choreography
+js/scrollfx.js      site-wide scroll choreography (see below)
 js/main.js          nav, reveals, counters, carousel, form, microinteractions
-js/vendor/          gsap.min.js, ScrollTrigger.min.js (3.12.5)
+js/vendor/          gsap.min.js, ScrollTrigger.min.js, lenis.min.js
 assets/fonts/       Fraunces + Hanken Grotesk (woff2, variable)
 assets/img/         SVG illustration plates (swappable)
 assets/photo/       hero stage photography + dusk CTA (webp; src/ originals)
 ```
+
+## The scroll choreography
+
+Beyond the hero, `js/scrollfx.js` carries the same cinematic language
+through the rest of the page (all GSAP ScrollTrigger, no new dependencies):
+
+- **Page water gauge** — a sight-glass line on the left edge fills with the
+  overall scroll position, a droplet riding the waterline (desktop).
+- **Statement** — the brand promise pins and illuminates word by word as
+  scroll pours through it.
+- **Service marquee** — an endless strip of services whose speed and
+  direction react to scroll velocity.
+- **Stat counters** — scrubbed directly by the scrollbar, so the numbers
+  climb and settle with the reader.
+- **Process pipeline** — on desktop the four steps pin and travel
+  horizontally while the pipe fills with water alongside.
+- **Parallax system** — annotate any element with `data-parallax="0.2"`
+  (whole-element drift) or any clipped image with `data-parallax-img`
+  (interior drift) and it joins the depth pass.
+- **Velocity skew** — imagery leans into fast scrolling and settles.
+- **Footer reveal, CTA push-in, review card dealing, water-drop cursor.**
+
+`js/scrollfx.js` loads before `js/main.js` and claims the counters and the
+process pipe via `sfx-*` classes on `<html>`; under reduced motion or
+without JavaScript, `main.js`'s IntersectionObserver reveals and static
+fallbacks take over untouched.
 
 ## Accessibility & performance
 

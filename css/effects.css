@@ -1,0 +1,194 @@
+/* ============================================================
+   CLEARFLOW — SCROLL EFFECTS LAYER
+   ------------------------------------------------------------
+   Styles for the site-wide choreography in js/scrollfx.js:
+   page water gauge, statement word reveal, service marquee,
+   horizontal process pipeline, trailing cursor. Everything
+   here is layout-safe without JavaScript and disappears
+   cleanly under prefers-reduced-motion.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   PAGE WATER GAUGE — sight-glass progress on the left edge
+------------------------------------------------------------- */
+.page-gauge {
+  position: fixed;
+  left: calc(var(--gutter) * 0.35);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 90;
+  height: min(16rem, 34vh);
+  display: flex;
+  align-items: stretch;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out);
+  pointer-events: none;
+}
+.page-gauge.is-visible { opacity: 1; }
+.page-gauge__track {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 100%;
+  background: rgba(82, 97, 107, 0.35);
+}
+.page-gauge__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--water);
+  transform-origin: top;
+  transform: scaleY(0);
+  will-change: transform;
+}
+.page-gauge__drop {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 11px;
+  margin-left: -5.5px;
+  will-change: transform;
+}
+.page-gauge__drop svg { width: 100%; fill: var(--water); }
+
+/* ------------------------------------------------------------
+   STATEMENT — word-by-word reveal targets
+------------------------------------------------------------- */
+[data-words] .w { display: inline-block; }
+
+/* ------------------------------------------------------------
+   SERVICE MARQUEE — endless velocity-reactive strip
+------------------------------------------------------------- */
+.marquee {
+  --marquee-gap: clamp(1.6rem, 3vw, 2.8rem);
+  overflow: clip;
+  border-block: 1px solid var(--line);
+  margin-bottom: var(--space-section);
+  padding: clamp(1.2rem, 2.4vw, 2rem) 0;
+}
+.marquee__track {
+  display: flex;
+  gap: 0;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-slide 40s linear infinite;
+}
+/* GSAP drives it when scrollfx is active */
+.marquee--js .marquee__track { animation: none; }
+.marquee__group {
+  display: flex;
+  align-items: center;
+  gap: var(--marquee-gap);
+  padding-right: var(--marquee-gap);
+  white-space: nowrap;
+}
+.marquee__item {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 90;
+  font-size: clamp(1.9rem, 3.8vw, 3.4rem);
+  font-weight: 450;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.marquee__item--ghost {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--slate-2);
+}
+.marquee__drop { width: clamp(0.75rem, 1.3vw, 1.05rem); flex: none; fill: var(--water); opacity: 0.85; }
+@keyframes marquee-slide {
+  to { transform: translateX(-50%); }
+}
+
+/* ------------------------------------------------------------
+   PROCESS — pinned horizontal pipeline (desktop, JS-applied)
+------------------------------------------------------------- */
+.process--flow { overflow: clip; }
+.process--flow .process__track {
+  width: max-content;
+  will-change: transform;
+}
+.process--flow .process__steps {
+  display: flex;
+  gap: 0;
+  width: max-content;
+}
+.process--flow .process__step {
+  flex: none;
+  width: clamp(23rem, 30vw, 32rem);
+  padding-right: clamp(3rem, 6vw, 6rem);
+}
+.process--flow .process__text { max-width: 26ch; }
+
+/* ------------------------------------------------------------
+   CURSOR — trailing water-drop ring (desktop fine pointers)
+------------------------------------------------------------- */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 400;
+  pointer-events: none;
+}
+.cursor-dot {
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: var(--water);
+}
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(62, 143, 176, 0.75);
+  display: grid;
+  place-items: center;
+  transition:
+    width 0.3s var(--ease-out),
+    height 0.3s var(--ease-out),
+    margin 0.3s var(--ease-out),
+    background-color 0.3s var(--ease-out),
+    border-color 0.3s var(--ease-out);
+}
+.cursor-ring__label {
+  font-family: var(--font-sans);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--paper);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.cursor-ring.is-link {
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  background: rgba(62, 143, 176, 0.12);
+}
+.cursor-ring.is-drag {
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  background: rgba(12, 24, 33, 0.85);
+  border-color: transparent;
+}
+.cursor-ring.is-drag .cursor-ring__label { opacity: 1; }
+
+/* ------------------------------------------------------------
+   GUARDS — small screens, coarse pointers, reduced motion
+------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .page-gauge { display: none; }
+}
+@media (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+  .page-gauge,
+  .cursor-dot,
+  .cursor-ring { display: none !important; }
+}

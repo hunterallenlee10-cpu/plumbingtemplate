@@ -25,6 +25,7 @@
 
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/effects.css">
 
   <!-- EDIT: LocalBusiness schema — update for the client's real details -->
   <script type="application/ld+json">
@@ -54,6 +55,16 @@
 <body>
 
   <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Page water gauge — fills as the page scrolls (js/scrollfx.js) -->
+  <div class="page-gauge" data-page-gauge aria-hidden="true">
+    <span class="page-gauge__track">
+      <span class="page-gauge__fill" data-page-gauge-fill></span>
+      <span class="page-gauge__drop" data-page-gauge-drop>
+        <svg viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+      </span>
+    </span>
+  </div>
 
   <!-- ================================================================
        HEADER
@@ -264,10 +275,9 @@
   ================================================================= -->
   <section class="statement" aria-labelledby="statement-title">
     <div class="container">
-      <h2 id="statement-title" class="statement__title" data-reveal-lines>
-        <span>Dependable plumbing.</span>
-        <span>Done right the first&nbsp;time.</span>
-      </h2>
+      <!-- data-words: js/scrollfx.js pins this section and reveals
+           the promise word by word as you scroll through it -->
+      <h2 id="statement-title" class="statement__title" data-words>Dependable plumbing. Done right the first time.</h2>
       <p class="statement__lede" data-reveal>From emergency repairs to complete plumbing installations, our licensed professionals keep your home running exactly as it should.</p>
       <p class="statement__trust" data-reveal>Licensed · Insured · Local</p>
     </div>
@@ -300,6 +310,50 @@
   </section>
 
   <!-- ================================================================
+       SERVICE MARQUEE — endless strip; scroll velocity drives it
+  ================================================================= -->
+  <section class="marquee" aria-hidden="true" data-marquee>
+    <div class="marquee__track" data-marquee-track>
+      <div class="marquee__group">
+        <span class="marquee__item">Emergency Repairs</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item marquee__item--ghost">Leak Detection</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item">Drain Cleaning</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item marquee__item--ghost">Water Heaters</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item">Sewer Repair</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item marquee__item--ghost">Repiping</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item">Fixture Installation</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item marquee__item--ghost">Water Filtration</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+      </div>
+      <div class="marquee__group">
+        <span class="marquee__item">Emergency Repairs</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item marquee__item--ghost">Leak Detection</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item">Drain Cleaning</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item marquee__item--ghost">Water Heaters</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item">Sewer Repair</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item marquee__item--ghost">Repiping</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item">Fixture Installation</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+        <span class="marquee__item marquee__item--ghost">Water Filtration</span>
+        <svg class="marquee__drop" viewBox="0 0 12 16"><path d="M6 0 Q10.6 6.2 10.6 9.4 A4.6 4.6 0 0 1 1.4 9.4 Q1.4 6.2 6 0 Z"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
        COMPANY INTRO
   ================================================================= -->
   <section class="intro" id="about" aria-labelledby="intro-title">
@@ -314,7 +368,7 @@
         <a class="link-arrow" href="#services" data-reveal>Explore our services</a>
       </div>
       <figure class="intro__media" data-reveal-mask>
-        <img src="assets/img/plate-intro.svg" alt="Illustration of a precisely installed home mechanical room: water heater, manifold and neatly routed supply lines" width="960" height="1200" loading="lazy">
+        <img src="assets/img/plate-intro.svg" alt="Illustration of a precisely installed home mechanical room: water heater, manifold and neatly routed supply lines" width="960" height="1200" loading="lazy" data-parallax-img>
         <figcaption class="intro__caption"><span class="tick"></span>Every line labeled. Every joint tested.</figcaption>
       </figure>
     </div>
@@ -447,7 +501,7 @@
        EMERGENCY
   ================================================================= -->
   <section class="emergency" aria-labelledby="emergency-title">
-    <div class="emergency__water" aria-hidden="true">
+    <div class="emergency__water" aria-hidden="true" data-parallax="0.28">
       <svg viewBox="0 0 1440 500" preserveAspectRatio="xMidYMid slice">
         <path class="wave wave--1" d="M0 260 C 240 230 420 290 720 260 C 1020 230 1200 290 1440 260" fill="none" stroke="#3E8FB0" stroke-width="1.4"/>
         <path class="wave wave--2" d="M0 310 C 260 280 460 340 720 310 C 980 280 1180 340 1440 310" fill="none" stroke="#3E8FB0" stroke-width="1.2"/>
@@ -532,7 +586,7 @@
         <!-- EDIT: projects — replace images, titles and locations -->
         <article class="work__item work__item--lg" data-reveal-mask>
           <a class="work__link" href="#contact">
-            <figure class="work__media"><img src="assets/img/plate-work-repipe.svg" alt="Diagram of a whole-home PEX repiping manifold with labeled hot and cold home-run lines" width="1200" height="800" loading="lazy"></figure>
+            <figure class="work__media"><img src="assets/img/plate-work-repipe.svg" alt="Diagram of a whole-home PEX repiping manifold with labeled hot and cold home-run lines" width="1200" height="800" loading="lazy" data-parallax-img></figure>
             <div class="work__meta">
               <h3 class="work__name">Whole-Home Repiping</h3>
               <p class="work__loc">Hollywood, MD</p>
@@ -542,7 +596,7 @@
         </article>
         <article class="work__item" data-reveal-mask>
           <a class="work__link" href="#contact">
-            <figure class="work__media"><img src="assets/img/plate-work-tankless.svg" alt="Diagram of a wall-mounted tankless water heater with isolation valves and neatly routed lines" width="800" height="1066" loading="lazy"></figure>
+            <figure class="work__media"><img src="assets/img/plate-work-tankless.svg" alt="Diagram of a wall-mounted tankless water heater with isolation valves and neatly routed lines" width="800" height="1066" loading="lazy" data-parallax-img></figure>
             <div class="work__meta">
               <h3 class="work__name">Tankless Water Heater Installation</h3>
               <p class="work__loc">California, MD</p>
@@ -552,7 +606,7 @@
         </article>
         <article class="work__item" data-reveal-mask>
           <a class="work__link" href="#contact">
-            <figure class="work__media"><img src="assets/img/plate-work-burst.svg" alt="Detail drawing of a repaired copper supply line with a new brazed coupling" width="1200" height="800" loading="lazy"></figure>
+            <figure class="work__media"><img src="assets/img/plate-work-burst.svg" alt="Detail drawing of a repaired copper supply line with a new brazed coupling" width="1200" height="800" loading="lazy" data-parallax-img></figure>
             <div class="work__meta">
               <h3 class="work__name">Burst Pipe Repair</h3>
               <p class="work__loc">Leonardtown, MD</p>
@@ -562,7 +616,7 @@
         </article>
         <article class="work__item work__item--wide" data-reveal-mask>
           <a class="work__link" href="#contact">
-            <figure class="work__media"><img src="assets/img/plate-work-sewer.svg" alt="Section drawing of a sewer lateral being camera-inspected from a yard cleanout" width="1200" height="800" loading="lazy"></figure>
+            <figure class="work__media"><img src="assets/img/plate-work-sewer.svg" alt="Section drawing of a sewer lateral being camera-inspected from a yard cleanout" width="1200" height="800" loading="lazy" data-parallax-img></figure>
             <div class="work__meta">
               <h3 class="work__name">Main Sewer Repair</h3>
               <p class="work__loc">Lexington Park, MD</p>
@@ -695,7 +749,7 @@
         </ul>
       </div>
       <div class="areas__map" data-reveal aria-hidden="true">
-        <svg viewBox="0 0 520 560" data-areas-map>
+        <svg viewBox="0 0 520 560" data-areas-map data-parallax="0.1">
           <defs>
             <pattern id="dotgrid" width="16" height="16" patternUnits="userSpaceOnUse">
               <circle cx="2" cy="2" r="1.1" fill="#52616B" opacity="0.35"/>
@@ -912,6 +966,7 @@
   <script src="js/vendor/lenis.min.js" defer></script>
   <script src="js/config.js" defer></script>
   <script src="js/hero.js" defer></script>
+  <script src="js/scrollfx.js" defer></script>
   <script src="js/main.js" defer></script>
 </body>
 </html>

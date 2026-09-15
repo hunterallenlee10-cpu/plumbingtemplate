@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [claude/template-2-contents-1cbe0n]
+    branches: [claude/template-2-contents-1cbe0n, claude/tender-bell-g9r215]
   workflow_dispatch:
 
 permissions:

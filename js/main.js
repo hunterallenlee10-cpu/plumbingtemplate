@@ -248,8 +248,10 @@
   Object.keys(spyMap).forEach(function (id) { spyIO.observe(document.getElementById(id)); });
 
   /* ==========================================================
-     04 · COUNTERS — count up when the stat band scrolls in
+     04 · COUNTERS — count up when the stat band scrolls in.
+     Skipped when js/scrollfx.js owns them (scroll-scrubbed).
   ========================================================== */
+  if (!docEl.classList.contains("sfx-counters")) {
   var counterIO = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (!entry.isIntersecting) return;
@@ -273,6 +275,7 @@
     });
   }, { threshold: 0.4 });
   document.querySelectorAll("[data-counter]").forEach(function (el) { counterIO.observe(el); });
+  }
 
   /* ==========================================================
      05 · MAGNETIC CTAS — desktop pointer only, restrained pull
@@ -376,10 +379,13 @@
   }
 
   /* ==========================================================
-     08 · PROCESS — pipe fills with water as you scroll through
+     08 · PROCESS — pipe fills with water as you scroll through.
+     Skipped when js/scrollfx.js owns it (pinned horizontal
+     pipeline on desktop, scrubbed vertical fill below that).
   ========================================================== */
   var processEl = document.querySelector("[data-process]");
-  if (processEl && window.gsap && window.ScrollTrigger && !reduced()) {
+  var sfxProcess = docEl.classList.contains("sfx-process");
+  if (processEl && !sfxProcess && window.gsap && window.ScrollTrigger && !reduced()) {
     var fill = processEl.querySelector("[data-process-fill]");
     var steps = Array.prototype.slice.call(processEl.querySelectorAll(".process__step"));
     gsap.to(fill, {
@@ -397,7 +403,7 @@
         }
       }
     });
-  } else if (processEl) {
+  } else if (processEl && !sfxProcess) {
     var fillStatic = processEl.querySelector("[data-process-fill]");
     if (fillStatic) fillStatic.style.strokeDashoffset = 0;
     processEl.querySelectorAll(".process__step").forEach(function (s) { s.classList.add("is-passed"); });

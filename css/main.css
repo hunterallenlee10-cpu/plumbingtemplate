@@ -727,12 +727,16 @@ body::after {
   inset: -5% -8%;
   opacity: 0.55;
   pointer-events: none;
-  animation: wave-drift 46s ease-in-out infinite alternate;
 }
 @keyframes wave-drift {
   to { transform: translateX(-3.5%); }
 }
-.emergency__water svg { width: 100%; height: 100%; }
+/* drift lives on the svg so scrollfx can parallax the container */
+.emergency__water svg {
+  width: 100%;
+  height: 100%;
+  animation: wave-drift 46s ease-in-out infinite alternate;
+}
 .wave { opacity: 0.7; }
 .emergency__inner {
   position: relative;
@@ -853,11 +857,13 @@ body::after {
   overflow: clip;
   background: var(--ink);
 }
+/* transform belongs to the scroll parallax (js/scrollfx.js);
+   hover feedback is a filter pop so the two never fight */
 .work__media img {
   width: 100%;
-  transition: transform 0.9s var(--ease-out);
+  transition: filter 0.5s var(--ease-out);
 }
-.work__link:hover .work__media img { transform: scale(1.035); }
+.work__link:hover .work__media img { filter: saturate(1.18) contrast(1.07) brightness(1.05); }
 .work__meta {
   display: flex;
   align-items: baseline;
