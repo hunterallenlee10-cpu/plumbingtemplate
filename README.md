@@ -87,9 +87,12 @@ form demos its success state without sending.
 ### 7. Entrance
 
 The first visit of a session opens with the brand mark drawing itself on a
-paper curtain that lifts to reveal the hero (about a second, never longer
-than two even on a slow connection). Set `intro: false` in `js/config.js` to
-skip it; the hero's line-by-line reveal still plays.
+paper curtain that lifts to reveal the hero: headline readable in about a
+second, everything settled by two. The header (and the phone number) is
+never held, scrolling is never locked, and any scroll ends the sequence
+immediately. On a slow connection the page simply appears. Set
+`intro: false` in `js/config.js` to skip the curtain; the hero's
+line-by-line reveal still plays.
 
 ---
 
@@ -104,15 +107,19 @@ the top of `css/main.css`):
   drives it.
 - **Timing** — micro-interactions 150–300 ms, entrances 600–1000 ms, and
   nothing all at once: reveal targets inside a `[data-reveal-group]` arrive
-  60 ms apart (`--stagger`), eyebrow → headline lines → copy → actions.
+  60 ms apart (`--stagger`, capped at five slots), eyebrow → headline lines
+  → copy → actions. Phones get shorter, smaller entrances.
 - **Signature moves** — masked line-by-line headline reveals (the hero's
-  lines are split at runtime so every visual line gets its own mask),
-  images that settle from a 1.15× over-zoom as their curtain mask lifts,
-  a first-visit curtain, magnetic CTAs that release on a soft spring,
+  lines are split at runtime so every visual line gets its own mask; the
+  masks carry ink room so Fraunces descenders are never clipped), images
+  that settle from a 1.2× over-zoom as their curtain mask lifts, a
+  first-visit curtain, magnetic CTAs that release with one soft overshoot,
   two-layer button labels, direction-aware service previews, a service-area
   map that draws itself in.
-- **Restraint** — reduced motion turns all of it off and shows the finished
-  page; any scroll during the entrance ends it immediately.
+- **Restraint** — velocity lean only on the work imagery and only for a
+  mouse; review cards rise without tilting; the stat counters count up once
+  and always land on the real number; reduced motion turns all of it off
+  and shows the finished page.
 
 `js/intro.js` owns the entrance (curtain + hero sequence); the `<head>`
 bootstrap in `index.html` marks JS support before first paint so nothing
@@ -170,14 +177,15 @@ through the rest of the page (all GSAP ScrollTrigger, no new dependencies):
   scroll pours through it.
 - **Service marquee** — an endless strip of services whose speed and
   direction react to scroll velocity.
-- **Stat counters** — scrubbed directly by the scrollbar, so the numbers
-  climb and settle with the reader.
+- **Stat counters** — count up once as the band arrives, 70 ms apart, and
+  always land exactly on the configured value.
 - **Process pipeline** — on desktop the four steps pin and travel
   horizontally while the pipe fills with water alongside.
 - **Parallax system** — annotate any element with `data-parallax="0.2"`
   (whole-element drift) or any clipped image with `data-parallax-img`
   (interior drift) and it joins the depth pass.
-- **Velocity skew** — imagery leans into fast scrolling and settles.
+- **Velocity skew** — the work imagery leans into a fast mouse scroll and
+  settles (desktop only, only while on screen).
 - **Footer reveal, CTA push-in, review card dealing, water-drop cursor.**
 
 `js/scrollfx.js` loads before `js/main.js` and claims the counters and the
@@ -188,9 +196,16 @@ its `data-reveal*` children arrive one stagger step apart.
 
 ## Accessibility & performance
 
-- Semantic landmarks, one `h1`, labeled forms, keyboard-operable menu,
-  accordion and carousel, visible focus states, skip link.
+- Semantic landmarks, one `h1` (it stays in the accessibility tree while
+  the hero story scrubs), labeled forms, keyboard-operable menu, accordion
+  and carousel, visible focus states, skip link. In-page links move focus
+  to their section and update the hash even under smooth scrolling; the
+  header never hides while keyboard focus is inside it.
 - `prefers-reduced-motion` honored everywhere (static hero, no scroll FX).
+- The hero photo is painted from the first frame (the entrance fades a
+  veil above it), so Largest Contentful Paint is not delayed by the
+  choreography; the diagnostic overlay fades per group as compositor
+  layers; ambient loops pause off screen.
 - ~900 KB total page weight (fonts, JS, art and all four hero photographs
   included), no external requests, no layout shift: images carry explicit
   dimensions. Hero transitions are compositor-only (transform/opacity).
