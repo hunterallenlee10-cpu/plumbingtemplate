@@ -53,7 +53,7 @@
 /* ------------------------------------------------------------
    STATEMENT — word-by-word reveal targets
 ------------------------------------------------------------- */
-[data-words] .w { display: inline-block; }
+[data-words] .w { display: inline-block; will-change: opacity; } /* scrubbed while pinned */
 
 /* ------------------------------------------------------------
    SERVICE MARQUEE — endless velocity-reactive strip

@@ -21,6 +21,7 @@
      every [data-bind] / [data-bind-href] element.
   ========================================================== */
   var S = window.SITE || {};
+  try { // a bad config value must never leave the page's reveals unwired
   var BINDINGS = {
     companyName: S.companyName,
     companyShort: S.companyShort,
@@ -116,12 +117,14 @@
       });
     }
   }
+  } catch (err) { if (window.console) console.error("config hydration:", err); }
 
   /* ==========================================================
      01b · SMOOTH SCROLL — Lenis, wired into ScrollTrigger.
      Skipped entirely under prefers-reduced-motion.
   ========================================================== */
   var lenis = null;
+  var lenisTick = null;
   function startLenis() {
     if (lenis || reduced() || !window.Lenis || !window.gsap || !window.ScrollTrigger) return;
     docEl.classList.add("has-lenis");
@@ -132,49 +135,110 @@
       easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); }
     });
     lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
+    lenisTick = function (t) { if (lenis) lenis.raf(t * 1000); };
+    gsap.ticker.add(lenisTick);
     gsap.ticker.lagSmoothing(0);
-    window.siteLenis = lenis; // js/intro.js holds the page while the curtain is up
+    if (menuOpen) lenis.stop();
   }
   function stopLenis() {
     if (!lenis) return;
+    gsap.ticker.remove(lenisTick);
+    lenisTick = null;
     lenis.destroy();
     lenis = null;
-    window.siteLenis = null;
     docEl.classList.remove("has-lenis");
+  }
+  var EXPO = function (t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); };
+  function glideTo(target, id) {
+    // distance-aware: a jump across the whole page lands sooner than a
+    // blur through twenty screens would; the header stays put on arrival
+    var dist = Math.abs(target.getBoundingClientRect().top);
+    holdHeader = true;
+    header.classList.remove("is-hidden");
+    lenis.scrollTo(target, {
+      duration: dist < window.innerHeight * 2 ? 0.8 : 1.1, // sections carry scroll-margin-top
+      easing: EXPO,
+      userData: { anchor: true }
+    });
+  }
+  /* deep links: the browser's fragment jump happens before the pinned
+     sections add their spacers, so land on the hash again once the page
+     has been laid out (two frames after load, past ScrollTrigger's refresh) */
+  function landOnHash() {
+    var id = window.location.hash.slice(1);
+    var target = id && id !== "main" && document.getElementById(id);
+    if (!target) return;
+    if (lenis) lenis.scrollTo(target, { immediate: true });
+    else target.scrollIntoView();
+    lastY = window.scrollY;
+    header.classList.remove("is-hidden");
+  }
+  if (window.location.hash) {
+    var land = function () { requestAnimationFrame(function () { requestAnimationFrame(landOnHash); }); };
+    if (document.readyState === "complete") land(); else window.addEventListener("load", land);
   }
   startLenis();
   REDUCE.addEventListener("change", function () { reduced() ? stopLenis() : startLenis(); });
 
-  // in-page anchors scroll through Lenis (native fallback otherwise)
+  /* in-page anchors glide through Lenis (native fallback otherwise). The
+     native anchor would also move focus and update the hash, so we do
+     both: focus first (screen readers announce, Tab continues from the
+     section), then glide. The skip link stays native. */
   document.addEventListener("click", function (e) {
     var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
     if (!a || !lenis) return;
     var id = a.getAttribute("href").slice(1);
     var target = id && document.getElementById(id);
-    if (!target) return;
+    if (!target || id === "main") return;
     e.preventDefault();
-    // a longer expo glide than the wheel: the page travels, it doesn't jump
-    lenis.scrollTo(target, {
-      offset: id === "top" ? 0 : -64,
-      duration: 1.5,
-      easing: function (t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); }
-    });
+    if (!target.hasAttribute("tabindex")) {
+      target.setAttribute("tabindex", "-1");
+      target.addEventListener("blur", function () { target.removeAttribute("tabindex"); }, { once: true });
+    }
+    target.focus({ preventScroll: true });
+    if (window.location.hash !== "#" + id) history.pushState(null, "", "#" + id);
+    glideTo(target, id);
+  });
+  window.addEventListener("popstate", function () {
+    var id = window.location.hash.slice(1);
+    var target = id && document.getElementById(id);
+    if (target && lenis) glideTo(target, id);
   });
 
   /* ==========================================================
      02 · HEADER — solid on scroll, hide on fast down-scroll
   ========================================================== */
   var header = document.querySelector("[data-header]");
-  var lastY = 0;
+  var lastY = window.scrollY;
+  var holdHeader = false; // set by an anchor glide: the nav the user just used stays put
+  function keyboardFocusInHeader() {
+    var a = document.activeElement;
+    return !!a && header.contains(a) && a.matches(":focus-visible");
+  }
   function onScroll() {
     var y = window.scrollY;
     header.classList.toggle("is-solid", y > 24);
-    if (y > 900 && y - lastY > 6 && !menuOpen) header.classList.add("is-hidden");
-    else if (lastY - y > 4 || y < 900) header.classList.remove("is-hidden");
+    var dy = y - lastY;
     lastY = y;
+    if (holdHeader) {
+      // released once Lenis has dropped the glide flag (finished, or the
+      // user took over mid-glide)
+      header.classList.remove("is-hidden");
+      if (!(lenis && lenis.userData && lenis.userData.anchor)) holdHeader = false;
+      return;
+    }
+    if (Math.abs(dy) > Math.max(300, window.innerHeight * 0.5)) {
+      // a jump, not a gesture: deep link, restored position, native anchor
+      header.classList.remove("is-hidden");
+      return;
+    }
+    if (y > 900 && dy > 6 && !menuOpen && !keyboardFocusInHeader()) header.classList.add("is-hidden");
+    else if (dy < -4 || y < 900) header.classList.remove("is-hidden");
   }
   window.addEventListener("scroll", onScroll, { passive: true });
+  header.addEventListener("focusin", function (e) {
+    if (e.target.matches(":focus-visible")) header.classList.remove("is-hidden");
+  });
   onScroll();
 
   /* mobile menu */
@@ -188,6 +252,8 @@
     toggle.setAttribute("aria-expanded", String(open));
     toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     document.body.style.overflow = open ? "hidden" : "";
+    docEl.classList.toggle("menu-open", open);
+    if (lenis) { open ? lenis.stop() : lenis.start(); }
     if (open) {
       var first = menu.querySelector("a");
       if (first) first.focus({ preventScroll: true });
@@ -248,7 +314,8 @@
       var slot = 0;
       Array.prototype.slice.call(entry.target.querySelectorAll(REVEAL_SEL)).forEach(function (el) {
         if (el.getBoundingClientRect().top < limit) {
-          el.style.setProperty("--d", (slot++ * STAGGER).toFixed(2) + "s");
+          // ladder capped at five slots: nothing on screen waits past 240ms
+          el.style.setProperty("--d", (Math.min(slot++, 4) * STAGGER).toFixed(2) + "s");
           el.classList.add("is-inview");
         } else {
           io.observe(el);
@@ -320,13 +387,13 @@
   ========================================================== */
   if (window.matchMedia("(pointer: fine)").matches && window.gsap) {
     document.querySelectorAll("[data-magnetic]").forEach(function (el) {
-      var strength = 14;
+      var strength = el.classList.contains("btn--sm") ? 10 : 12;
       var xTo = null, yTo = null;
       el.addEventListener("mouseenter", function () {
         if (reduced()) return;
         // fresh setters per hover: the spring release below overwrites them
-        xTo = gsap.quickTo(el, "x", { duration: 0.45, ease: "power3.out" });
-        yTo = gsap.quickTo(el, "y", { duration: 0.45, ease: "power3.out" });
+        xTo = gsap.quickTo(el, "x", { duration: 0.35, ease: "power3.out" });
+        yTo = gsap.quickTo(el, "y", { duration: 0.35, ease: "power3.out" });
       });
       el.addEventListener("mousemove", function (e) {
         if (reduced() || !xTo) return;
@@ -337,7 +404,7 @@
       el.addEventListener("mouseleave", function () {
         xTo = yTo = null;
         // settles home on a soft spring: one small overshoot, then rest
-        gsap.to(el, { x: 0, y: 0, duration: 0.85, ease: "elastic.out(1, 0.62)", overwrite: "auto" });
+        gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: "back.out(1.6)", overwrite: "auto" });
       });
     });
   }
@@ -391,6 +458,8 @@
     }
   }
 
+  var scrollingUntil = 0;
+  window.addEventListener("scroll", function () { scrollingUntil = performance.now() + 160; }, { passive: true });
   serviceRows.forEach(function (row) {
     var idx = +row.getAttribute("data-service");
     var trigger = row.querySelector(".services__trigger");
@@ -400,7 +469,7 @@
       trigger.setAttribute("aria-controls", detail.id);
     }
     row.addEventListener("mouseenter", function () {
-      if (isDesktopSvc()) activateService(idx);
+      if (isDesktopSvc() && performance.now() > scrollingUntil) activateService(idx);
     });
     trigger.addEventListener("focus", function () {
       if (isDesktopSvc()) activateService(idx);

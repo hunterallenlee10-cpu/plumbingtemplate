@@ -23,7 +23,10 @@
        targets never flash, and hold the hero for its load-in (js/intro.js):
          .is-loading  hero + header wait for the entrance sequence
          .is-curtain  brand-mark curtain, first visit of the session only
-       The timeout is a safety net if the scripts fail to load. -->
+       The header is never held: the phone number is visible at first
+       paint. If the scripts have not arrived within 1.5s (slow connection)
+       the hold is released and the page simply appears; intro.js takes
+       over that timer when it runs. -->
   <script>
     (function (d, S) {
       d.classList.add("js");
@@ -32,21 +35,31 @@
       var curtain = !(S && S.intro === false) && !window.location.hash;
       try { if (window.sessionStorage.getItem("cf-intro")) curtain = false; } catch (e) {}
       if (curtain) d.classList.add("is-curtain");
-      setTimeout(function () { d.classList.remove("is-loading", "is-curtain"); }, 4000);
+      window.__introTimer = setTimeout(function () { d.classList.remove("is-loading", "is-curtain"); }, 1500);
     })(document.documentElement, window.SITE);
   </script>
 
-  <!-- Self-hosted fonts (no external requests) -->
-  <link rel="preload" href="assets/photo/hero-1-exterior.webp" as="image" type="image/webp">
+  <!-- Self-hosted fonts + the first two hero plates (no external requests).
+       Stages 3 and 4 load from their <img> tags once the page is up. -->
+  <link rel="preload" href="assets/photo/hero-1-exterior.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="preload" href="assets/photo/hero-2-cutaway.webp" as="image" type="image/webp">
-  <link rel="preload" href="assets/photo/hero-3-repair.webp" as="image" type="image/webp">
-  <link rel="preload" href="assets/photo/hero-4-restored.webp" as="image" type="image/webp">
   <link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/hanken-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/hero.css">
   <link rel="stylesheet" href="css/effects.css">
+
+  <!-- Scripts are deferred (they run in this order after the page has
+       parsed) and listed here so they are discovered early. intro.js sits
+       right behind GSAP so the entrance can start as soon as possible. -->
+  <script src="js/vendor/gsap.min.js" defer></script>
+  <script src="js/intro.js" defer></script>
+  <script src="js/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="js/vendor/lenis.min.js" defer></script>
+  <script src="js/hero.js" defer></script>
+  <script src="js/scrollfx.js" defer></script>
+  <script src="js/main.js" defer></script>
 
   <!-- EDIT: LocalBusiness schema — update for the client's real details -->
   <script type="application/ld+json">
@@ -159,7 +172,7 @@
     </nav>
   </div>
 
-  <main id="main">
+  <main id="main" tabindex="-1">
 
   <!-- ================================================================
        HERO — “Scroll to restore your home”
@@ -238,7 +251,11 @@
               <img class="hero__stage" data-stage="2" src="assets/photo/hero-2-cutaway.webp" alt="" width="1280" height="768">
             </div>
             <img class="hero__stage" data-stage="4" src="assets/photo/hero-4-restored.webp" alt="" width="1280" height="768">
-            <svg class="hero__overlay" viewBox="0 0 1280 768" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <!-- Diagnostic overlay: one <svg> host per animated group so
+                 each fade composites as a layer instead of re-rasterising
+                 the whole frame. All hosts share the photo's coordinate
+                 space (1280x768); the defs in the first host serve them all. -->
+            <svg class="hero__overlay hero__fx" data-fx="problem" viewBox="0 0 1280 768" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
               <defs>
                 <filter id="ov-glow" x="-80%" y="-80%" width="260%" height="260%">
                   <feGaussianBlur stdDeviation="4" result="b"/>
@@ -249,28 +266,36 @@
                 </pattern>
               </defs>
               <!-- stage 01: exterior problem cues -->
-              <g id="ov-problem" opacity="0">
+              <g id="ov-problem">
                 <ellipse cx="618" cy="562" rx="62" ry="11" fill="#0C1821" opacity="0.32"/>
                 <path d="M604 508 q3 9 -1 18 q-3 8 1 16" fill="none" stroke="#26404d" stroke-width="2.2" opacity="0.6"/>
                 <path d="M634 514 q-2 10 1 19" fill="none" stroke="#26404d" stroke-width="1.8" opacity="0.45"/>
                 <circle id="ov-pulse" cx="618" cy="540" r="12" fill="none" stroke="#B4552D" stroke-width="2.4" opacity="0"/>
                 <circle id="ov-pulse-dot" cx="618" cy="540" r="3.5" fill="#B4552D" opacity="0"/>
               </g>
-              <!-- diagnostic wipe grid -->
-              <rect id="ov-grid-rect" width="1280" height="768" fill="url(#ov-grid)" opacity="0"/>
-              <!-- stage 02: scan reticle + tag -->
-              <g id="ov-reticle" opacity="0">
+            </svg>
+            <!-- diagnostic wipe grid -->
+            <svg class="hero__overlay hero__fx" data-fx="grid" viewBox="0 0 1280 768" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="1280" height="768" fill="url(#ov-grid)"/>
+            </svg>
+            <!-- stage 02: scan reticle + tag -->
+            <svg class="hero__overlay hero__fx" data-fx="reticle" viewBox="0 0 1280 768" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <g id="ov-reticle">
                 <circle cx="685" cy="419" r="34" fill="none" stroke="#8ED6E8" stroke-width="2"/>
                 <circle cx="685" cy="419" r="54" fill="none" stroke="#8ED6E8" stroke-width="1" opacity="0.5"/>
                 <path d="M685 357 v22 M685 459 v22 M623 419 h22 M725 419 h22" stroke="#8ED6E8" stroke-width="2" fill="none"/>
                 <circle id="ov-reticle-glow" cx="685" cy="419" r="10" fill="#B4552D" opacity="0" filter="url(#ov-glow)"/>
               </g>
-              <g id="ov-tag" opacity="0">
+            </svg>
+            <svg class="hero__overlay hero__fx" data-fx="tag" viewBox="0 0 1280 768" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <g id="ov-tag">
                 <line x1="685" y1="381" x2="685" y2="330" stroke="#B4552D" stroke-width="1.4"/>
                 <text x="685" y="316" class="svg-label svg-label--warn">LEAK DETECTED</text>
               </g>
-              <!-- stage 04: water flow + heater -->
-              <g id="ov-flow" opacity="0" fill="none" stroke="#8ED6E8" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+            </svg>
+            <!-- stage 04: water flow + heater -->
+            <svg class="hero__overlay hero__fx" data-fx="flow" viewBox="0 0 1280 768" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <g id="ov-flow" fill="none" stroke="#8ED6E8" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
                 <path class="flow-path" d="M226 586 H648 V620"/>
                 <path class="flow-path" d="M688 598 V492 H468"/>
                 <path class="flow-path" d="M688 492 V236 H1086"/>
@@ -278,7 +303,7 @@
               <circle id="ov-heater-ring" cx="688" cy="642" r="16" fill="none" stroke="#8ED6E8" stroke-width="2.5" opacity="0"/>
             </svg>
           </div>
-          <img class="hero__stage hero__stage--top" data-stage="3" src="assets/photo/hero-3-repair.webp" alt="" width="1280" height="768">
+          <img class="hero__stage hero__stage--top" data-stage="3" src="assets/photo/hero-3-repair.webp" alt="" width="1280" height="768" fetchpriority="low">
           <svg class="hero__overlay hero__overlay--top" viewBox="0 0 1280 768" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
             <g id="ov-fit-l" opacity="0">
               <circle cx="847" cy="402" r="27" fill="none" stroke="#F2D9A4" stroke-width="2.5"/>
@@ -323,19 +348,19 @@
       <dl class="stats__row" data-reveal-group>
         <div class="stats__item" data-reveal>
           <dt class="stats__label">Years experience</dt>
-          <dd class="stats__value"><span data-counter data-target="20">0</span><sup>+</sup></dd>
+          <dd class="stats__value"><span data-counter data-target="20">20</span><sup>+</sup></dd>
         </div>
         <div class="stats__item" data-reveal>
           <dt class="stats__label">Customer rating</dt>
-          <dd class="stats__value"><span data-counter data-target="4.9" data-decimals="1">0.0</span><sup class="stats__star">★</sup></dd>
+          <dd class="stats__value"><span data-counter data-target="4.9" data-decimals="1">4.9</span><sup class="stats__star">★</sup></dd>
         </div>
         <div class="stats__item" data-reveal>
           <dt class="stats__label">Homes served</dt>
-          <dd class="stats__value"><span data-counter data-target="2500" data-comma>0</span><sup>+</sup></dd>
+          <dd class="stats__value"><span data-counter data-target="2500" data-comma>2,500</span><sup>+</sup></dd>
         </div>
         <div class="stats__item" data-reveal>
           <dt class="stats__label">Emergency service</dt>
-          <dd class="stats__value"><span data-counter data-target="24">0</span><sup>/7</sup></dd>
+          <dd class="stats__value"><span data-counter data-target="24">24</span><sup>/7</sup></dd>
         </div>
       </dl>
     </div>
@@ -771,15 +796,15 @@
         <h2 id="areas-title" class="h2" data-reveal-lines><span>Proudly serving</span> <span data-bind="regionShort">St.&nbsp;Mary's County</span></h2>
         <p class="areas__lede" data-reveal>If you're anywhere in the county — or just across the line — we're already in the neighborhood.</p>
         <!-- EDIT: service areas — keep in sync with js/config.js -->
-        <ul class="areas__list" data-areas-list>
-          <li data-reveal><a href="#contact" data-area="0">Leonardtown</a></li>
-          <li data-reveal><a href="#contact" data-area="1">California</a></li>
-          <li data-reveal><a href="#contact" data-area="2">Lexington Park</a></li>
-          <li data-reveal><a href="#contact" data-area="3">Hollywood</a></li>
-          <li data-reveal><a href="#contact" data-area="4">Mechanicsville</a></li>
-          <li data-reveal><a href="#contact" data-area="5">Great Mills</a></li>
-          <li data-reveal><a href="#contact" data-area="6">Charlotte Hall</a></li>
-          <li data-reveal><a href="#contact" data-area="7">Lusby</a></li>
+        <ul class="areas__list" data-areas-list data-reveal>
+          <li><a href="#contact" data-area="0">Leonardtown</a></li>
+          <li><a href="#contact" data-area="1">California</a></li>
+          <li><a href="#contact" data-area="2">Lexington Park</a></li>
+          <li><a href="#contact" data-area="3">Hollywood</a></li>
+          <li><a href="#contact" data-area="4">Mechanicsville</a></li>
+          <li><a href="#contact" data-area="5">Great Mills</a></li>
+          <li><a href="#contact" data-area="6">Charlotte Hall</a></li>
+          <li><a href="#contact" data-area="7">Lusby</a></li>
         </ul>
       </div>
       <div class="areas__map" data-reveal aria-hidden="true">
@@ -868,7 +893,7 @@
         </dl>
       </div>
 
-      <form class="contact__form" data-contact-form novalidate data-reveal>
+      <form class="contact__form" data-contact-form novalidate>
         <div class="field">
           <label class="field__label" for="f-name">Name</label>
           <input class="field__input" id="f-name" name="name" type="text" autocomplete="name" required>
@@ -914,7 +939,7 @@
           </div>
         </fieldset>
         <p class="contact__form-error" data-form-error role="alert" hidden>Please fill in the highlighted fields.</p>
-        <button class="btn contact__submit" type="submit" data-magnetic><span class="btn__label">Request Service</span></button>
+        <button class="btn contact__submit" type="submit"><span class="btn__label">Request Service</span></button>
         <p class="contact__form-note">We reply within one business hour, seven days a week.</p>
         <div class="contact__success" data-form-success hidden>
           <p class="contact__success-title">Request received.</p>
@@ -995,12 +1020,5 @@
     </div>
   </footer>
 
-  <script src="js/vendor/gsap.min.js" defer></script>
-  <script src="js/vendor/ScrollTrigger.min.js" defer></script>
-  <script src="js/vendor/lenis.min.js" defer></script>
-  <script src="js/hero.js" defer></script>
-  <script src="js/scrollfx.js" defer></script>
-  <script src="js/main.js" defer></script>
-  <script src="js/intro.js" defer></script>
 </body>
 </html>

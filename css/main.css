@@ -81,6 +81,7 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-anchor: none; /* pinned sections change height; reload must land where it left */
 }
 /* Lenis owns scrolling when active */
 html.has-lenis { scroll-behavior: auto; }
@@ -110,6 +111,10 @@ address, cite, em { font-style: normal; }
   outline-offset: 3px;
   border-radius: 2px;
 }
+/* in-page links move focus to their section (see main.js): no ring
+   around a whole landmark, and room under the header on a native jump */
+main:focus, section:focus { outline: none; }
+section[id] { scroll-margin-top: 4.5rem; }
 
 /* filmic grain over the whole page */
 body::after {
@@ -120,6 +125,9 @@ body::after {
   pointer-events: none;
   opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (pointer: coarse) {
+  body::after { display: none; } /* a full-screen blend every frame is not worth the battery on phones */
 }
 
 .skip-link {
@@ -193,10 +201,14 @@ body::after {
   padding-bottom: 0.5rem;
 }
 
-/* split-line reveal targets */
+/* split-line reveal targets. The mask carries ink room above and below
+   (padding pulled back by negative margins so the leading is unchanged)
+   because at line-height 1.04 Fraunces descenders overhang the line box. */
 [data-reveal-lines] > span {
   display: block;
   overflow: clip;
+  padding-block: 0.1em 0.2em;
+  margin-block: -0.1em -0.2em;
 }
 [data-reveal-lines] > span > .line-inner { display: block; }
 
@@ -243,7 +255,7 @@ body::after {
 .btn__label-text,
 .btn__label-ghost {
   display: block;
-  transition: transform 0.5s var(--ease-out);
+  transition: transform 0.4s var(--ease-out);
 }
 .btn__label-ghost {
   position: absolute;
@@ -340,6 +352,7 @@ body::after {
   box-shadow: 0 1px 0 var(--line);
 }
 .site-header.is-hidden { transform: translateY(-100%); }
+.site-header.is-hidden:focus-within { transform: none; }
 .site-header__inner {
   max-width: var(--container);
   margin-inline: auto;
@@ -434,6 +447,17 @@ body::after {
 .nav-toggle__line:nth-child(1) { top: calc(50% - 4px); }
 .nav-toggle__line:nth-child(2) { top: calc(50% + 4px); }
 .nav-toggle[aria-expanded="true"] { color: var(--paper); }
+/* while the menu is open the header rides above the panel (its own
+   z-index would otherwise trap the close button underneath it) */
+.menu-open .site-header {
+  z-index: 125;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.menu-open .site-header .brand { color: var(--paper); }
+.menu-open .site-header .brand__word em { color: var(--slate-2); }
 .nav-toggle[aria-expanded="true"] .nav-toggle__line:nth-child(1) { top: 50%; transform: rotate(45deg); }
 .nav-toggle[aria-expanded="true"] .nav-toggle__line:nth-child(2) { top: 50%; transform: rotate(-45deg); }
 
@@ -625,10 +649,8 @@ body::after {
 }
 
 /* image mask reveal */
-[data-reveal-mask] { position: relative; overflow: clip; }
-[data-reveal-mask] > figure, [data-reveal-mask] > img, .work__item[data-reveal-mask] .work__media {
-  will-change: transform;
-}
+[data-reveal-mask] { position: relative; overflow: clip; overflow-clip-margin: 6px; }
+.work__item[data-reveal-mask] .work__media { will-change: transform; }
 
 /* --- Services ---------------------------------------------- */
 .services {
@@ -768,6 +790,7 @@ body::after {
   height: 100%;
   animation: wave-drift 46s ease-in-out infinite alternate;
 }
+.js .emergency:not(.is-onscreen) .emergency__water svg { animation-play-state: paused; }
 .wave { opacity: 0.7; }
 .emergency__inner {
   position: relative;
@@ -1072,14 +1095,14 @@ body::after {
 .areas__list li:nth-child(even) a:hover { padding-left: 2.3rem; }
 .areas__list a:hover::before { transform: translateY(-50%) scale(1); }
 .areas__map svg { width: 100%; height: auto; }
-/* reveal: the county outline draws itself, then the towns pop in
-   60ms apart (keyframes, so the hover transitions stay instant) */
-.js .areas__map[data-reveal] .county-outline {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-}
+/* reveal: the county outline draws itself, then the towns arrive 60ms
+   apart. The resting state is a normal declaration on .is-inview; the
+   keyframes (backwards fill) only hold the start state through each
+   delay, so hover transitions and reduced motion are untouched. */
+.js .areas__map[data-reveal] .county-outline { stroke-dasharray: 1; stroke-dashoffset: 1; }
 .js .areas__map[data-reveal].is-inview .county-outline {
-  animation: county-draw 1.8s var(--ease-inout) 0.15s forwards;
+  stroke-dashoffset: 0;
+  animation: county-draw 1.4s var(--ease-out) 0.15s backwards;
 }
 .js .areas__map[data-reveal] .map-marker__dot {
   transform-box: fill-box;
@@ -1087,15 +1110,17 @@ body::after {
   transform: scale(0);
 }
 .js .areas__map[data-reveal].is-inview .map-marker__dot {
-  animation: marker-pop 0.6s var(--ease-back) calc(0.55s + var(--i, 0) * var(--stagger)) forwards;
+  transform: none;
+  animation: marker-pop 0.7s var(--ease-out) calc(0.5s + var(--i, 0) * var(--stagger)) backwards;
 }
-.js .areas__map[data-reveal]:not(.is-inview) .map-marker text { opacity: 0; }
+.js .areas__map[data-reveal] .map-marker text { fill-opacity: 0; }
 .js .areas__map[data-reveal].is-inview .map-marker text {
-  animation: marker-fade 0.6s var(--ease-out) calc(0.7s + var(--i, 0) * var(--stagger)) backwards;
+  fill-opacity: 1;
+  animation: marker-fade 0.6s var(--ease-out) calc(0.6s + var(--i, 0) * var(--stagger)) backwards;
 }
-@keyframes county-draw { to { stroke-dashoffset: 0; } }
-@keyframes marker-pop { from { transform: scale(0); } to { transform: scale(1); } }
-@keyframes marker-fade { from { opacity: 0; } to { opacity: 0.75; } }
+@keyframes county-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes marker-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes marker-fade { from { fill-opacity: 0; } to { fill-opacity: 1; } }
 .map-marker__dot { fill: var(--water); transition: fill 0.3s; }
 .map-marker__ring {
   fill: none;
@@ -1262,7 +1287,8 @@ body::after {
   border-color: var(--ink);
 }
 .toggle input:focus-visible + span { outline: 2px solid var(--water); outline-offset: 2px; }
-.contact__submit { justify-self: start; }
+.contact__submit { justify-self: start; transition: transform 0.15s var(--ease-out), color 0.35s var(--ease-out); }
+.contact__submit:active { transform: scale(0.98); }
 .contact__form-note { font-size: 0.82rem; color: var(--slate); }
 .contact__form-error {
   font-size: 0.88rem;
@@ -1356,7 +1382,7 @@ body::after {
   transition: opacity var(--dur-enter) var(--ease-out) var(--d, 0s),
               transform var(--dur-enter) var(--ease-out) var(--d, 0s);
 }
-.js [data-reveal-lines] > span > .line-inner { transform: translateY(110%); }
+.js [data-reveal-lines] > span > .line-inner { transform: translateY(130%); }
 .js [data-reveal-lines].is-inview > span > .line-inner {
   transform: none;
   transition: transform 1s var(--ease-out) var(--d, 0s);
@@ -1385,9 +1411,8 @@ body::after {
    .is-curtain shows the first-visit curtain. Both are removed by
    intro.js (or by the bootstrap's safety timeout). */
 .is-loading .hero__intro > *,
-.is-loading .hero__cue,
-.is-loading .hero__frame,
-.is-loading .site-header__inner > * { opacity: 0; }
+.is-loading .hero__cue { opacity: 0; }
+.is-loading .hero__frame { --veil: 1; }
 
 .curtain {
   position: fixed;
@@ -1408,17 +1433,21 @@ body::after {
   stroke-linecap: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: curtain-pipe 0.7s var(--ease-inout) 0.08s forwards;
+  animation: curtain-pipe 0.5s var(--ease-inout) 0.05s forwards;
 }
 .curtain__drop {
   fill: var(--water);
   transform-box: fill-box;
   transform-origin: 50% 0;
   transform: scale(0);
-  animation: curtain-drop 0.45s var(--ease-back) 0.5s forwards;
+  animation: curtain-drop 0.35s var(--ease-back) 0.38s forwards;
 }
 @keyframes curtain-pipe { to { stroke-dashoffset: 0; } }
 @keyframes curtain-drop { to { transform: scale(1); } }
+/* intro.js freezes the drawn mark before lifting: the lift's first frame
+   would otherwise restart the keyframes */
+.curtain.is-drawn .curtain__pipe { animation: none; stroke-dashoffset: 0; }
+.curtain.is-drawn .curtain__drop { animation: none; transform: scale(1); }
 
 /* ---------------- responsive ---------------- */
 @media (max-width: 1100px) {
@@ -1437,6 +1466,8 @@ body::after {
 }
 
 @media (max-width: 860px) {
+  :root { --dur-enter: 0.7s; }
+  .js [data-reveal] { transform: translateY(16px); }
   .stats__row { grid-template-columns: 1fr 1fr; border-top: 0; }
   .stats__item { border-top: 1px solid var(--line); padding-right: 1rem; }
   .stats__item + .stats__item { padding-left: 0; }
@@ -1490,8 +1521,9 @@ body::after {
   .js .areas__map[data-reveal] .county-outline { stroke-dashoffset: 0; }
   .js .areas__map[data-reveal] .map-marker__dot { transform: none; }
   .js .areas__map[data-reveal] .map-marker text { opacity: 0.75; }
-  .is-loading .hero__intro > *, .is-loading .hero__cue, .is-loading .hero__frame,
-  .is-loading .site-header__inner > * { opacity: 1; }
+  .is-loading .hero__intro > *, .is-loading .hero__cue { opacity: 1; }
+  .is-loading .hero__frame { --veil: 0; }
+  .js .areas__map[data-reveal] .map-marker text { fill-opacity: 1; }
   .curtain, .page-gauge, .cursor-dot, .cursor-ring, body::after { display: none !important; }
 }
 
@@ -1500,17 +1532,18 @@ body::after {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.001s !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001s !important;
+    transition-delay: 0s !important;
   }
   .js [data-reveal], .js [data-reveal-lines] > span > .line-inner { opacity: 1; transform: none; }
   .js [data-reveal-mask]::after { display: none; }
-  .js .areas__map[data-reveal] .county-outline { stroke-dashoffset: 0; }
-  .js .areas__map[data-reveal] .map-marker__dot { transform: none; }
-  .js .areas__map[data-reveal] .map-marker text { opacity: 0.75; }
+  .js .areas__map[data-reveal] .county-outline { stroke-dashoffset: 0; animation: none; }
+  .js .areas__map[data-reveal] .map-marker__dot { transform: none; animation: none; }
+  .js .areas__map[data-reveal] .map-marker text { fill-opacity: 1; animation: none; }
   .is-loading .hero__intro > *,
-  .is-loading .hero__cue,
-  .is-loading .hero__frame,
-  .is-loading .site-header__inner > * { opacity: 1; }
+  .is-loading .hero__cue { opacity: 1; }
+  .is-loading .hero__frame { --veil: 0; }
   .curtain { display: none !important; }
 }
